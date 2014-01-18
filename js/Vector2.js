@@ -1,5 +1,6 @@
-// From http://www.kevlindev.com/gui/math/vector2d/index.htm
-//
+// URL: https://github.com/sebleedelisle/JSTouchController/blob/master/js/Vector2.js 
+// Author: Seb Lee Delisle
+// Modified: Vladislav Zorov
 
 var Vector2 = function (x,y) {
 	
