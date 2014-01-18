@@ -42,12 +42,23 @@ canvas.ontouchstart = touchWells;
 canvas.ontouchmove = touchWells; 
 canvas.ontouchend = touchWells;
 
+function drawCirclePath(ctx, pos, r) {
+    ctx.beginPath();
+    ctx.arc(pos.x, pos.y, r, 0, Math.PI * 2, true);
+    ctx.closePath();
+}
+
 var puck = {
     pos: new Vector2(0, 0),
     R: 30,
     V: new Vector2(0, 0),
     center: function(canvas) {
         this.pos = new Vector2(canvas.width / 2, canvas.height / 2);
+    },
+    draw: function(ctx) {
+        ctx.fillStyle = "red";
+        drawCirclePath(ctx, this.pos, this.R);
+        ctx.fill();
     }
 }
 
@@ -91,21 +102,13 @@ function update() {
 
 var ctx = canvas.getContext("2d");
 
-function drawCircle(pos, r) {
-    ctx.beginPath();
-    ctx.arc(pos.x, pos.y, r, 0, Math.PI * 2, true);
-    ctx.closePath();
-    ctx.fill();
-}
-
 function draw() {
     // Clear screen
     ctx.fillStyle = "lightblue";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     // Draw puck
-    ctx.fillStyle = "red";
-    drawCircle(puck.pos, puck.R);
+    puck.draw(ctx);
 }
 
 function main() {
