@@ -1,3 +1,5 @@
+var Vector2 = window.Vector2;
+
 var canvas = document.createElement("canvas");
 
 canvas.width = window.innerWidth;
@@ -10,9 +12,9 @@ window.onresize = function() {
     canvas.height = window.innerHeight;
     puck.center(canvas);
     draw();
-}
+};
 
-var gravityWells = new Array();
+var gravityWells = [];
 
 canvas.onmousedown = function(e) {
     gravityWells[0] = new Vector2(e.clientX, e.clientY);
@@ -20,19 +22,19 @@ canvas.onmousedown = function(e) {
         gravityWells[0].x = e.clientX;
         gravityWells[0].y = e.clientY;
         return false;
-    }
-}
+    };
+};
 
 canvas.onmouseup = function() {
-    gravityWells = new Array();
+    gravityWells = [];
     canvas.onmousemove = null;
-}
+};
 
 function touchWells(e) {
     e.preventDefault();
 
-    gravityWells = new Array();
-    for (i = 0; i < e.touches.length; i++) {
+    gravityWells = [];
+    for (var i = 0; i < e.touches.length; i++) {
         var touchV = new Vector2(e.touches[i].pageX, e.touches[i].pageY);
         gravityWells.push(touchV);
     }
@@ -60,13 +62,13 @@ var puck = {
         drawCirclePath(ctx, this.pos, this.R);
         ctx.fill();
     }
-}
+};
 
 function update() {
     var wallBounceRatio = 0.9;
 
     if (gravityWells.length > 0) {
-        for (i = 0; i < gravityWells.length; i++) {
+        for (var i = 0; i < gravityWells.length; i++) {
             var directionV = gravityWells[i].minusNew(puck.pos);
             var directionMagnitude = directionV.magnitude();
             
@@ -80,8 +82,8 @@ function update() {
     }
 
     if (puck.pos.x + puck.R > canvas.width) {
-       puck.pos.x = canvas.width - puck.R;
-       puck.V.x = -puck.V.x * wallBounceRatio;
+        puck.pos.x = canvas.width - puck.R;
+        puck.V.x = -puck.V.x * wallBounceRatio;
     }
     else if (puck.pos.x - puck.R < 0) {
         puck.pos.x = puck.R;
@@ -89,8 +91,8 @@ function update() {
     }
 
     if (puck.pos.y + puck.R > canvas.height) {
-       puck.pos.y = canvas.height - puck.R;
-       puck.V.y = -puck.V.y * wallBounceRatio;
+        puck.pos.y = canvas.height - puck.R;
+        puck.V.y = -puck.V.y * wallBounceRatio;
     }
     else if (puck.pos.y - puck.R < 0) {
         puck.pos.y = puck.R;
