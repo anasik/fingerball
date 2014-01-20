@@ -74,7 +74,7 @@ function update() {
             
             directionV.normalise();
 
-            var force = 10000 / Math.pow(Math.max(directionMagnitude, puck.R * 5), 2);
+            var force = 10000 / Math.pow(Math.max(directionMagnitude, puck.R * 2), 2);
             var accelV = directionV.multiplyNew(force);
             
             puck.V.plusEq(accelV);
