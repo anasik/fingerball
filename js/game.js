@@ -2,15 +2,11 @@ var Vector2 = window.Vector2;
 
 var canvas = document.createElement("canvas");
 
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
 
 document.body.appendChild(canvas);
 
 window.onresize = function() {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-    puck.center(canvas);
+    initGame();
     draw();
 };
 
@@ -61,6 +57,65 @@ var puck = {
         ctx.fillStyle = "red";
         drawCirclePath(ctx, this.pos, this.R);
         ctx.fill();
+    }
+};
+
+function ctxVecOp(ctx, op, vec) {
+    ctx[op](vec.x, vec.y);
+}
+
+var field = {
+    goalPosts: [],
+    landscape: false,
+    width: 0,
+    height: 0,
+    addGoals: function(canvas) {
+        this.width = canvas.width;
+        this.height = canvas.height;
+
+        if (canvas.width < canvas.height) {
+            this.landscape = false;
+            var oneThirdW = canvas.width / 3;
+            var twoThirdsW = canvas.width * 2 / 3;
+            this.goalPosts[0] = new Vector2(oneThirdW, 0);
+            this.goalPosts[1] = new Vector2(twoThirdsW, 0);
+            this.goalPosts[2] = new Vector2(oneThirdW, canvas.height);
+            this.goalPosts[3] = new Vector2(twoThirdsW, canvas.height);
+        }
+        else {
+            this.landscape = true;
+            var oneThirdH = canvas.height / 3;
+            var twoThirdsH = canvas.height * 2 / 3;
+            this.goalPosts[0] = new Vector2(0, oneThirdH);
+            this.goalPosts[1] = new Vector2(0, twoThirdsH);
+            this.goalPosts[2] = new Vector2(canvas.width, oneThirdH);
+            this.goalPosts[3] = new Vector2(canvas.width, twoThirdsH);
+        }
+    },
+    draw: function(ctx) {
+        ctx.beginPath();
+        ctxVecOp(ctx, "moveTo", this.goalPosts[0]);
+        if (this.landscape) {
+            ctx.lineTo(0, 0);
+            ctx.lineTo(this.width, 0);
+            ctxVecOp(ctx, "lineTo", this.goalPosts[2]);
+            ctxVecOp(ctx, "moveTo", this.goalPosts[3]);
+            ctx.lineTo(this.width, this.height);
+            ctx.lineTo(0, this.height);
+            ctxVecOp(ctx, "lineTo", this.goalPosts[1]);
+        }
+        else {
+            ctx.lineTo(0, 0);
+            ctx.lineTo(0, this.height);
+            ctxVecOp(ctx, "lineTo", this.goalPosts[2]);
+            ctxVecOp(ctx, "moveTo", this.goalPosts[3]);
+            ctx.lineTo(this.width, this.height);
+            ctx.lineTo(this.width, 0);
+            ctxVecOp(ctx, "lineTo", this.goalPosts[1]);
+        }
+        ctx.lineWidth = 3;
+        ctx.strokeStyle = "red";
+        ctx.stroke();
     }
 };
 
@@ -118,8 +173,8 @@ function draw() {
     ctx.fillStyle = "lightblue";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    // Draw puck
     puck.draw(ctx);
+    field.draw(ctx);
 }
 
 function main() {
@@ -127,5 +182,12 @@ function main() {
     draw();
 }
 
-puck.center(canvas);
+function initGame() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    puck.center(canvas);
+    field.addGoals(canvas);
+}
+
+initGame();
 setInterval(main, 1000 / 60);
