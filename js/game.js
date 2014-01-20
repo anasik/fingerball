@@ -70,14 +70,23 @@ function update() {
     if (gravityWells.length > 0) {
         for (var i = 0; i < gravityWells.length; i++) {
             var directionV = gravityWells[i].minusNew(puck.pos);
+
             var directionMagnitude = directionV.magnitude();
-            
             directionV.normalise();
 
-            var force = 10000 / Math.pow(Math.max(directionMagnitude, puck.R * 2), 2);
-            var accelV = directionV.multiplyNew(force);
-            
-            puck.V.plusEq(accelV);
+            if (directionMagnitude > puck.R * 2) {
+                var force = 10000 / Math.pow(directionMagnitude, 2);
+                var accelV = directionV.multiplyNew(force);
+
+                puck.V.plusEq(accelV);
+            }
+            else {
+                // Bounce and remove puck from collision.
+                // directionV points away from surface normal, but
+                // reflect(angle + 180deg) is the same as reflect(angle).
+                puck.V.reflect(directionV);
+                puck.pos.minusEq(directionV.multiplyNew((puck.R * 2) - directionMagnitude));
+            }
         }
     }
 
