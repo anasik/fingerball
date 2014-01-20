@@ -124,6 +124,28 @@ var field = {
     collide: function(puck) {
         var futurePos = puck.pos.plusNew(puck.V);
 
+        if (this.landscape) {
+            if (futurePos.y - puck.R > this.goalPosts[0].y &&
+                    futurePos.y + puck.R < this.goalPosts[1].y) {
+                return;
+            }
+        }
+        else {
+            if (futurePos.x - puck.R > this.goalPosts[0].x &&
+                    futurePos.x + puck.R < this.goalPosts[1].x) {
+                return;
+            }
+        }
+
+        for (var i = 0; i < 4; i++) {
+            var direction = this.goalPosts[i].minusNew(futurePos);
+            if (direction.isMagLessThan(puck.R)) {
+                direction.normalise();
+                puck.V.reflect(direction);
+                return;
+            }
+        }
+
         if (futurePos.x + puck.R > this.width) {
             futurePos.x = this.width - puck.R;
             puck.V.x = -puck.V.x * this.wallBounceRatio;
