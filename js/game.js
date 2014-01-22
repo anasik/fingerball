@@ -2,7 +2,6 @@ var Vector2 = window.Vector2;
 
 var canvas = document.createElement("canvas");
 
-
 document.body.appendChild(canvas);
 
 window.onresize = function() {
@@ -66,6 +65,7 @@ function ctxVecOp(ctx, op, vec) {
 
 var field = {
     goalPosts: [],
+    goalPostR: 5,
     landscape: false,
     width: 0,
     height: 0,
@@ -119,6 +119,12 @@ var field = {
         ctx.lineWidth = 3;
         ctx.strokeStyle = "red";
         ctx.stroke();
+
+        ctx.fillStyle = "red";
+        for (var i = 0; i < 4; i++) {
+            drawCirclePath(ctx, this.goalPosts[i], this.goalPostR);
+            ctx.fill();
+        }
     },
 
     collide: function(puck) {
