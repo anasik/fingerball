@@ -65,7 +65,7 @@ function ctxVecOp(ctx, op, vec) {
 
 var field = {
     goalPosts: [],
-    goalPostR: 5,
+    goalPostR: 10,
     landscape: false,
     width: 0,
     height: 0,
@@ -128,45 +128,46 @@ var field = {
     },
 
     collide: function(puck) {
-        var futurePos = puck.pos.plusNew(puck.V);
-
         if (this.landscape) {
-            if (futurePos.y - puck.R > this.goalPosts[0].y &&
-                    futurePos.y + puck.R < this.goalPosts[1].y) {
+            if (puck.pos.y - puck.R > this.goalPosts[0].y + this.goalPostR &&
+                    puck.pos.y + puck.R < this.goalPosts[1].y - this.goalPostR) {
                 return;
             }
         }
         else {
-            if (futurePos.x - puck.R > this.goalPosts[0].x &&
-                    futurePos.x + puck.R < this.goalPosts[1].x) {
+            if (puck.pos.x - puck.R > this.goalPosts[0].x + this.goalPostR &&
+                    puck.pos.x + puck.R < this.goalPosts[1].x - this.goalPostR) {
                 return;
             }
         }
 
         for (var i = 0; i < 4; i++) {
-            var direction = this.goalPosts[i].minusNew(futurePos);
-            if (direction.isMagLessThan(puck.R)) {
-                direction.normalise();
-                puck.V.reflect(direction);
+            var directionV = puck.pos.minusNew(this.goalPosts[i]);
+            var directionMagnitude = directionV.magnitude();
+
+            if (directionMagnitude < puck.R + this.goalPostR) {
+                directionV.normalise();
+                puck.V.reflect(directionV);
+                puck.pos.plusEq(directionV.multiplyEq((puck.R + this.goalPostR) - directionMagnitude));
                 return;
             }
         }
 
-        if (futurePos.x + puck.R > this.width) {
-            futurePos.x = this.width - puck.R;
+        if (puck.pos.x + puck.R > this.width) {
+            puck.pos.x = this.width - puck.R;
             puck.V.x = -puck.V.x * this.wallBounceRatio;
         }
-        else if (futurePos.x - puck.R < this.margin) {
-            futurePos.x = puck.R + this.margin;
+        else if (puck.pos.x - puck.R < this.margin) {
+            puck.pos.x = puck.R + this.margin;
             puck.V.x = -puck.V.x * this.wallBounceRatio;
         }
 
-        if (futurePos.y + puck.R > this.height) {
-            futurePos.y = this.height - puck.R;
+        if (puck.pos.y + puck.R > this.height) {
+            puck.pos.y = this.height - puck.R;
             puck.V.y = -puck.V.y * this.wallBounceRatio;
         }
-        else if (futurePos.y - puck.R < this.margin) {
-            futurePos.y = puck.R + this.margin;
+        else if (puck.pos.y - puck.R < this.margin) {
+            puck.pos.y = puck.R + this.margin;
             puck.V.y = -puck.V.y * this.wallBounceRatio;
         }
     }
@@ -188,16 +189,22 @@ function update() {
             }
             else {
                 // Bounce and remove puck from collision.
-                // directionV points away from surface normal, but
-                // reflect(angle + 180deg) is the same as reflect(angle).
+                directionV.reverse();
                 puck.V.reflect(directionV);
-                puck.pos.minusEq(directionV.multiplyNew((puck.R * 2) - directionMagnitude));
+                puck.pos.plusEq(directionV.multiplyNew((puck.R * 2) - directionMagnitude));
             }
         }
     }
 
-    field.collide(puck);
     puck.pos.plusEq(puck.V);
+    field.collide(puck);
+
+    if (puck.pos.x < field.margin || puck.pos.x > field.width ||
+            puck.pos.y < field.margin || puck.pos.y > field.height)
+    {
+        puck.V = new Vector2(0, 0);
+        puck.center(canvas);
+    }
 }
 
 var ctx = canvas.getContext("2d");
