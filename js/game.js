@@ -175,19 +175,19 @@ var field = {
     }
 };
 
-function update() {
+function update(elapsed) {
     if (gravityWells.length > 0) {
-        for (var i = 0; i < gravityWells.length; i++) {
+        for (var i = 0, length = gravityWells.length; i < length; i++) {
             var directionV = gravityWells[i].minusNew(puck.pos);
 
             var directionMagnitude = directionV.magnitude();
             directionV.normalise();
 
             if (directionMagnitude > puck.R * 2) {
-                var force = 10000 / Math.pow(directionMagnitude, 2);
+                var force = 10 / (directionMagnitude * directionMagnitude); 
                 var accelV = directionV.multiplyNew(force);
 
-                puck.V.plusEq(accelV);
+                puck.V.plusEq(accelV.multiplyEq(elapsed));
             }
             else {
                 // Bounce and remove puck from collision.
@@ -198,7 +198,7 @@ function update() {
         }
     }
 
-    puck.pos.plusEq(puck.V);
+    puck.pos.plusEq(puck.V.multiplyNew(elapsed));
     field.collide(puck);
 
     if (puck.pos.x < field.margin || puck.pos.x > field.width ||
@@ -220,9 +220,12 @@ function draw() {
     field.draw(ctx);
 }
 
-function main() {
-    update();
+var lastUpdate = 0;
+
+function main(timestamp) {
+    update(timestamp - lastUpdate);
     draw();
+    lastUpdate = timestamp;
     window.requestAnimationFrame(main);
 }
 
