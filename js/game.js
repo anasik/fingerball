@@ -175,7 +175,8 @@ var field = {
     }
 };
 
-function update(elapsed) {
+function update() {
+    var elapsed = 1000/60;
     if (gravityWells.length > 0) {
         for (var i = 0, length = gravityWells.length; i < length; i++) {
             var directionV = gravityWells[i].minusNew(puck.pos);
