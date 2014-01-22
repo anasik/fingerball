@@ -1,4 +1,6 @@
 var Vector2 = window.Vector2;
+window.requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame ||
+        window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
 
 var canvas = document.createElement("canvas");
 
@@ -221,6 +223,7 @@ function draw() {
 function main() {
     update();
     draw();
+    window.requestAnimationFrame(main);
 }
 
 function initGame() {
@@ -231,4 +234,4 @@ function initGame() {
 }
 
 initGame();
-setInterval(main, 1000 / 60);
+window.requestAnimationFrame(main);
