@@ -183,9 +183,9 @@ function update(elapsed) {
             var directionMagnitude = directionV.magnitude();
             directionV.normalise();
 
-            if (directionMagnitude > puck.R * 3) {
+            if (directionMagnitude > puck.R * 2.5) {
                 var scaledMagnitude = directionMagnitude / 10;
-                var force = 0.5 / (scaledMagnitude * scaledMagnitude); 
+                var force = 0.2 / (scaledMagnitude * scaledMagnitude); 
                 var accelV = directionV.multiplyNew(force);
 
                 puck.V.plusEq(accelV.multiplyEq(elapsed));
@@ -194,7 +194,7 @@ function update(elapsed) {
                 // Bounce and remove puck from collision.
                 directionV.reverse();
                 puck.V.reflect(directionV);
-                puck.pos.plusEq(directionV.multiplyNew((puck.R * 3) - directionMagnitude));
+                puck.pos.plusEq(directionV.multiplyNew((puck.R * 2.5) - directionMagnitude));
             }
         }
     }
@@ -222,7 +222,7 @@ function draw() {
 
     ctx.fillStyle = "orange";
     for (var i = 0, length = gravityWells.length; i < length; i++) {
-        drawCirclePath(ctx, gravityWells[i], puck.R * 2);
+        drawCirclePath(ctx, gravityWells[i], puck.R * 1.5);
         ctx.fill();
     }
 }
