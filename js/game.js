@@ -175,8 +175,9 @@ var field = {
     }
 };
 
-function update() {
-    var elapsed = 1000/60;
+function update(elapsed) {
+    puck.pos.plusEq(puck.V.multiplyNew(elapsed));
+
     if (gravityWells.length > 0) {
         for (var i = 0, length = gravityWells.length; i < length; i++) {
             var directionV = gravityWells[i].minusNew(puck.pos);
@@ -200,7 +201,6 @@ function update() {
         }
     }
 
-    puck.pos.plusEq(puck.V.multiplyNew(elapsed));
     field.collide(puck);
 
     if (puck.pos.x < field.margin || puck.pos.x > field.width ||
