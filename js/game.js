@@ -80,21 +80,21 @@ var field = {
 
         if (canvas.width < canvas.height) {
             this.landscape = false;
-            var oneThirdW = (canvas.width / 3) + this.margin;
-            var twoThirdsW = (canvas.width * 2 / 3) + this.margin;
-            this.goalPosts[0] = new Vector2(oneThirdW, this.margin);
-            this.goalPosts[1] = new Vector2(twoThirdsW, this.margin);
-            this.goalPosts[2] = new Vector2(oneThirdW, this.height);
-            this.goalPosts[3] = new Vector2(twoThirdsW, this.height);
+            var oneQuarterW = (canvas.width / 4) + this.margin;
+            var threeQuartersW = (canvas.width * 3 / 4) + this.margin;
+            this.goalPosts[0] = new Vector2(oneQuarterW, this.margin);
+            this.goalPosts[1] = new Vector2(threeQuartersW, this.margin);
+            this.goalPosts[2] = new Vector2(oneQuarterW, this.height);
+            this.goalPosts[3] = new Vector2(threeQuartersW, this.height);
         }
         else {
             this.landscape = true;
-            var oneThirdH = (canvas.height / 3) + this.margin;
-            var twoThirdsH = (canvas.height * 2 / 3) + this.margin;
-            this.goalPosts[0] = new Vector2(this.margin, oneThirdH);
-            this.goalPosts[1] = new Vector2(this.margin, twoThirdsH);
-            this.goalPosts[2] = new Vector2(this.width, oneThirdH);
-            this.goalPosts[3] = new Vector2(this.width, twoThirdsH);
+            var oneQuarterH = (canvas.height / 4) + this.margin;
+            var threeQuartersH = (canvas.height * 3 / 4) + this.margin;
+            this.goalPosts[0] = new Vector2(this.margin, oneQuarterH);
+            this.goalPosts[1] = new Vector2(this.margin, threeQuartersH);
+            this.goalPosts[2] = new Vector2(this.width, oneQuarterH);
+            this.goalPosts[3] = new Vector2(this.width, threeQuartersH);
         }
     },
 
