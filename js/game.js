@@ -61,9 +61,13 @@ var puck = {
     }
 };
 
-function ctxVecOp(ctx, op, vec) {
-    ctx[op](vec.x, vec.y);
-}
+CanvasRenderingContext2D.prototype.lineToV = function(vec) {
+    this.lineTo(vec.x, vec.y);
+};
+
+CanvasRenderingContext2D.prototype.moveToV = function(vec) {
+    this.moveTo(vec.x, vec.y);
+};
 
 var field = {
     goalPosts: [],
@@ -100,24 +104,29 @@ var field = {
 
     draw: function(ctx) {
         ctx.beginPath();
-        ctxVecOp(ctx, "moveTo", this.goalPosts[0]);
+        ctx.moveToV(this.goalPosts[0]);
         ctx.lineTo(this.margin, this.margin);
+
         if (this.landscape) {
             ctx.lineTo(this.width + this.margin, this.margin);
-            ctxVecOp(ctx, "lineTo", this.goalPosts[2]);
-            ctxVecOp(ctx, "moveTo", this.goalPosts[3]);
-            ctx.lineTo(this.width + this.margin, this.height + this.margin);
-            ctx.lineTo(this.margin, this.height + this.margin);
-            ctxVecOp(ctx, "lineTo", this.goalPosts[1]);
         }
         else {
             ctx.lineTo(this.margin, this.height + this.margin);
-            ctxVecOp(ctx, "lineTo", this.goalPosts[2]);
-            ctxVecOp(ctx, "moveTo", this.goalPosts[3]);
+        }
+        
+        ctx.lineToV(this.goalPosts[2]);
+        ctx.moveToV(this.goalPosts[3]);
+
+        if (this.landscape) {
+            ctx.lineTo(this.width + this.margin, this.height + this.margin);
+            ctx.lineTo(this.margin, this.height + this.margin);
+        }
+        else {
             ctx.lineTo(this.width + this.margin, this.height + this.margin);
             ctx.lineTo(this.width + this.margin, this.margin);
-            ctxVecOp(ctx, "lineTo", this.goalPosts[1]);
         }
+        
+        ctx.lineToV(this.goalPosts[1]);
         ctx.lineWidth = 3;
         ctx.strokeStyle = "red";
         ctx.stroke();
