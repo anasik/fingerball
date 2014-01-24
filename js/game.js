@@ -1,17 +1,19 @@
-var Vector2 = window.Vector2;
-window.requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame ||
-        window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
+var canvas, ctx, Vector2, gravityWells, lastUpdate, framesRendered, lastFPScheck, fps, puckV;
 
-var canvas = document.createElement("canvas");
-
-document.body.appendChild(canvas);
+canvas = document.createElement("canvas");
+ctx = canvas.getContext("2d");
+Vector2 = window.Vector2; // library imported in html
+gravityWells = [];
+lastUpdate = 0;
+lastFPScheck = 0;
 
 window.onresize = function() {
     initGame();
     draw();
 };
 
-var gravityWells = [];
+window.requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame ||
+        window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
 
 canvas.onmousedown = function(e) {
     gravityWells[0] = new Vector2(e.clientX, e.clientY);
@@ -41,32 +43,33 @@ canvas.ontouchstart = touchWells;
 canvas.ontouchmove = touchWells; 
 canvas.ontouchend = touchWells;
 
-function drawCirclePath(ctx, pos, r) {
-    ctx.beginPath();
-    ctx.arc(pos.x, pos.y, r, 0, Math.PI * 2, true);
-    ctx.closePath();
-}
+document.body.appendChild(canvas);
+
+var crc2DProto = CanvasRenderingContext2D.prototype;
+crc2DProto.lineToV = function(vec) {
+    this.lineTo(vec.x, vec.y);
+};
+crc2DProto.moveToV = function(vec) {
+    this.moveTo(vec.x, vec.y);
+};
+crc2DProto.circlePathV = function(pos, r) {
+    this.beginPath();
+    this.arc(pos.x, pos.y, r, 0, Math.PI * 2, true);
+    this.closePath();
+};
 
 var puck = {
     pos: new Vector2(0, 0),
     R: 30,
     V: new Vector2(0, 0),
-    center: function(canvas) {
+    center: function() {
         this.pos = new Vector2(canvas.width / 2, canvas.height / 2);
     },
-    draw: function(ctx) {
+    draw: function() {
         ctx.fillStyle = "red";
-        drawCirclePath(ctx, this.pos, this.R);
+        ctx.circlePathV(this.pos, this.R);
         ctx.fill();
     }
-};
-
-CanvasRenderingContext2D.prototype.lineToV = function(vec) {
-    this.lineTo(vec.x, vec.y);
-};
-
-CanvasRenderingContext2D.prototype.moveToV = function(vec) {
-    this.moveTo(vec.x, vec.y);
 };
 
 var field = {
@@ -78,7 +81,7 @@ var field = {
     margin: 20,
     wallBounceRatio: 0.9,
 
-    addGoals: function(canvas) {
+    addGoals: function() {
         this.width = canvas.width - (2 * this.margin);
         this.height = canvas.height - (2 * this.margin);
 
@@ -102,7 +105,7 @@ var field = {
         }
     },
 
-    draw: function(ctx) {
+    draw: function() {
         ctx.beginPath();
         ctx.moveToV(this.goalPosts[0]);
         ctx.lineTo(this.margin, this.margin);
@@ -133,7 +136,7 @@ var field = {
 
         ctx.fillStyle = "red";
         for (var i = 0; i < 4; i++) {
-            drawCirclePath(ctx, this.goalPosts[i], this.goalPostR);
+            ctx.circlePathV(this.goalPosts[i], this.goalPostR);
             ctx.fill();
         }
     },
@@ -228,25 +231,20 @@ function update(elapsed) {
     }
 }
 
-var ctx = canvas.getContext("2d");
-
 function draw() {
     // Clear screen
     ctx.fillStyle = "lightblue";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    puck.draw(ctx);
-    field.draw(ctx);
+    puck.draw();
+    field.draw();
 
     ctx.fillStyle = "orange";
     for (var i = 0, length = gravityWells.length; i < length; i++) {
-        drawCirclePath(ctx, gravityWells[i], puck.R * 1.5);
+        ctx.circlePathV(gravityWells[i], puck.R * 1.5);
         ctx.fill();
     }
 }
-
-var lastUpdate = 0;
-var framesRendered, lastFPScheck = 0, fps, puckV;
 
 function main(timestamp) {
     update(timestamp - lastUpdate);
