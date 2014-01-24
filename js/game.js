@@ -130,17 +130,15 @@ var field = {
     },
 
     collide: function(puck) {
-        // The goal post radius is not included below,
-        // because they handle collisions themselves.
         if (this.landscape) {
-            if (puck.pos.y - puck.R > this.goalPosts[0].y &&
-                    puck.pos.y + puck.R < this.goalPosts[1].y) {
+            if (puck.pos.y - puck.R > this.goalPosts[0].y + this.goalPostR &&
+                    puck.pos.y + puck.R < this.goalPosts[1].y - this.goalPostR) {
                 return;
             }
         }
         else {
-            if (puck.pos.x - puck.R > this.goalPosts[0].x &&
-                    puck.pos.x + puck.R < this.goalPosts[1].x) {
+            if (puck.pos.x - puck.R > this.goalPosts[0].x + this.goalPostR &&
+                    puck.pos.x + puck.R < this.goalPosts[1].x - this.goalPostR) {
                 return;
             }
         }
