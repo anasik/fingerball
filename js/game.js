@@ -157,7 +157,7 @@ var field = {
             }
         }
 
-        if (puck.pos.x + puck.R > this.width && puck.V.x > 0) {
+        if (puck.pos.x + puck.R > this.width + this.margin && puck.V.x > 0) {
             puck.pos.x = this.width - puck.R;
             puck.V.x = -puck.V.x * this.wallBounceRatio;
         }
@@ -166,7 +166,7 @@ var field = {
             puck.V.x = -puck.V.x * this.wallBounceRatio;
         }
 
-        if (puck.pos.y + puck.R > this.height && puck.V.y > 0) {
+        if (puck.pos.y + puck.R > this.height + this.margin && puck.V.y > 0) {
             puck.pos.y = this.height - puck.R;
             puck.V.y = -puck.V.y * this.wallBounceRatio;
         }
