@@ -155,23 +155,31 @@ var field = {
             }
         }
 
-        if (puck.pos.x + puck.R > this.width + this.margin && puck.V.x > 0) {
-            puck.pos.x = this.width - puck.R;
-            puck.V.x = -puck.V.x * this.wallBounceRatio;
-        }
-        else if (puck.pos.x - puck.R < this.margin && puck.V.x < 0) {
-            puck.pos.x = puck.R + this.margin;
-            puck.V.x = -puck.V.x * this.wallBounceRatio;
+        if (!this.landscape ||
+                puck.pos.y < this.goalPosts[0].y - this.goalPostR ||
+                puck.pos.y > this.goalPosts[1].y + this.goalPostR) {
+            if (puck.pos.x + puck.R > this.width + this.margin) {
+                puck.pos.x = (this.width + this.margin) - puck.R;
+                puck.V.x = -puck.V.x * this.wallBounceRatio;
+            }
+            else if (puck.pos.x - puck.R < this.margin) {
+                puck.pos.x = puck.R + this.margin;
+                puck.V.x = -puck.V.x * this.wallBounceRatio;
+            }
         }
 
-        if (puck.pos.y + puck.R > this.height + this.margin && puck.V.y > 0) {
-            puck.pos.y = this.height - puck.R;
-            puck.V.y = -puck.V.y * this.wallBounceRatio;
-        }
-        else if (puck.pos.y - puck.R < this.margin && puck.V.y < 0) {
-            puck.pos.y = puck.R + this.margin;
-            puck.V.y = -puck.V.y * this.wallBounceRatio;
-        }
+        if (this.landscape ||
+                puck.pos.x < this.goalPosts[0].x - this.goalPostR ||
+                puck.pos.x > this.goalPosts[1].x + this.goalPostR) {
+            if (puck.pos.y + puck.R > this.height + this.margin) {
+                puck.pos.y = (this.height + this.margin) - puck.R;
+                puck.V.y = -puck.V.y * this.wallBounceRatio;
+            }
+            else if (puck.pos.y - puck.R < this.margin) {
+                puck.pos.y = puck.R + this.margin;
+                puck.V.y = -puck.V.y * this.wallBounceRatio;
+            }
+        } 
     }
 };
 
@@ -203,8 +211,8 @@ function update(elapsed) {
 
     field.collide(puck);
 
-    if (puck.pos.x < field.margin || puck.pos.x > field.width + field.margin ||
-            puck.pos.y < field.margin || puck.pos.y > field.height + field.margin)
+    if (puck.pos.x + puck.R < field.margin || puck.pos.x - puck.R > field.width + field.margin ||
+            puck.pos.y + puck.R < field.margin || puck.pos.y - puck.R > field.height + field.margin)
     {
         puck.V = new Vector2(0, 0);
         puck.center(canvas);
