@@ -1,9 +1,8 @@
-var canvas, ctx, Vector2, gravityWells, lastUpdate, framesRendered, lastFPScheck, fps, puckV;
+var canvas, ctx, Vector2, lastUpdate, framesRendered, lastFPScheck, fps, puckV;
 
 canvas = document.createElement("canvas");
 ctx = canvas.getContext("2d");
 Vector2 = window.Vector2; // library imported in html
-gravityWells = [];
 lastUpdate = 0;
 lastFPScheck = 0;
 
@@ -14,34 +13,6 @@ window.onresize = function() {
 
 window.requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame ||
         window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
-
-canvas.onmousedown = function(e) {
-    gravityWells[0] = new Vector2(e.clientX, e.clientY);
-    canvas.onmousemove = function(e) {
-        gravityWells[0].x = e.clientX;
-        gravityWells[0].y = e.clientY;
-        return false;
-    };
-};
-
-canvas.onmouseup = function() {
-    gravityWells = [];
-    canvas.onmousemove = null;
-};
-
-function touchWells(e) {
-    e.preventDefault();
-
-    gravityWells = [];
-    for (var i = 0; i < e.touches.length; i++) {
-        var touchV = new Vector2(e.touches[i].pageX, e.touches[i].pageY);
-        gravityWells.push(touchV);
-    }
-}
-
-canvas.ontouchstart = touchWells;
-canvas.ontouchmove = touchWells; 
-canvas.ontouchend = touchWells;
 
 document.body.appendChild(canvas);
 
@@ -57,6 +28,77 @@ crc2DProto.circlePathV = function(pos, r) {
     this.arc(pos.x, pos.y, r, 0, Math.PI * 2, true);
     this.closePath();
 };
+
+var gravityWells = {
+    wells: [],
+
+    mouseDown: function(e) {
+        gravityWells.wells[0] = new Vector2(e.clientX, e.clientY);
+        canvas.onmousemove = gravityWells.mouseMove;
+    },
+
+    mouseMove: function(e) {
+        gravityWells.wells[0].x = e.clientX;
+        gravityWells.wells[0].y = e.clientY;
+        return false;
+    },
+
+    mouseUp: function() {
+        gravityWells.wells = [];
+        canvas.onmousemove = null;
+    },
+
+    touchWells: function(e) {
+        e.preventDefault();
+
+        gravityWells.wells = [];
+        for (var i = 0; i < e.touches.length; i++) {
+            var touchV = new Vector2(e.touches[i].pageX, e.touches[i].pageY);
+            gravityWells.wells.push(touchV);
+        }
+    },
+
+    applyForces: function(puck, elapsed) {
+        if (!this.wells.length) {
+            return;
+        }
+
+        for (var i = 0, length = this.wells.length; i < length; i++) {
+            var directionV = this.wells[i].minusNew(puck.pos);
+
+            var directionMagnitude = directionV.magnitude();
+            directionV.normalise();
+
+            if (directionMagnitude > puck.R * 2.5) {
+                var scaledMagnitude = directionMagnitude / 10;
+                var force = 0.2 / (scaledMagnitude * scaledMagnitude); 
+                var accelV = directionV.multiplyNew(force);
+
+                puck.V.plusEq(accelV.multiplyEq(elapsed));
+            }
+            else {
+                // Bounce and remove puck from collision.
+                directionV.reverse();
+                puck.V.reflect(directionV);
+                puck.pos.plusEq(directionV.multiplyNew((puck.R * 2.5) - directionMagnitude));
+            }
+        }
+    },
+
+    draw: function() {
+        ctx.fillStyle = "orange";
+        for (var i = 0, length = this.wells.length; i < length; i++) {
+            ctx.circlePathV(this.wells[i], puck.R * 1.5);
+            ctx.fill();
+        }
+    }
+};
+
+canvas.onmousedown = gravityWells.mouseDown;
+canvas.onmouseup = gravityWells.mouseUp;
+canvas.ontouchstart = gravityWells.touchWells;
+canvas.ontouchmove = gravityWells.touchWells; 
+canvas.ontouchend = gravityWells.touchWells;
 
 var puck = {
     pos: new Vector2(0, 0),
@@ -198,28 +240,7 @@ var field = {
 function update(elapsed) {
     puck.pos.plusEq(puck.V.multiplyNew(elapsed));
 
-    if (gravityWells.length > 0) {
-        for (var i = 0, length = gravityWells.length; i < length; i++) {
-            var directionV = gravityWells[i].minusNew(puck.pos);
-
-            var directionMagnitude = directionV.magnitude();
-            directionV.normalise();
-
-            if (directionMagnitude > puck.R * 2.5) {
-                var scaledMagnitude = directionMagnitude / 10;
-                var force = 0.2 / (scaledMagnitude * scaledMagnitude); 
-                var accelV = directionV.multiplyNew(force);
-
-                puck.V.plusEq(accelV.multiplyEq(elapsed));
-            }
-            else {
-                // Bounce and remove puck from collision.
-                directionV.reverse();
-                puck.V.reflect(directionV);
-                puck.pos.plusEq(directionV.multiplyNew((puck.R * 2.5) - directionMagnitude));
-            }
-        }
-    }
+    gravityWells.applyForces(puck, elapsed);
 
     field.collide(puck);
 
@@ -238,12 +259,7 @@ function draw() {
 
     puck.draw();
     field.draw();
-
-    ctx.fillStyle = "orange";
-    for (var i = 0, length = gravityWells.length; i < length; i++) {
-        ctx.circlePathV(gravityWells[i], puck.R * 1.5);
-        ctx.fill();
-    }
+    gravityWells.draw();
 }
 
 function main(timestamp) {
