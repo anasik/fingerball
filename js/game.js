@@ -246,11 +246,28 @@ function draw() {
 }
 
 var lastUpdate = 0;
+var framesRendered, lastFPScheck = 0, fps, puckV;
 
 function main(timestamp) {
     update(timestamp - lastUpdate);
     draw();
     lastUpdate = timestamp;
+
+    framesRendered += 1;
+    var timeSinceLastFPScheck = timestamp - lastFPScheck;
+
+    if (timeSinceLastFPScheck > 200) {
+        fps = Math.floor((framesRendered / timeSinceLastFPScheck) * 1000);
+        lastFPScheck = timestamp;
+        framesRendered = 0;
+
+        puckV = Math.round(puck.V.magnitude() * fps);
+    }
+
+    ctx.font = "12px sans-serif";
+    ctx.fillStyle = "white";
+    ctx.fillText("FPS: " + fps + " puckV: " + puckV, 80, 14);
+
     window.requestAnimationFrame(main);
 }
 
