@@ -75,26 +75,26 @@ var field = {
     wallBounceRatio: 0.9,
 
     addGoals: function(canvas) {
-        this.width = canvas.width - this.margin;
-        this.height = canvas.height - this.margin;
+        this.width = canvas.width - (2 * this.margin);
+        this.height = canvas.height - (2 * this.margin);
 
         if (canvas.width < canvas.height) {
             this.landscape = false;
-            var oneQuarterW = (canvas.width / 4) + this.margin;
-            var threeQuartersW = (canvas.width * 3 / 4) + this.margin;
+            var oneQuarterW = (this.width / 4) + this.margin;
+            var threeQuartersW = (this.width * 3 / 4) + this.margin;
             this.goalPosts[0] = new Vector2(oneQuarterW, this.margin);
             this.goalPosts[1] = new Vector2(threeQuartersW, this.margin);
-            this.goalPosts[2] = new Vector2(oneQuarterW, this.height);
-            this.goalPosts[3] = new Vector2(threeQuartersW, this.height);
+            this.goalPosts[2] = new Vector2(oneQuarterW, this.height + this.margin);
+            this.goalPosts[3] = new Vector2(threeQuartersW, this.height + this.margin);
         }
         else {
             this.landscape = true;
-            var oneQuarterH = (canvas.height / 4) + this.margin;
-            var threeQuartersH = (canvas.height * 3 / 4) + this.margin;
+            var oneQuarterH = (this.height / 4) + this.margin;
+            var threeQuartersH = (this.height * 3 / 4) + this.margin;
             this.goalPosts[0] = new Vector2(this.margin, oneQuarterH);
             this.goalPosts[1] = new Vector2(this.margin, threeQuartersH);
-            this.goalPosts[2] = new Vector2(this.width, oneQuarterH);
-            this.goalPosts[3] = new Vector2(this.width, threeQuartersH);
+            this.goalPosts[2] = new Vector2(this.width + this.margin, oneQuarterH);
+            this.goalPosts[3] = new Vector2(this.width + this.margin, threeQuartersH);
         }
     },
 
@@ -103,19 +103,19 @@ var field = {
         ctxVecOp(ctx, "moveTo", this.goalPosts[0]);
         ctx.lineTo(this.margin, this.margin);
         if (this.landscape) {
-            ctx.lineTo(this.width, this.margin);
+            ctx.lineTo(this.width + this.margin, this.margin);
             ctxVecOp(ctx, "lineTo", this.goalPosts[2]);
             ctxVecOp(ctx, "moveTo", this.goalPosts[3]);
-            ctx.lineTo(this.width, this.height);
-            ctx.lineTo(this.margin, this.height);
+            ctx.lineTo(this.width + this.margin, this.height + this.margin);
+            ctx.lineTo(this.margin, this.height + this.margin);
             ctxVecOp(ctx, "lineTo", this.goalPosts[1]);
         }
         else {
-            ctx.lineTo(this.margin, this.height);
+            ctx.lineTo(this.margin, this.height + this.margin);
             ctxVecOp(ctx, "lineTo", this.goalPosts[2]);
             ctxVecOp(ctx, "moveTo", this.goalPosts[3]);
-            ctx.lineTo(this.width, this.height);
-            ctx.lineTo(this.width, this.margin);
+            ctx.lineTo(this.width + this.margin, this.height + this.margin);
+            ctx.lineTo(this.width + this.margin, this.margin);
             ctxVecOp(ctx, "lineTo", this.goalPosts[1]);
         }
         ctx.lineWidth = 3;
@@ -130,15 +130,17 @@ var field = {
     },
 
     collide: function(puck) {
+        // The goal post radius is not included below,
+        // because they handle collisions themselves.
         if (this.landscape) {
-            if (puck.pos.y - puck.R > this.goalPosts[0].y + this.goalPostR &&
-                    puck.pos.y + puck.R < this.goalPosts[1].y - this.goalPostR) {
+            if (puck.pos.y - puck.R > this.goalPosts[0].y &&
+                    puck.pos.y + puck.R < this.goalPosts[1].y) {
                 return;
             }
         }
         else {
-            if (puck.pos.x - puck.R > this.goalPosts[0].x + this.goalPostR &&
-                    puck.pos.x + puck.R < this.goalPosts[1].x - this.goalPostR) {
+            if (puck.pos.x - puck.R > this.goalPosts[0].x &&
+                    puck.pos.x + puck.R < this.goalPosts[1].x) {
                 return;
             }
         }
@@ -155,20 +157,20 @@ var field = {
             }
         }
 
-        if (puck.pos.x + puck.R > this.width) {
+        if (puck.pos.x + puck.R > this.width && puck.V.x > 0) {
             puck.pos.x = this.width - puck.R;
             puck.V.x = -puck.V.x * this.wallBounceRatio;
         }
-        else if (puck.pos.x - puck.R < this.margin) {
+        else if (puck.pos.x - puck.R < this.margin && puck.V.x < 0) {
             puck.pos.x = puck.R + this.margin;
             puck.V.x = -puck.V.x * this.wallBounceRatio;
         }
 
-        if (puck.pos.y + puck.R > this.height) {
+        if (puck.pos.y + puck.R > this.height && puck.V.y > 0) {
             puck.pos.y = this.height - puck.R;
             puck.V.y = -puck.V.y * this.wallBounceRatio;
         }
-        else if (puck.pos.y - puck.R < this.margin) {
+        else if (puck.pos.y - puck.R < this.margin && puck.V.y < 0) {
             puck.pos.y = puck.R + this.margin;
             puck.V.y = -puck.V.y * this.wallBounceRatio;
         }
@@ -203,8 +205,8 @@ function update(elapsed) {
 
     field.collide(puck);
 
-    if (puck.pos.x < field.margin || puck.pos.x > field.width ||
-            puck.pos.y < field.margin || puck.pos.y > field.height)
+    if (puck.pos.x < field.margin || puck.pos.x > field.width + field.margin ||
+            puck.pos.y < field.margin || puck.pos.y > field.height + field.margin)
     {
         puck.V = new Vector2(0, 0);
         puck.center(canvas);
