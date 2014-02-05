@@ -321,9 +321,9 @@ function main(timestamp) {
         lastFPScheck = timestamp;
         framesRendered = 0;
 
-        puckV = Math.round(puck.V.magnitude() * fps);
+        puckV = Math.round(puck.V.magnitude() * 1000);
         if (gravityWells.wells[0]) {
-            firstWellV = Math.round(gravityWells.wells[0].V.magnitude() * fps);
+            firstWellV = Math.round(gravityWells.wells[0].V.magnitude() * 1000);
         }
         else
         {
