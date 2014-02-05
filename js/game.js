@@ -5,7 +5,9 @@ var canvas = document.createElement("canvas"),
     framesRendered,
     lastFPScheck = 0,
     fps,
-    puckV;
+    puckV,
+    firstWellV = 0,
+    lastWellVCheck = 0;
 
 window.requestAnimationFrame = window.requestAnimationFrame ||
     window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame ||
@@ -31,17 +33,29 @@ crc2DProto.circlePathV = function(pos, r) {
     this.closePath();
 };
 
+function GravityWell(pos) {
+    this.pos = pos;
+    this.startPos = pos.clone();
+    this.V = new Vector2(0,0);
+}
+
+function TouchGravityWell(pos, identifier) {
+    GravityWell.call(this, pos);
+    this.identifier = identifier;
+}
+
 var gravityWells = {
     wells: [],
 
     mouseDown: function(e) {
-        gravityWells.wells[0] = new Vector2(e.clientX, e.clientY);
+        var pos = new Vector2(e.clientX, e.clientY);
+        gravityWells.wells[0] = new GravityWell(pos);
         canvas.onmousemove = gravityWells.mouseMove;
     },
 
     mouseMove: function(e) {
-        gravityWells.wells[0].x = e.clientX;
-        gravityWells.wells[0].y = e.clientY;
+        gravityWells.wells[0].pos.x = e.clientX;
+        gravityWells.wells[0].pos.y = e.clientY;
         return false;
     },
 
@@ -53,11 +67,28 @@ var gravityWells = {
     touchWells: function(e) {
         e.preventDefault();
 
-        gravityWells.wells = [];
+        var newWells = [];
         for (var i = 0; i < e.touches.length; i++) {
             var touchV = new Vector2(e.touches[i].pageX, e.touches[i].pageY);
-            gravityWells.wells.push(touchV);
+
+            var oldTouch = null;
+            for (var j = 0; j < gravityWells.wells.length; j++) {
+                if (gravityWells.wells[j].identifier === e.touches[i].identifier) {
+                    oldTouch = gravityWells.wells[j];
+                    break;
+                }
+            }
+
+            if (oldTouch) {
+                oldTouch.pos = touchV;
+                newWells.push(oldTouch);
+            }
+            else {
+                newWells.push(new TouchGravityWell(touchV, e.touches[i].identifier));
+            }
         }
+
+        gravityWells.wells = newWells;
     },
 
     applyForces: function(puck, elapsed) {
@@ -66,7 +97,7 @@ var gravityWells = {
         }
 
         for (var i = 0, length = this.wells.length; i < length; i++) {
-            var directionV = this.wells[i].minusNew(puck.pos);
+            var directionV = this.wells[i].pos.minusNew(puck.pos);
 
             var directionMagnitude = directionV.magnitude();
             directionV.normalise();
@@ -79,6 +110,7 @@ var gravityWells = {
                 puck.V.plusEq(accelV.multiplyEq(elapsed));
             }
             else {
+                puck.V.minusEq(this.wells[i].V);
                 // Bounce and remove puck from collision.
                 directionV.reverse();
                 puck.V.reflect(directionV);
@@ -90,7 +122,7 @@ var gravityWells = {
     draw: function() {
         ctx.fillStyle = "orange";
         for (var i = 0, length = this.wells.length; i < length; i++) {
-            ctx.circlePathV(this.wells[i], puck.R * 1.5);
+            ctx.circlePathV(this.wells[i].pos, puck.R * 1.5);
             ctx.fill();
         }
     }
@@ -240,6 +272,18 @@ var field = {
 };
 
 function update(elapsed) {
+    //lastWellVCheck += elapsed;
+    //if (lastWellVCheck > 200) {
+        for (var i = 0, len = gravityWells.wells.length; i < len; i++) {
+            var well = gravityWells.wells[i];
+            // weighted average
+            var newV = well.pos.minusNew(well.startPos).multiplyEq(2);
+            well.V = newV.plusEq(well.V).divideEq(3).divideEq(elapsed);
+            well.pos.copyTo(well.startPos);
+        }
+      //  lastWellVCheck = 0;
+    //}
+
     puck.pos.plusEq(puck.V.multiplyNew(elapsed));
 
     gravityWells.applyForces(puck, elapsed);
@@ -278,11 +322,18 @@ function main(timestamp) {
         framesRendered = 0;
 
         puckV = Math.round(puck.V.magnitude() * fps);
+        if (gravityWells.wells[0]) {
+            firstWellV = Math.round(gravityWells.wells[0].V.magnitude() * fps);
+        }
+        else
+        {
+            firstWellV = 0;
+        }
     }
 
     ctx.font = "12px sans-serif";
     ctx.fillStyle = "white";
-    ctx.fillText("FPS: " + fps + " puckV: " + puckV, 80, 14);
+    ctx.fillText("FPS: " + fps + " puckV: " + puckV + " firstWellV: " + firstWellV, 80, 14);
 
     window.requestAnimationFrame(main);
 }
