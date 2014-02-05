@@ -1,18 +1,20 @@
-var canvas, ctx, Vector2, lastUpdate, framesRendered, lastFPScheck, fps, puckV;
+var canvas = document.createElement("canvas"),
+    ctx = canvas.getContext("2d"),
+    Vector2 = window.Vector2, // library imported in index.html
+    lastUpdate = 0,
+    framesRendered,
+    lastFPScheck = 0,
+    fps,
+    puckV;
 
-canvas = document.createElement("canvas");
-ctx = canvas.getContext("2d");
-Vector2 = window.Vector2; // library imported in html
-lastUpdate = 0;
-lastFPScheck = 0;
+window.requestAnimationFrame = window.requestAnimationFrame ||
+    window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame ||
+    window.msRequestAnimationFrame;
 
 window.onresize = function() {
     initGame();
     draw();
 };
-
-window.requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame ||
-        window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
 
 document.body.appendChild(canvas);
 
