@@ -7,7 +7,8 @@ var canvas = document.createElement("canvas"),
     fps,
     puckV,
     firstWellV = 0,
-    lastWellVCheck = 0;
+    lastWellVCheck = 0,
+    paused = false;
 
 window.requestAnimationFrame = window.requestAnimationFrame ||
     window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame ||
@@ -48,24 +49,34 @@ var gravityWells = {
     wells: [],
 
     mouseDown: function(e) {
-        var pos = new Vector2(e.clientX, e.clientY);
-        gravityWells.wells[0] = new GravityWell(pos);
+        if (!paused) {
+            var pos = new Vector2(e.clientX, e.clientY);
+            gravityWells.wells[0] = new GravityWell(pos);
+        }
         canvas.onmousemove = gravityWells.mouseMove;
     },
 
     mouseMove: function(e) {
-        gravityWells.wells[0].pos.x = e.clientX;
-        gravityWells.wells[0].pos.y = e.clientY;
+        if (!paused) {
+            gravityWells.wells[0].pos.x = e.clientX;
+            gravityWells.wells[0].pos.y = e.clientY;
+        }
         return false;
     },
 
     mouseUp: function() {
-        gravityWells.wells = [];
+        if (!paused) {
+            gravityWells.wells = [];
+        }
         canvas.onmousemove = null;
     },
 
     touchWells: function(e) {
         e.preventDefault();
+
+        if (paused) {
+            return;
+        }
 
         var newWells = [];
         for (var i = 0; i < e.touches.length; i++) {
@@ -110,6 +121,10 @@ var gravityWells = {
                 puck.V.plusEq(accelV.multiplyEq(elapsed));
             }
             else {
+                // DEBUG
+                paused = true;
+                return;
+
                 puck.V.minusEq(this.wells[i].V);
                 // Bounce and remove puck from collision.
                 directionV.reverse();
@@ -272,6 +287,10 @@ var field = {
 };
 
 function update(elapsed) {
+    if (paused) {
+        return;
+    }
+
     //lastWellVCheck += elapsed;
     //if (lastWellVCheck > 200) {
         for (var i = 0, len = gravityWells.wells.length; i < len; i++) {
