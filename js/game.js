@@ -7,8 +7,8 @@ var canvas = document.createElement("canvas"),
     fps,
     puckV,
     firstWellV = 0,
-    lastWellVCheck = 0,
-    paused = false;
+    paused = false,
+    debug = true;
 
 window.requestAnimationFrame = window.requestAnimationFrame ||
     window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame ||
@@ -33,6 +33,13 @@ crc2DProto.circlePathV = function(pos, r) {
     this.arc(pos.x, pos.y, r, 0, Math.PI * 2, true);
     this.closePath();
 };
+
+function debugAlert(msg) {
+    if (debug) {
+        window.draw();
+        alert(msg);
+    }
+}
 
 function GravityWell(pos) {
     this.pos = pos;
@@ -121,25 +128,37 @@ var gravityWells = {
                 puck.V.plusEq(accelV.multiplyEq(elapsed));
             }
             else {
-                // DEBUG
-                paused = true;
-                return;
-
+                debugAlert('before resolve');
+                
+                // Remove puck from well
+                puck.pos.minusEq(directionV.multiplyNew((puck.R * 2.5) - directionMagnitude));
+                
+                debugAlert('after resolve');
+                
+                // Mock-up, replace with convervation of momentum
                 puck.V.minusEq(this.wells[i].V);
-                // Bounce and remove puck from collision.
+
+                // Bounce
                 directionV.reverse();
                 puck.V.reflect(directionV);
-                puck.pos.plusEq(directionV.multiplyNew((puck.R * 2.5) - directionMagnitude));
             }
         }
     },
 
     draw: function() {
         ctx.fillStyle = "orange";
-        for (var i = 0, length = this.wells.length; i < length; i++) {
-            ctx.circlePathV(this.wells[i].pos, puck.R * 1.5);
+        this.wells.forEach(function(well) {
+            ctx.circlePathV(well.pos, puck.R * 1.5);
             ctx.fill();
-        }
+
+            if (debug) {
+                ctx.save();
+                ctx.globalAlpha = 0.5;
+                ctx.circlePathV(well.pos.minusNew(well.V.multiplyNew(1000 / 60)), puck.R * 1.5);
+                ctx.fill();
+                ctx.restore();
+            }
+        });
     }
 };
 
@@ -160,6 +179,14 @@ var puck = {
         ctx.fillStyle = "red";
         ctx.circlePathV(this.pos, this.R);
         ctx.fill();
+
+        if (debug) {
+            ctx.save();
+            ctx.globalAlpha = 0.5;
+            ctx.circlePathV(this.pos.minusNew(this.V.multiplyNew(1000 / 60)), this.R);
+            ctx.fill();
+            ctx.restore();
+        }
     }
 };
 
