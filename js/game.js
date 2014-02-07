@@ -114,35 +114,46 @@ var gravityWells = {
             return;
         }
 
-        for (var i = 0, length = this.wells.length; i < length; i++) {
-            var directionV = this.wells[i].pos.minusNew(puck.pos);
+        this.wells.forEach(function(well) {
+            var distanceV = well.pos.minusNew(puck.pos);
+            var distance = distanceV.magnitude();
+            var minimumDistance = puck.R * 2.5; // well is 1.5 * puck.R
+            var collisionNormal = distanceV.clone().normalise();
 
-            var directionMagnitude = directionV.magnitude();
-            directionV.normalise();
-
-            if (directionMagnitude > puck.R * 2.5) {
-                var scaledMagnitude = directionMagnitude / 10;
+            if (distance > minimumDistance) {
+                var scaledMagnitude = distance / 10;
                 var force = 0.2 / (scaledMagnitude * scaledMagnitude); 
-                var accelV = directionV.multiplyNew(force);
+                var accelV = collisionNormal.multiplyNew(force);
 
                 puck.V.plusEq(accelV.multiplyEq(elapsed));
             }
             else {
-                debugAlert('before resolve');
-                
                 // Remove puck from well
-                puck.pos.minusEq(directionV.multiplyNew((puck.R * 2.5) - directionMagnitude));
-                
-                debugAlert('after resolve');
+                debugAlert('before resolve');
+                var relativeV = puck.V.minusNew(well.V).multiplyEq(elapsed);
+                var distanceDotRelV = distanceV.clone().dot(relativeV);
+                var relVSquared = relativeV.clone().dot(relativeV);
+                var distanceVSquared = distanceV.clone().dot(distanceV);
+                var discriminant = (distanceDotRelV * distanceDotRelV) -
+                    (relVSquared * (distanceVSquared - (minimumDistance * minimumDistance)));
+                discriminant = Math.sqrt(discriminant);
+                var t1 = (distanceDotRelV + discriminant) / relVSquared;
+                var t2 = (distanceDotRelV - discriminant) / relVSquared;
+
+                var beforeCollisionT = t1 < 0 ? t1 : t2;
+
+                puck.pos.plusEq(puck.V.multiplyNew(elapsed * beforeCollisionT));
+                well.pos.plusEq(well.V.multiplyNew(elapsed * beforeCollisionT));
+                debugAlert('after resolve ' + beforeCollisionT);
                 
                 // Mock-up, replace with convervation of momentum
-                puck.V.minusEq(this.wells[i].V);
+                puck.V.minusEq(well.V);
 
                 // Bounce
-                directionV.reverse();
-                puck.V.reflect(directionV);
+                collisionNormal.reverse();
+                puck.V.reflect(collisionNormal);
             }
-        }
+        });
     },
 
     draw: function() {
@@ -318,17 +329,13 @@ function update(elapsed) {
         return;
     }
 
-    //lastWellVCheck += elapsed;
-    //if (lastWellVCheck > 200) {
-        for (var i = 0, len = gravityWells.wells.length; i < len; i++) {
-            var well = gravityWells.wells[i];
-            // weighted average
-            var newV = well.pos.minusNew(well.startPos).multiplyEq(2);
-            well.V = newV.plusEq(well.V).divideEq(3).divideEq(elapsed);
-            well.pos.copyTo(well.startPos);
-        }
-      //  lastWellVCheck = 0;
-    //}
+    for (var i = 0, len = gravityWells.wells.length; i < len; i++) {
+        var well = gravityWells.wells[i];
+        // weighted average
+        var newV = well.pos.minusNew(well.startPos).multiplyEq(2);
+        well.V = newV.plusEq(well.V).divideEq(3).divideEq(elapsed);
+        well.pos.copyTo(well.startPos);
+    }
 
     puck.pos.plusEq(puck.V.multiplyNew(elapsed));
 
