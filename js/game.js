@@ -128,6 +128,10 @@ var gravityWells = {
                 puck.V.plusEq(accelV.multiplyEq(elapsed));
             }
             else {
+                var nullV = new Vector2(0,0);
+                if ((!well.V || well.V.equals(nullV)) && (!puck.V || puck.V.equals(nullV))) {
+                    return;
+                }
                 // Remove puck from well
                 debugAlert('before resolve');
                 var relativeV = puck.V.minusNew(well.V).multiplyEq(elapsed);
