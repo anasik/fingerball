@@ -8,7 +8,7 @@ var canvas = document.createElement("canvas"),
     puckV,
     firstWellV = 0,
     paused = false,
-    debug = true;
+    debug = false;
 
 window.requestAnimationFrame = window.requestAnimationFrame ||
     window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame ||
@@ -150,12 +150,22 @@ var gravityWells = {
                 well.pos.plusEq(well.V.multiplyNew(elapsed * beforeCollisionT));
                 debugAlert('after resolve ' + beforeCollisionT);
                 
-                // Mock-up, replace with convervation of momentum
-                puck.V.minusEq(well.V);
+                var normalVel = relativeV.divideNew(elapsed).dot(collisionNormal);
 
-                // Bounce
-                collisionNormal.reverse();
-                puck.V.reflect(collisionNormal);
+                var perpToNorm = null;
+                if (collisionNormal.y < 0) {
+                    perpToNorm = new Vector2(-collisionNormal.y, collisionNormal.x);
+                }
+                else {
+                    perpToNorm = new Vector2(collisionNormal.y, -collisionNormal.x);
+                }
+
+                var perpVel = puck.V.clone().dot(perpToNorm);
+
+                debugAlert('nv ' + normalVel + ' pv ' + perpVel);
+
+                puck.V = collisionNormal.multiplyNew(-normalVel);
+                puck.V.plusEq(perpToNorm.multiplyNew(perpVel));
             }
         });
     },
