@@ -45,6 +45,7 @@ function GravityWell(pos) {
     this.pos = pos;
     this.startPos = pos.clone();
     this.V = new Vector2(0,0);
+    this.collisionTimeout = 1;
 }
 
 function TouchGravityWell(pos, identifier) {
@@ -121,6 +122,10 @@ var gravityWells = {
             var collisionNormal = distanceV.clone().normalise();
 
             if (distance > minimumDistance) {
+                if (well.collisionTimeout > 0) {
+                    well.collisionTimeout -= elapsed;
+                } 
+
                 var scaledMagnitude = distance / 10;
                 var force = 0.2 / (scaledMagnitude * scaledMagnitude); 
                 var accelV = collisionNormal.multiplyNew(force);
@@ -128,10 +133,16 @@ var gravityWells = {
                 puck.V.plusEq(accelV.multiplyEq(elapsed));
             }
             else {
-                var nullV = new Vector2(0,0);
-                if ((!well.V || well.V.equals(nullV)) && (!puck.V || puck.V.equals(nullV))) {
+                //var nullV = new Vector2(0,0);
+                //if ((!well.V || well.V.equals(nullV)) && (!puck.V || puck.V.equals(nullV))) {
+                //    return;
+                //}
+                if (well.collisionTimeout > 0) {
+                    console.log('skipped collision');
                     return;
                 }
+                well.collisionTimeout = 100;
+                console.log('collided');
                 // Remove puck from well
                 debugAlert('before resolve');
                 var relativeV = puck.V.minusNew(well.V).multiplyEq(elapsed);
