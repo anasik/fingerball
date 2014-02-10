@@ -166,44 +166,32 @@ var gravityWells = {
                 puck.V.plusEq(accelV.multiplyEq(elapsed));
             }
             else {
-                //var nullV = new Vector2(0,0);
-                //if ((!well.V || well.V.equals(nullV)) && (!puck.V || puck.V.equals(nullV))) {
-                //    return;
-                //}
-                if (well.collisionTimeout > 0) {
-                    debugLog('skipped collision');
-                    return;
-                }
-                well.collisionTimeout = 100;
-
-                debugLog('collided');
-
-                // Remove puck from well
                 debugAlert('before resolve');
 
                 var deltaT = circlesTimeToCollisionPoint(puck, well, elapsed);
-                puck.pos.plusEq(puck.V.multiplyNew(elapsed * deltaT));
-                well.pos.plusEq(well.V.multiplyNew(elapsed * deltaT));
+                debugLog('deltaT ' + deltaT);
 
-                debugAlert('after resolve');
+                if (deltaT > -1.1) {
+                    puck.pos.plusEq(puck.V.multiplyNew(elapsed * deltaT));
+                    well.pos.plusEq(well.V.multiplyNew(elapsed * deltaT));
 
-                var relativeV = puck.V.minusNew(well.V);
-                var normalVel = relativeV.dot(collisionNormal);
+                    var relativeV = puck.V.minusNew(well.V);
+                    var normalVel = relativeV.dot(collisionNormal);
+                    var perpToNorm = new Vector2(-collisionNormal.y, collisionNormal.x);
+                    var perpVel = puck.V.clone().dot(perpToNorm);
 
-                var perpToNorm = null;
-                if (collisionNormal.y < 0) {
-                    perpToNorm = new Vector2(-collisionNormal.y, collisionNormal.x);
+                    debugLog('nv ' + normalVel + ' pv ' + perpVel);
+
+                    puck.V = collisionNormal.multiplyNew(-normalVel);
+                    puck.V.plusEq(perpToNorm.multiplyNew(perpVel));
                 }
                 else {
-                    perpToNorm = new Vector2(collisionNormal.y, -collisionNormal.x);
+                    var minDist = puck.R + well.R;
+                    var moveDist = collisionNormal.multiplyNew(minDist - distance);
+                    puck.pos.minusEq(moveDist);
                 }
 
-                var perpVel = puck.V.clone().dot(perpToNorm);
-
-                debugAlert('nv ' + normalVel + ' pv ' + perpVel);
-
-                puck.V = collisionNormal.multiplyNew(-normalVel);
-                puck.V.plusEq(perpToNorm.multiplyNew(perpVel));
+                debugAlert('after resolve');
             }
         });
     },
