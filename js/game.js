@@ -41,10 +41,40 @@ function debugAlert(msg) {
     }
 }
 
+function moveCirclesToCollisionPoint(c1, c2, elapsed) {
+    if (!c1.hasOwnProperty('V') || !c2.hasOwnProperty('V')) {
+        throw new Error("Circles don't have velocities.");
+    }
+    if (!c1.hasOwnProperty('pos') || !c2.hasOwnProperty('pos')) {
+        throw new Error("Circles don't have center positions.");
+    }
+    if (!c1.hasOwnProperty('R') || !c2.hasOwnProperty('R')) {
+        throw new Error("Circles don't have radii.");
+    }
+
+    var minimumDistance = c1.R + c2.R;
+    var distanceV = c2.pos.minusNew(c1.pos);
+    var relativeV = c1.V.minusNew(c2.V).multiplyEq(elapsed);
+    var distanceDotRelV = distanceV.clone().dot(relativeV);
+    var relVSquared = relativeV.clone().dot(relativeV);
+    var distanceVSquared = distanceV.clone().dot(distanceV);
+    var discriminant = (distanceDotRelV * distanceDotRelV) -
+        (relVSquared * (distanceVSquared - (minimumDistance * minimumDistance)));
+    discriminant = Math.sqrt(discriminant);
+    var t1 = (distanceDotRelV + discriminant) / relVSquared;
+    var t2 = (distanceDotRelV - discriminant) / relVSquared;
+
+    var beforeCollisionT = t1 < 0 ? t1 : t2;
+
+    c1.pos.plusEq(c1.V.multiplyNew(elapsed * beforeCollisionT));
+    c2.pos.plusEq(c2.V.multiplyNew(elapsed * beforeCollisionT));
+}
+
 function GravityWell(pos) {
     this.pos = pos;
     this.startPos = pos.clone();
     this.V = new Vector2(0,0);
+    this.R = 45;
     this.collisionTimeout = 1;
 }
 
@@ -145,23 +175,11 @@ var gravityWells = {
                 console.log('collided');
                 // Remove puck from well
                 debugAlert('before resolve');
-                var relativeV = puck.V.minusNew(well.V).multiplyEq(elapsed);
-                var distanceDotRelV = distanceV.clone().dot(relativeV);
-                var relVSquared = relativeV.clone().dot(relativeV);
-                var distanceVSquared = distanceV.clone().dot(distanceV);
-                var discriminant = (distanceDotRelV * distanceDotRelV) -
-                    (relVSquared * (distanceVSquared - (minimumDistance * minimumDistance)));
-                discriminant = Math.sqrt(discriminant);
-                var t1 = (distanceDotRelV + discriminant) / relVSquared;
-                var t2 = (distanceDotRelV - discriminant) / relVSquared;
+                moveCirclesToCollisionPoint(puck, well, elapsed);
+                debugAlert('after resolve');
 
-                var beforeCollisionT = t1 < 0 ? t1 : t2;
-
-                puck.pos.plusEq(puck.V.multiplyNew(elapsed * beforeCollisionT));
-                well.pos.plusEq(well.V.multiplyNew(elapsed * beforeCollisionT));
-                debugAlert('after resolve ' + beforeCollisionT);
-                
-                var normalVel = relativeV.divideNew(elapsed).dot(collisionNormal);
+                var relativeV = puck.V.minusNew(well.V);
+                var normalVel = relativeV.dot(collisionNormal);
 
                 var perpToNorm = null;
                 if (collisionNormal.y < 0) {
