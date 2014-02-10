@@ -41,7 +41,13 @@ function debugAlert(msg) {
     }
 }
 
-function moveCirclesToCollisionPoint(c1, c2, elapsed) {
+function debugLog(msg) {
+    if (debug) {
+        console.log(msg);
+    }
+}
+
+function circlesTimeToCollisionPoint(c1, c2, elapsed) {
     if (!c1.hasOwnProperty('V') || !c2.hasOwnProperty('V')) {
         throw new Error("Circles don't have velocities.");
     }
@@ -64,10 +70,7 @@ function moveCirclesToCollisionPoint(c1, c2, elapsed) {
     var t1 = (distanceDotRelV + discriminant) / relVSquared;
     var t2 = (distanceDotRelV - discriminant) / relVSquared;
 
-    var beforeCollisionT = t1 < 0 ? t1 : t2;
-
-    c1.pos.plusEq(c1.V.multiplyNew(elapsed * beforeCollisionT));
-    c2.pos.plusEq(c2.V.multiplyNew(elapsed * beforeCollisionT));
+    return t1 < 0 ? t1 : t2;
 }
 
 function GravityWell(pos) {
@@ -168,14 +171,20 @@ var gravityWells = {
                 //    return;
                 //}
                 if (well.collisionTimeout > 0) {
-                    console.log('skipped collision');
+                    debugLog('skipped collision');
                     return;
                 }
                 well.collisionTimeout = 100;
-                console.log('collided');
+
+                debugLog('collided');
+
                 // Remove puck from well
                 debugAlert('before resolve');
-                moveCirclesToCollisionPoint(puck, well, elapsed);
+
+                var deltaT = circlesTimeToCollisionPoint(puck, well, elapsed);
+                puck.pos.plusEq(puck.V.multiplyNew(elapsed * deltaT));
+                well.pos.plusEq(well.V.multiplyNew(elapsed * deltaT));
+
                 debugAlert('after resolve');
 
                 var relativeV = puck.V.minusNew(well.V);
