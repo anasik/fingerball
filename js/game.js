@@ -364,13 +364,10 @@ function update(elapsed) {
         return;
     }
 
-    for (var i = 0, len = gravityWells.wells.length; i < len; i++) {
-        var well = gravityWells.wells[i];
-        // weighted average
-        var newV = well.pos.minusNew(well.startPos).multiplyEq(2);
-        well.V = newV.plusEq(well.V).divideEq(3).divideEq(elapsed);
+    gravityWells.wells.forEach(function (well) {
+        well.V = well.pos.minusNew(well.startPos).divideEq(elapsed);
         well.pos.copyTo(well.startPos);
-    }
+    });
 
     puck.pos.plusEq(puck.V.multiplyNew(elapsed));
 
