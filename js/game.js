@@ -78,7 +78,6 @@ function GravityWell(pos) {
     this.startPos = pos.clone();
     this.V = new Vector2(0,0);
     this.R = 45;
-    this.collisionTimeout = 1;
 }
 
 function TouchGravityWell(pos, identifier) {
@@ -155,10 +154,6 @@ var gravityWells = {
             var collisionNormal = distanceV.clone().normalise();
 
             if (distance > minimumDistance) {
-                if (well.collisionTimeout > 0) {
-                    well.collisionTimeout -= elapsed;
-                } 
-
                 var scaledMagnitude = distance / 10;
                 var force = 0.2 / (scaledMagnitude * scaledMagnitude); 
                 var accelV = collisionNormal.multiplyNew(force);
