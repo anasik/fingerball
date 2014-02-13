@@ -161,32 +161,35 @@ var gravityWells = {
                 puck.V.plusEq(accelV.multiplyEq(elapsed));
             }
             else {
-                debugAlert('before resolve');
 
                 var deltaT = circlesTimeToCollisionPoint(puck, well, elapsed);
                 debugLog('deltaT ' + deltaT);
 
-                if (deltaT > -1.1) {
+                if (deltaT > -1) {
+                    // Rewind time and re-calculate collision normal
                     puck.pos.plusEq(puck.V.multiplyNew(elapsed * deltaT));
                     well.pos.plusEq(well.V.multiplyNew(elapsed * deltaT));
+                    collisionNormal = well.pos.minusNew(puck.pos).normalise();
 
+                    // Calculate velocity
                     var relativeV = puck.V.minusNew(well.V);
                     var normalVel = relativeV.dot(collisionNormal);
                     var perpToNorm = new Vector2(-collisionNormal.y, collisionNormal.x);
                     var perpVel = puck.V.clone().dot(perpToNorm);
 
-                    debugLog('nv ' + normalVel + ' pv ' + perpVel);
-
                     puck.V = collisionNormal.multiplyNew(-normalVel);
                     puck.V.plusEq(perpToNorm.multiplyNew(perpVel));
+
+                    // Fast-forward time
+                    puck.pos.plusEq(puck.V.multiplyNew(elapsed * -deltaT));
+                    well.pos.plusEq(well.V.multiplyNew(elapsed * -deltaT));
                 }
-                else {
+                else if (deltaT < -3) {
+                    // Collision more than 3 frames away; probably direct press on the puck
                     var minDist = puck.R + well.R;
                     var moveDist = collisionNormal.multiplyNew(minDist - distance);
                     puck.pos.minusEq(moveDist);
                 }
-
-                debugAlert('after resolve');
             }
         });
     },
