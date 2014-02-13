@@ -8,7 +8,7 @@ var canvas = document.createElement("canvas"),
     puckV,
     firstWellV = 0,
     paused = false,
-    debug = false;
+    debug = true;
 
 window.requestAnimationFrame = window.requestAnimationFrame ||
     window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame ||
@@ -75,9 +75,10 @@ function circlesTimeToCollisionPoint(c1, c2, elapsed) {
 
 function GravityWell(pos) {
     this.pos = pos;
-    this.startPos = pos.clone();
+    this.startPos = null;
     this.V = new Vector2(0,0);
     this.R = 45;
+    this.timeout = 0;
 }
 
 function TouchGravityWell(pos, identifier) {
@@ -161,11 +162,11 @@ var gravityWells = {
                 puck.V.plusEq(accelV.multiplyEq(elapsed));
             }
             else {
-
                 var deltaT = circlesTimeToCollisionPoint(puck, well, elapsed);
-                debugLog('deltaT ' + deltaT);
+                debugLog('deltaT ' + deltaT + ' wellV ' + (well.V.magnitude() * elapsed) +
+                    ' timeout ' + well.timeout);
 
-                if (deltaT > -1) {
+                if (deltaT > -1 && well.timeout <= 0) {
                     // Rewind time and re-calculate collision normal
                     puck.pos.plusEq(puck.V.multiplyNew(elapsed * deltaT));
                     well.pos.plusEq(well.V.multiplyNew(elapsed * deltaT));
@@ -183,9 +184,11 @@ var gravityWells = {
                     // Fast-forward time
                     puck.pos.plusEq(puck.V.multiplyNew(elapsed * -deltaT));
                     well.pos.plusEq(well.V.multiplyNew(elapsed * -deltaT));
+
+                    well.timeout = 100;
                 }
-                else if (deltaT < -3) {
-                    // Collision more than 3 frames away; probably direct press on the puck
+                else {
+                    // Collision more than 5 frames away; probably direct press on the puck
                     var minDist = puck.R + well.R;
                     var moveDist = collisionNormal.multiplyNew(minDist - distance);
                     puck.pos.minusEq(moveDist);
@@ -368,8 +371,18 @@ function update(elapsed) {
     }
 
     gravityWells.wells.forEach(function (well) {
-        well.V = well.pos.minusNew(well.startPos).divideEq(elapsed);
+        if (well.startPos) {
+            well.V = well.pos.minusNew(well.startPos).divideEq(elapsed);
+        }
+        else {
+            well.startPos = new Vector2();
+        }
+
         well.pos.copyTo(well.startPos);
+
+        if (well.timeout > 0) {
+            well.timeout -= elapsed;
+        }
     });
 
     puck.pos.plusEq(puck.V.multiplyNew(elapsed));
