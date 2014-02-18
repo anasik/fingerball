@@ -8,7 +8,7 @@ var canvas = document.createElement("canvas"),
     puckV,
     firstWellV = 0,
     paused = false,
-    debug = true;
+    debug = false;
 
 window.requestAnimationFrame = window.requestAnimationFrame ||
     window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame ||
@@ -224,6 +224,13 @@ var puck = {
     pos: new Vector2(0, 0),
     R: 30,
     V: new Vector2(0, 0),
+    applyDrag: function() {
+        if (this.V.x !== 0 || this.V.y !== 0) {
+            var drag = this.V.clone().normalise();
+            drag.multiplyEq(this.V.magnitudeSquared() * 0.008);
+            this.V.minusEq(drag);
+        }
+    },
     center: function() {
         this.pos = new Vector2(canvas.width / 2, canvas.height / 2);
     },
@@ -384,6 +391,8 @@ function update(elapsed) {
             well.timeout -= elapsed;
         }
     });
+
+    puck.applyDrag();
 
     puck.pos.plusEq(puck.V.multiplyNew(elapsed));
 
