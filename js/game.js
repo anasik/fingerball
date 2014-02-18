@@ -8,7 +8,8 @@ var canvas = document.createElement("canvas"),
     puckV,
     firstWellV = 0,
     paused = false,
-    debug = false;
+    debug = false,
+    gravity = false;
 
 window.requestAnimationFrame = window.requestAnimationFrame ||
     window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame ||
@@ -155,11 +156,13 @@ var gravityWells = {
             var collisionNormal = distanceV.clone().normalise();
 
             if (distance > minimumDistance) {
-                var scaledMagnitude = distance / 10;
-                var force = 0.2 / (scaledMagnitude * scaledMagnitude); 
-                var accelV = collisionNormal.multiplyNew(force);
+                if (gravity) {
+                    var scaledMagnitude = distance / 10;
+                    var force = 0.2 / (scaledMagnitude * scaledMagnitude); 
+                    var accelV = collisionNormal.multiplyNew(force);
 
-                puck.V.plusEq(accelV.multiplyEq(elapsed));
+                    puck.V.plusEq(accelV.multiplyEq(elapsed));
+                }
             }
             else {
                 var deltaT = circlesTimeToCollisionPoint(puck, well, elapsed);
