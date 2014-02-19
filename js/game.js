@@ -177,12 +177,16 @@ var gravityWells = {
 
                     // Calculate velocity
                     var relativeV = puck.V.minusNew(well.V);
-                    var normalVel = relativeV.dot(collisionNormal);
+                    var normalVel = relativeV.dot(collisionNormal) * 0.8;
+
                     var perpToNorm = new Vector2(-collisionNormal.y, collisionNormal.x);
-                    var perpVel = puck.V.clone().dot(perpToNorm);
+                    var surfaceV = (puck.angularV * puck.R * 5) / 7;
+                    var perpVel = relativeV.dot(perpToNorm) - surfaceV;
+
+                    puck.angularV = ((-perpVel / puck.R) * 5) / 7;
 
                     puck.V = collisionNormal.multiplyNew(-normalVel);
-                    puck.V.plusEq(perpToNorm.multiplyNew(perpVel));
+                    puck.V.plusEq(perpToNorm.multiplyNew((perpVel * 5) / 7));
 
                     // Fast-forward time
                     puck.pos.plusEq(puck.V.multiplyNew(elapsed * -deltaT));
@@ -227,6 +231,8 @@ var puck = {
     pos: new Vector2(0, 0),
     R: 30,
     V: new Vector2(0, 0),
+    angle: 0,
+    angularV: 0,
     applyDrag: function() {
         if (this.V.x !== 0 || this.V.y !== 0) {
             var drag = this.V.clone().normalise();
@@ -236,11 +242,29 @@ var puck = {
     },
     center: function() {
         this.pos = new Vector2(canvas.width / 2, canvas.height / 2);
+        this.V = new Vector2(0, 0);
+        this.angle = 0;
+        this.angularV = 0;
     },
     draw: function() {
+        ctx.save();
+        ctx.translate(this.pos.x, this.pos.y);
+        ctx.rotate(this.angle);
+
+        ctx.beginPath();
         ctx.fillStyle = "red";
-        ctx.circlePathV(this.pos, this.R);
+        ctx.arc(0, 0, this.R, 0, Math.PI * 2, true);
+        ctx.closePath();
         ctx.fill();
+
+        ctx.beginPath();
+        ctx.strokeStyle = "orange";
+        ctx.lineWidth = 3;
+        ctx.moveTo(0, 0);
+        ctx.lineTo(0, -this.R);
+        ctx.stroke();
+
+        ctx.restore();
 
         if (debug) {
             ctx.save();
@@ -399,6 +423,11 @@ function update(elapsed) {
 
     puck.pos.plusEq(puck.V.multiplyNew(elapsed));
 
+    puck.angle += puck.angularV * elapsed;
+    if (puck.angle < 0 || puck.angle > Math.PI * 2) {
+        puck.angle -= Math.floor(puck.angle / (Math.PI * 2)) * Math.PI * 2;
+    }
+
     gravityWells.applyForces(puck, elapsed);
 
     field.collide(puck);
@@ -422,6 +451,8 @@ function draw() {
 }
 
 function main(timestamp) {
+    window.requestAnimationFrame(main);
+
     update(timestamp - lastUpdate);
     draw();
     lastUpdate = timestamp;
@@ -447,8 +478,6 @@ function main(timestamp) {
     ctx.font = "12px sans-serif";
     ctx.fillStyle = "white";
     ctx.fillText("FPS: " + fps + " puckV: " + puckV + " firstWellV: " + firstWellV, 80, 14);
-
-    window.requestAnimationFrame(main);
 }
 
 function initGame() {
