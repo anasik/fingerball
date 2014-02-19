@@ -293,6 +293,13 @@ var field = {
     margin: 20,
     wallBounceRatio: 0.9,
 
+    createGoalPost: function(position) {
+        return {
+            pos: position,
+            V: new Vector2(0, 0),
+            R: this.goalPostR
+        };
+    },
     addGoals: function() {
         this.width = canvas.width - (2 * this.margin);
         this.height = canvas.height - (2 * this.margin);
@@ -301,25 +308,25 @@ var field = {
             this.landscape = false;
             var oneQuarterW = (this.width / 4) + this.margin;
             var threeQuartersW = (this.width * 3 / 4) + this.margin;
-            this.goalPosts[0] = new Vector2(oneQuarterW, this.margin);
-            this.goalPosts[1] = new Vector2(threeQuartersW, this.margin);
-            this.goalPosts[2] = new Vector2(oneQuarterW, this.height + this.margin);
-            this.goalPosts[3] = new Vector2(threeQuartersW, this.height + this.margin);
+            this.goalPosts[0] = this.createGoalPost(new Vector2(oneQuarterW, this.margin));
+            this.goalPosts[1] = this.createGoalPost(new Vector2(threeQuartersW, this.margin));
+            this.goalPosts[2] = this.createGoalPost(new Vector2(oneQuarterW, this.height + this.margin));
+            this.goalPosts[3] = this.createGoalPost(new Vector2(threeQuartersW, this.height + this.margin));
         }
         else {
             this.landscape = true;
             var oneQuarterH = (this.height / 4) + this.margin;
             var threeQuartersH = (this.height * 3 / 4) + this.margin;
-            this.goalPosts[0] = new Vector2(this.margin, oneQuarterH);
-            this.goalPosts[1] = new Vector2(this.margin, threeQuartersH);
-            this.goalPosts[2] = new Vector2(this.width + this.margin, oneQuarterH);
-            this.goalPosts[3] = new Vector2(this.width + this.margin, threeQuartersH);
+            this.goalPosts[0] = this.createGoalPost(new Vector2(this.margin, oneQuarterH));
+            this.goalPosts[1] = this.createGoalPost(new Vector2(this.margin, threeQuartersH));
+            this.goalPosts[2] = this.createGoalPost(new Vector2(this.width + this.margin, oneQuarterH));
+            this.goalPosts[3] = this.createGoalPost(new Vector2(this.width + this.margin, threeQuartersH));
         }
     },
 
     draw: function() {
         ctx.beginPath();
-        ctx.moveToV(this.goalPosts[0]);
+        ctx.moveToV(this.goalPosts[0].pos);
         ctx.lineTo(this.margin, this.margin);
 
         if (this.landscape) {
@@ -329,8 +336,8 @@ var field = {
             ctx.lineTo(this.margin, this.height + this.margin);
         }
         
-        ctx.lineToV(this.goalPosts[2]);
-        ctx.moveToV(this.goalPosts[3]);
+        ctx.lineToV(this.goalPosts[2].pos);
+        ctx.moveToV(this.goalPosts[3].pos);
 
         if (this.landscape) {
             ctx.lineTo(this.width + this.margin, this.height + this.margin);
@@ -341,34 +348,34 @@ var field = {
             ctx.lineTo(this.width + this.margin, this.margin);
         }
         
-        ctx.lineToV(this.goalPosts[1]);
+        ctx.lineToV(this.goalPosts[1].pos);
         ctx.lineWidth = 3;
         ctx.strokeStyle = "red";
         ctx.stroke();
 
         ctx.fillStyle = "red";
         for (var i = 0; i < 4; i++) {
-            ctx.circlePathV(this.goalPosts[i], this.goalPostR);
+            ctx.circlePathV(this.goalPosts[i].pos, this.goalPostR);
             ctx.fill();
         }
     },
 
     collide: function(puck) {
         if (this.landscape) {
-            if (puck.pos.y - puck.R > this.goalPosts[0].y + this.goalPostR &&
-                    puck.pos.y + puck.R < this.goalPosts[1].y - this.goalPostR) {
+            if (puck.pos.y - puck.R > this.goalPosts[0].pos.y + this.goalPostR &&
+                    puck.pos.y + puck.R < this.goalPosts[1].pos.y - this.goalPostR) {
                 return;
             }
         }
         else {
-            if (puck.pos.x - puck.R > this.goalPosts[0].x + this.goalPostR &&
-                    puck.pos.x + puck.R < this.goalPosts[1].x - this.goalPostR) {
+            if (puck.pos.x - puck.R > this.goalPosts[0].pos.x + this.goalPostR &&
+                    puck.pos.x + puck.R < this.goalPosts[1].pos.x - this.goalPostR) {
                 return;
             }
         }
 
         for (var i = 0; i < 4; i++) {
-            var directionV = puck.pos.minusNew(this.goalPosts[i]);
+            var directionV = puck.pos.minusNew(this.goalPosts[i].pos);
             var directionMagnitude = directionV.magnitude();
 
             if (directionMagnitude < puck.R + this.goalPostR) {
@@ -380,28 +387,28 @@ var field = {
         }
 
         if (!this.landscape ||
-                puck.pos.y < this.goalPosts[0].y - this.goalPostR ||
-                puck.pos.y > this.goalPosts[1].y + this.goalPostR) {
+                puck.pos.y < this.goalPosts[0].pos.y - this.goalPostR ||
+                puck.pos.y > this.goalPosts[1].pos.y + this.goalPostR) {
             if (puck.pos.x + puck.R > this.width + this.margin) {
                 puck.pos.x = (this.width + this.margin) - puck.R;
                 puck.collideWithNormal(new Vector2(1, 0));
             }
             else if (puck.pos.x - puck.R < this.margin) {
                 puck.pos.x = puck.R + this.margin;
-                puck.collideWithNormal(new Vector2(1, 0));
+                puck.collideWithNormal(new Vector2(-1, 0));
             }
         }
 
         if (this.landscape ||
-                puck.pos.x < this.goalPosts[0].x - this.goalPostR ||
-                puck.pos.x > this.goalPosts[1].x + this.goalPostR) {
+                puck.pos.x < this.goalPosts[0].pos.x - this.goalPostR ||
+                puck.pos.x > this.goalPosts[1].pos.x + this.goalPostR) {
             if (puck.pos.y + puck.R > this.height + this.margin) {
                 puck.pos.y = (this.height + this.margin) - puck.R;
                 puck.collideWithNormal(new Vector2(0, 1));
             }
             else if (puck.pos.y - puck.R < this.margin) {
                 puck.pos.y = puck.R + this.margin;
-                puck.collideWithNormal(new Vector2(0, 1));
+                puck.collideWithNormal(new Vector2(0, -1));
             }
         } 
     }
