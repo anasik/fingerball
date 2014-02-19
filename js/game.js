@@ -186,7 +186,7 @@ var gravityWells = {
                     puck.angularV = ((-perpVel / puck.R) * 5) / 7;
 
                     puck.V = collisionNormal.multiplyNew(-normalVel);
-                    puck.V.plusEq(perpToNorm.multiplyNew((perpVel * 5) / 7));
+                    puck.V.plusEq(perpToNorm.multiplyNew(puck.V.dot(perpToNorm) - surfaceV));
 
                     // Fast-forward time
                     puck.pos.plusEq(puck.V.multiplyNew(elapsed * -deltaT));
