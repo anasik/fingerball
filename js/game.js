@@ -240,10 +240,10 @@ var puck = {
         var surfaceV = (this.angularV * this.R) * (5 / 7);
         var perpVel = relativeV.dot(perpToNorm) - surfaceV;
 
-        this.angularV = ((-perpVel / puck.R) * 5) / 7;
+        this.angularV = (-perpVel / puck.R) * (5 / 7);
 
         // The other object can't change our perpendicular velocity.
-        perpVel = this.V.dot(perpToNorm) - surfaceV;
+        perpVel = (this.V.dot(perpToNorm) - surfaceV) * (5 / 7);
 
         this.V = collisionNormal.multiplyNew(-normalVel * 0.8);
         this.V.plusEq(perpToNorm.multiplyNew(perpVel));
@@ -384,11 +384,11 @@ var field = {
                 puck.pos.y > this.goalPosts[1].y + this.goalPostR) {
             if (puck.pos.x + puck.R > this.width + this.margin) {
                 puck.pos.x = (this.width + this.margin) - puck.R;
-                puck.V.x = -puck.V.x * this.wallBounceRatio;
+                puck.collideWithNormal(new Vector2(1, 0));
             }
             else if (puck.pos.x - puck.R < this.margin) {
                 puck.pos.x = puck.R + this.margin;
-                puck.V.x = -puck.V.x * this.wallBounceRatio;
+                puck.collideWithNormal(new Vector2(1, 0));
             }
         }
 
@@ -397,11 +397,11 @@ var field = {
                 puck.pos.x > this.goalPosts[1].x + this.goalPostR) {
             if (puck.pos.y + puck.R > this.height + this.margin) {
                 puck.pos.y = (this.height + this.margin) - puck.R;
-                puck.V.y = -puck.V.y * this.wallBounceRatio;
+                puck.collideWithNormal(new Vector2(0, 1));
             }
             else if (puck.pos.y - puck.R < this.margin) {
                 puck.pos.y = puck.R + this.margin;
-                puck.V.y = -puck.V.y * this.wallBounceRatio;
+                puck.collideWithNormal(new Vector2(0, 1));
             }
         } 
     }
