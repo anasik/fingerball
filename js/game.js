@@ -176,17 +176,7 @@ var gravityWells = {
                     collisionNormal = well.pos.minusNew(puck.pos).normalise();
 
                     // Calculate velocity
-                    var relativeV = puck.V.minusNew(well.V);
-                    var normalVel = relativeV.dot(collisionNormal) * 0.8;
-
-                    var perpToNorm = new Vector2(-collisionNormal.y, collisionNormal.x);
-                    var surfaceV = (puck.angularV * puck.R * 5) / 7;
-                    var perpVel = relativeV.dot(perpToNorm) - surfaceV;
-
-                    puck.angularV = ((-perpVel / puck.R) * 5) / 7;
-
-                    puck.V = collisionNormal.multiplyNew(-normalVel);
-                    puck.V.plusEq(perpToNorm.multiplyNew(puck.V.dot(perpToNorm) - surfaceV));
+                    puck.collideWithNormal(collisionNormal, well.V);
 
                     // Fast-forward time
                     puck.pos.plusEq(puck.V.multiplyNew(elapsed * -deltaT));
@@ -239,6 +229,24 @@ var puck = {
             drag.multiplyEq(this.V.magnitudeSquared() * 0.008);
             this.V.minusEq(drag);
         }
+    },
+    collideWithNormal: function(collisionNormal, otherV) {
+        window.draw();
+        var relativeV = otherV ? this.V.minusNew(otherV) : this.V;
+
+        var normalVel = relativeV.dot(collisionNormal);
+
+        var perpToNorm = new Vector2(-collisionNormal.y, collisionNormal.x);
+        var surfaceV = (this.angularV * this.R) * (5 / 7);
+        var perpVel = relativeV.dot(perpToNorm) - surfaceV;
+
+        this.angularV = ((-perpVel / puck.R) * 5) / 7;
+
+        // The other object can't change our perpendicular velocity.
+        perpVel = this.V.dot(perpToNorm) - surfaceV;
+
+        this.V = collisionNormal.multiplyNew(-normalVel * 0.8);
+        this.V.plusEq(perpToNorm.multiplyNew(perpVel));
     },
     center: function() {
         this.pos = new Vector2(canvas.width / 2, canvas.height / 2);
