@@ -150,7 +150,7 @@ var gravityWells = {
         }
 
         this.wells.forEach(function(well) {
-            var distanceV = well.pos.minusNew(puck.pos);
+            var distanceV = puck.pos.minusNew(well.pos);
             var distance = distanceV.magnitude();
             var minimumDistance = puck.R * 2.5; // well is 1.5 * puck.R
             var collisionNormal = distanceV.clone().normalise();
@@ -159,7 +159,7 @@ var gravityWells = {
                 if (gravity) {
                     var scaledMagnitude = distance / 10;
                     var force = 0.2 / (scaledMagnitude * scaledMagnitude); 
-                    var accelV = collisionNormal.multiplyNew(force);
+                    var accelV = collisionNormal.multiplyNew(-force);
 
                     puck.V.plusEq(accelV.multiplyEq(elapsed));
                 }
@@ -173,7 +173,7 @@ var gravityWells = {
                     // Rewind time and re-calculate collision normal
                     puck.pos.plusEq(puck.V.multiplyNew(elapsed * deltaT));
                     well.pos.plusEq(well.V.multiplyNew(elapsed * deltaT));
-                    collisionNormal = well.pos.minusNew(puck.pos).normalise();
+                    collisionNormal = puck.pos.minusNew(well.pos).normalise();
 
                     // Calculate velocity
                     puck.collideWithNormal(collisionNormal, well.V);
@@ -187,7 +187,7 @@ var gravityWells = {
                 else {
                     // Collision more than 5 frames away; probably direct press on the puck
                     var minDist = puck.R + well.R;
-                    var moveDist = collisionNormal.multiplyNew(minDist - distance);
+                    var moveDist = collisionNormal.reverse().multiplyNew(minDist - distance);
                     puck.pos.minusEq(moveDist);
                 }
             }
@@ -231,19 +231,38 @@ var puck = {
         }
     },
     collideWithNormal: function(collisionNormal, otherV) {
-        window.draw();
         var relativeV = otherV ? this.V.minusNew(otherV) : this.V;
 
         var normalVel = relativeV.dot(collisionNormal);
 
         var perpToNorm = new Vector2(-collisionNormal.y, collisionNormal.x);
-        var surfaceV = (this.angularV * this.R) * (5 / 7);
-        var perpVel = relativeV.dot(perpToNorm) - surfaceV;
+        var surfaceVel = this.angularV * this.R;
+        var perpVel = relativeV.dot(perpToNorm);
 
-        this.angularV = (-perpVel / puck.R) * (5 / 7);
+        var collisionDuration = 300; // microsec
+        var normalForce = ((-normalVel * 0.8) - normalVel) / collisionDuration;
+
+        var kineticFriction = Math.abs(normalForce * 0.40);
+
+        for (var i = 0; i < collisionDuration; i++) {
+            if (Math.abs(surfaceVel - perpVel) < kineticFriction) {
+                break;
+            }
+
+            if (surfaceVel > perpVel) {
+                surfaceVel -= kineticFriction;
+                perpVel += kineticFriction / 2;
+            }
+            else {
+                surfaceVel += kineticFriction / 2;
+                perpVel -= kineticFriction;
+            }
+        }
+
+        this.angularV = surfaceVel / puck.R;
 
         // The other object can't change our perpendicular velocity.
-        perpVel = (this.V.dot(perpToNorm) - surfaceV) * (5 / 7);
+        //perpVel = (this.V.dot(perpToNorm) - surfaceV) * (5 / 7);
 
         this.V = collisionNormal.multiplyNew(-normalVel * 0.8);
         this.V.plusEq(perpToNorm.multiplyNew(perpVel));
@@ -268,8 +287,10 @@ var puck = {
         ctx.beginPath();
         ctx.strokeStyle = "orange";
         ctx.lineWidth = 3;
-        ctx.moveTo(0, 0);
-        ctx.lineTo(0, -this.R);
+        ctx.moveTo(0, -this.R);
+        ctx.lineTo(0, this.R);
+        ctx.moveTo(-this.R, 0);
+        ctx.lineTo(this.R, 0);
         ctx.stroke();
 
         ctx.restore();
@@ -391,11 +412,11 @@ var field = {
                 puck.pos.y > this.goalPosts[1].pos.y + this.goalPostR) {
             if (puck.pos.x + puck.R > this.width + this.margin) {
                 puck.pos.x = (this.width + this.margin) - puck.R;
-                puck.collideWithNormal(new Vector2(1, 0));
+                puck.collideWithNormal(new Vector2(-1, 0));
             }
             else if (puck.pos.x - puck.R < this.margin) {
                 puck.pos.x = puck.R + this.margin;
-                puck.collideWithNormal(new Vector2(-1, 0));
+                puck.collideWithNormal(new Vector2(1, 0));
             }
         }
 
@@ -404,11 +425,11 @@ var field = {
                 puck.pos.x > this.goalPosts[1].pos.x + this.goalPostR) {
             if (puck.pos.y + puck.R > this.height + this.margin) {
                 puck.pos.y = (this.height + this.margin) - puck.R;
-                puck.collideWithNormal(new Vector2(0, 1));
+                puck.collideWithNormal(new Vector2(0, -1));
             }
             else if (puck.pos.y - puck.R < this.margin) {
                 puck.pos.y = puck.R + this.margin;
-                puck.collideWithNormal(new Vector2(0, -1));
+                puck.collideWithNormal(new Vector2(0, 1));
             }
         } 
     }
