@@ -261,8 +261,10 @@ var puck = {
 
         this.angularV = surfaceVel / puck.R;
 
-        // The other object can't change our perpendicular velocity.
-        //perpVel = (this.V.dot(perpToNorm) - surfaceV) * (5 / 7);
+        if (otherV) {
+            // Above was in other object's frame of reference
+            perpVel += otherV.dot(perpToNorm);
+        }
 
         this.V = collisionNormal.multiplyNew(-normalVel * 0.8);
         this.V.plusEq(perpToNorm.multiplyNew(perpVel));
