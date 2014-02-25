@@ -9,7 +9,7 @@ var canvas = document.createElement("canvas"),
     firstWellV = 0,
     paused = false,
     debug = false,
-    gravity = false;
+    gravity = true;
 
 window.requestAnimationFrame = window.requestAnimationFrame ||
     window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame ||
@@ -383,7 +383,7 @@ var field = {
         }
     },
 
-    collide: function(puck) {
+    collide: function(puck, elapsed) {
         if (this.landscape) {
             if (puck.pos.y - puck.R > this.goalPosts[0].pos.y + this.goalPostR &&
                     puck.pos.y + puck.R < this.goalPosts[1].pos.y - this.goalPostR) {
@@ -397,17 +397,21 @@ var field = {
             }
         }
 
-        for (var i = 0; i < 4; i++) {
-            var directionV = puck.pos.minusNew(this.goalPosts[i].pos);
+        this.goalPosts.forEach(function (goalPost) {
+            var directionV = puck.pos.minusNew(goalPost.pos);
             var directionMagnitude = directionV.magnitude();
 
-            if (directionMagnitude < puck.R + this.goalPostR) {
-                directionV.normalise();
-                puck.V.reflect(directionV);
-                puck.pos.plusEq(directionV.multiplyEq((puck.R + this.goalPostR) - directionMagnitude));
+            if (directionV.isMagLessThan(puck.R + goalPost.R)) {
+                var deltaT = circlesTimeToCollisionPoint(puck, goalPost, elapsed);
+                puck.pos.plusEq(puck.V.multiplyNew(elapsed * deltaT));
+
+                var collisionNormal = puck.pos.minusNew(goalPost.pos).normalise();
+                puck.collideWithNormal(collisionNormal);
+
+                puck.pos.plusEq(puck.V.multiplyNew(elapsed * -deltaT));
                 return;
             }
-        }
+        });
 
         if (!this.landscape ||
                 puck.pos.y < this.goalPosts[0].pos.y - this.goalPostR ||
@@ -468,7 +472,7 @@ function update(elapsed) {
 
     gravityWells.applyForces(puck, elapsed);
 
-    field.collide(puck);
+    field.collide(puck, elapsed);
 
     if (puck.pos.x + puck.R < field.margin || puck.pos.x - puck.R > field.width + field.margin ||
             puck.pos.y + puck.R < field.margin || puck.pos.y - puck.R > field.height + field.margin)
