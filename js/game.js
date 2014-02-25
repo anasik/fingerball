@@ -6,6 +6,7 @@ var canvas = document.createElement("canvas"),
     lastFPScheck = 0,
     fps,
     puckV,
+    puckAV,
     firstWellV = 0,
     paused = false,
     debug = false,
@@ -223,11 +224,26 @@ var puck = {
     V: new Vector2(0, 0),
     angle: 0,
     angularV: 0,
-    applyDrag: function() {
-        if (this.V.x !== 0 || this.V.y !== 0) {
+    applyDrag: function(elapsed) {
+        var re = this.V.magnitude() + Math.abs(this.angularV * this.R);
+        var highRe = re > 1.0;
+
+        if (this.V.x || this.V.y) {
             var drag = this.V.clone().normalise();
-            drag.multiplyEq(this.V.magnitudeSquared() * 0.008);
+            var cd = highRe ? 0.0005 : 0.0010;
+            drag.multiplyEq(this.V.magnitudeSquared() * cd * elapsed);
             this.V.minusEq(drag);
+        }
+        if (this.angularV !== 0) {
+            var ACd = highRe ? 0.05 : 0.10;
+
+            var angularDragDir = -this.angularV / Math.abs(this.angularV);
+            var angularDrag = (this.angularV * this.angularV) * ACd;
+            this.angularV += angularDragDir * angularDrag * elapsed;
+
+            var magnusDir = this.V.clone().rotate(Math.PI * 0.5, true).normalise();
+            var magnus = this.V.magnitude() * this.angularV * 0.04;
+            this.V.plusEq(magnusDir.multiplyEq(magnus * elapsed));
         }
     },
     collideWithNormal: function(collisionNormal, otherV) {
@@ -461,14 +477,14 @@ function update(elapsed) {
         }
     });
 
-    puck.applyDrag();
-
     puck.pos.plusEq(puck.V.multiplyNew(elapsed));
 
     puck.angle += puck.angularV * elapsed;
     if (puck.angle < 0 || puck.angle > Math.PI * 2) {
         puck.angle -= Math.floor(puck.angle / (Math.PI * 2)) * Math.PI * 2;
     }
+
+    puck.applyDrag(elapsed);
 
     gravityWells.applyForces(puck, elapsed);
 
@@ -508,6 +524,7 @@ function main(timestamp) {
         framesRendered = 0;
 
         puckV = Math.round(puck.V.magnitude() * 1000);
+        puckAV = Math.round(puck.angularV * 1000 * 100 / (Math.PI * 2)) / 100;
         if (gravityWells.wells[0]) {
             firstWellV = Math.round(gravityWells.wells[0].V.magnitude() * 1000);
         }
@@ -519,7 +536,11 @@ function main(timestamp) {
 
     ctx.font = "12px sans-serif";
     ctx.fillStyle = "white";
-    ctx.fillText("FPS: " + fps + " puckV: " + puckV + " firstWellV: " + firstWellV, 80, 14);
+    ctx.fillText("FPS: " + fps +
+            " puckV: " + puckV +
+            " puckAV: " + puckAV +
+            " firstWellV: " + firstWellV,
+            80, 14);
 }
 
 function initGame() {
