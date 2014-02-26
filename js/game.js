@@ -224,18 +224,19 @@ var puck = {
     V: new Vector2(0, 0),
     angle: 0,
     angularV: 0,
+    highRe: false,
     applyDrag: function(elapsed) {
         var re = this.V.magnitude() + Math.abs(this.angularV * this.R);
-        var highRe = re > 1.0;
+        this.highRe = re > 1.0;
 
         if (this.V.x || this.V.y) {
             var drag = this.V.clone().normalise();
-            var cd = highRe ? 0.0005 : 0.0010;
+            var cd = this.highRe ? 0.0005 : 0.0010;
             drag.multiplyEq(this.V.magnitudeSquared() * cd * elapsed);
             this.V.minusEq(drag);
         }
         if (this.angularV !== 0) {
-            var ACd = highRe ? 0.05 : 0.10;
+            var ACd = this.highRe ? 0.05 : 0.10;
 
             var angularDragDir = -this.angularV / Math.abs(this.angularV);
             var angularDrag = (this.angularV * this.angularV) * ACd;
@@ -294,32 +295,32 @@ var puck = {
     draw: function() {
         ctx.save();
         ctx.translate(this.pos.x, this.pos.y);
-        ctx.rotate(this.angle);
+        ctx.fillStyle = "red";
+
+        if (this.highRe) {
+            ctx.save();
+            ctx.globalAlpha = 0.5;
+            ctx.beginPath();
+            ctx.arc(-this.V.x * 16, -this.V.y * 16, this.R, 0, Math.PI * 2, true);
+            ctx.fill();
+            ctx.restore();
+        }
 
         ctx.beginPath();
-        ctx.fillStyle = "red";
         ctx.arc(0, 0, this.R, 0, Math.PI * 2, true);
         ctx.closePath();
         ctx.fill();
+
+        ctx.rotate(this.angle);
 
         ctx.beginPath();
         ctx.strokeStyle = "orange";
         ctx.lineWidth = 3;
         ctx.moveTo(0, -this.R);
         ctx.lineTo(0, this.R);
-        ctx.moveTo(-this.R, 0);
-        ctx.lineTo(this.R, 0);
         ctx.stroke();
 
         ctx.restore();
-
-        if (debug) {
-            ctx.save();
-            ctx.globalAlpha = 0.5;
-            ctx.circlePathV(this.pos.minusNew(this.V.multiplyNew(1000 / 60)), this.R);
-            ctx.fill();
-            ctx.restore();
-        }
     }
 };
 
@@ -388,6 +389,16 @@ var field = {
         }
         
         ctx.lineToV(this.goalPosts[1].pos);
+
+        if (this.landscape) {
+            ctx.moveTo((this.width / 2) + this.margin, this.margin);
+            ctx.lineTo((this.width / 2) + this.margin, this.height + this.margin);
+        }
+        else {
+            ctx.moveTo(this.margin, (this.height / 2) + this.margin);
+            ctx.lineTo(this.width + this.margin, (this.height / 2) + this.margin);
+        }
+
         ctx.lineWidth = 3;
         ctx.strokeStyle = "red";
         ctx.stroke();
@@ -503,8 +514,8 @@ function draw() {
     ctx.fillStyle = "lightblue";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    puck.draw();
     field.draw();
+    puck.draw();
     gravityWells.draw();
 }
 
