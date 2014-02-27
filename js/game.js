@@ -1,11 +1,11 @@
 var canvas = document.createElement("canvas"),
     ctx = canvas.getContext("2d"),
     Vector2 = window.Vector2, // library imported in index.html
-    physics = new window.Physics(),
-    gravityWells = new window.GravityWells(physics, canvas, ctx, true, 45),
-    puck = new window.Puck(canvas, ctx, 30),
-    field = new window.Field(physics, canvas, ctx, 10, 20, 0.9),
-    ai = new window.AI(gravityWells, puck, field),
+    physics = null,
+    gravityWells = null,
+    puck = null,
+    field = null,
+    ai = null,
     lastUpdate = 0,
     framesRendered,
     lastFPScheck = 0,
@@ -53,19 +53,14 @@ function debugLog(msg) {
     }
 }
 
-canvas.onmousedown = $.proxy(gravityWells.mouseDown, gravityWells);
-canvas.onmouseup = $.proxy(gravityWells.mouseUp, gravityWells);
-var touchWellsProxy = $.proxy(gravityWells.touchWells, gravityWells);
-canvas.ontouchstart = touchWellsProxy;
-canvas.ontouchmove = touchWellsProxy; 
-canvas.ontouchend = touchWellsProxy;
-
 function update(elapsed) {
     if (paused) {
         return;
     }
 
-    gravityWells.wells.forEach(function (well) {
+    ai.think();
+
+    gravityWells.allWellsArray().forEach(function (well) {
         if (well.startPos) {
             well.V = well.pos.minusNew(well.startPos).divideEq(elapsed);
         }
@@ -148,8 +143,20 @@ function main(timestamp) {
 function initGame() {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
+    physics = new window.Physics();
+    gravityWells = new window.GravityWells(physics, canvas, ctx, true, 45);
+    puck = new window.Puck(canvas, ctx, 30);
     puck.center(canvas);
+    field = new window.Field(physics, canvas, ctx, 10, 20, 0.9);
     field.addGoals(canvas);
+    ai = new window.AI(gravityWells, puck, field);
+
+    canvas.onmousedown = $.proxy(gravityWells.mouseDown, gravityWells);
+    canvas.onmouseup = $.proxy(gravityWells.mouseUp, gravityWells);
+    var touchWellsProxy = $.proxy(gravityWells.touchWells, gravityWells);
+    canvas.ontouchstart = touchWellsProxy;
+    canvas.ontouchmove = touchWellsProxy; 
+    canvas.ontouchend = touchWellsProxy;
 }
 
 initGame();

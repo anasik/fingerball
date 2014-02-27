@@ -17,25 +17,25 @@ function GravityWells(physics, canvas, ctx, gravityEnabled, R) {
     this.physics = physics;
     this.canvas = canvas;
     this.ctx = ctx;
-    this.wells = [];
+    this.wells = {};
     this.gravity = gravityEnabled;
     this.R = R;
 }
 
 GravityWells.prototype.mouseDown = function(e) {
     var pos = new Vector2(e.clientX, e.clientY);
-    this.wells[0] = new GravityWell(pos, this.R);
+    this.wells.mouse = new GravityWell(pos, this.R);
     this.canvas.onmousemove = $.proxy(this.mouseMove, this);
 };
 
 GravityWells.prototype.mouseMove = function(e) {
-    this.wells[0].pos.x = e.clientX;
-    this.wells[0].pos.y = e.clientY;
+    this.wells.mouse.pos.x = e.clientX;
+    this.wells.mouse.pos.y = e.clientY;
     return false;
 };
 
 GravityWells.prototype.mouseUp = function() {
-    this.wells = [];
+    delete this.wells.mouse;
     this.canvas.onmousemove = null;
 };
 
@@ -47,9 +47,9 @@ GravityWells.prototype.touchWells = function(e) {
         var touchV = new Vector2(e.touches[i].pageX, e.touches[i].pageY);
 
         var oldTouch = null;
-        for (var j = 0; j < this.wells.length; j++) {
-            if (this.wells[j].identifier === e.touches[i].identifier) {
-                oldTouch = this.wells[j];
+        for (var j = 0; j < this.wells.touches.length; j++) {
+            if (this.wells.touches[j].identifier === e.touches[i].identifier) {
+                oldTouch = this.wells.touches[j];
                 break;
             }
         }
@@ -63,15 +63,11 @@ GravityWells.prototype.touchWells = function(e) {
         }
     }
 
-    this.wells = newWells;
+    this.wells.touches = newWells;
 };
 
 GravityWells.prototype.applyForces = function(puck, elapsed) {
-    if (!this.wells.length) {
-        return;
-    }
-
-    this.wells.forEach(function(well) {
+    this.allWellsArray().forEach(function(well) {
         var distanceV = puck.pos.minusNew(well.pos);
         var distance = distanceV.magnitude();
         var minimumDistance = puck.R + this.R;
@@ -114,10 +110,31 @@ GravityWells.prototype.applyForces = function(puck, elapsed) {
     }, this);
 };
 
+GravityWells.prototype.allWellsArray = function() {
+    var activeWells = [];
+
+    if (this.wells.mouse) {
+        activeWells.push(this.wells.mouse);
+    }
+    if (this.wells.ai) {
+        activeWells.push(this.wells.ai);
+    }
+    if (this.wells.touches) {
+        var touchesLength = this.wells.touches.length;
+        if (touchesLength) {
+            for (var i = 0; i < touchesLength; i++) {
+                activeWells.push(this.wells.touches[i]);
+            }
+        }
+    }
+
+    return activeWells;
+};
+
 GravityWells.prototype.draw = function() {
     this.ctx.fillStyle = "orange";
-    this.wells.forEach(function(well) {
-        this.ctx.circlePathV(well.pos, this.R);
+    this.allWellsArray().forEach(function(well) {
+        this.ctx.circlePathV(well.pos, well.R);
         this.ctx.fill();
     }, this);
 };

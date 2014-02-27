@@ -1,5 +1,5 @@
-var Vector2 = window.Vector2;
-var GravityWell = window.GravityWell;
+var Vector2 = window.Vector2,
+    GravityWell = window.GravityWell;
 
 function AI(gravityWells, puck, field) {
     this.gravityWells = gravityWells;
@@ -11,8 +11,11 @@ function AI(gravityWells, puck, field) {
                 field.margin + (field.height / 2)) :
         new Vector2(field.margin + (field.width / 2),
                 field.margin + (field.height * 0.20));
-    this.myGravityWell = new GravityWell();
+
+    this.myGravityWell = new GravityWell(startPos, 45);
+    gravityWells.wells.ai = this.myGravityWell;
 }
 
 AI.prototype.think = function(elapsed) {
+    //this.gravityWells.wells[-1] = this.myGravityWell;
 };
