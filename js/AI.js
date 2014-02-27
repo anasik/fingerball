@@ -6,13 +6,13 @@ function AI(gravityWells, puck, field) {
     this.puck = puck;
     this.field = field;
 
-    var startPos = field.landscape ?
+    this.startPos = field.landscape ?
         new Vector2(field.margin + (field.width * 0.80),
                 field.margin + (field.height / 2)) :
         new Vector2(field.margin + (field.width / 2),
                 field.margin + (field.height * 0.20));
 
-    this.myGravityWell = new GravityWell(startPos, 45);
+    this.myGravityWell = new GravityWell(this.startPos, 45);
     this.maxV = 0.8;
     this.arriveRadius = 50;
     this.destination = new Vector2(-1, -1);
@@ -40,7 +40,8 @@ AI.prototype.think = function(elapsed) {
             this.destination.y = this.puck.pos.y;
             this.arrive(elapsed);
         }
-        else if (this.gravityWells.wells.ai) {
+        else if (this.gravityWells.wells.ai &&
+                this.puck.pos.x + this.puck.R < this.startPos.x - this.myGravityWell.R) {
             delete this.gravityWells.wells.ai;
         }
     }
@@ -51,7 +52,8 @@ AI.prototype.think = function(elapsed) {
             this.destination.y = this.myGravityWell.pos.y;
             this.arrive(elapsed);
         }
-        else if (this.gravityWells.wells.ai) {
+        else if (this.gravityWells.wells.ai &&
+                this.puck.pos.y - this.puck.R > this.startPos.y + this.myGravityWell.R) {
             delete this.gravityWells.wells.ai;
         }
     }
