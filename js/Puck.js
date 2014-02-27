@@ -1,0 +1,113 @@
+var Vector2 = window.Vector2;
+
+function Puck(canvas, ctx, R) {
+    this.canvas = canvas;
+    this.ctx = ctx;
+    this.pos = new Vector2(0, 0);
+    this.R = R;
+    this.V = new Vector2(0, 0);
+    this.angle = 0;
+    this.angularV = 0;
+    this.highRe = false;
+}
+
+Puck.prototype.applyDrag = function(elapsed) {
+    var re = this.V.magnitude() + Math.abs(this.angularV * this.R);
+    this.highRe = re > 1.0;
+
+    if (this.V.x || this.V.y) {
+        var drag = this.V.clone().normalise();
+        var cd = this.highRe ? 0.0005 : 0.0010;
+        drag.multiplyEq(this.V.magnitudeSquared() * cd * elapsed);
+        this.V.minusEq(drag);
+    }
+    if (this.angularV !== 0) {
+        var ACd = this.highRe ? 0.05 : 0.10;
+
+        var angularDragDir = -this.angularV / Math.abs(this.angularV);
+        var angularDrag = (this.angularV * this.angularV) * ACd;
+        this.angularV += angularDragDir * angularDrag * elapsed;
+
+        var magnusDir = this.V.clone().rotate(Math.PI * 0.5, true).normalise();
+        var magnus = this.V.magnitude() * this.angularV * 0.04;
+        this.V.plusEq(magnusDir.multiplyEq(magnus * elapsed));
+    }
+};
+
+Puck.prototype.collideWithNormal = function(collisionNormal, otherV) {
+    var relativeV = otherV ? this.V.minusNew(otherV) : this.V;
+
+    var normalVel = relativeV.dot(collisionNormal);
+
+    var perpToNorm = new Vector2(-collisionNormal.y, collisionNormal.x);
+    var surfaceVel = this.angularV * this.R;
+    var perpVel = relativeV.dot(perpToNorm);
+
+    var collisionDuration = 300; // microsec
+    var normalForce = ((-normalVel * 0.8) - normalVel) / collisionDuration;
+
+    var kineticFriction = Math.abs(normalForce * 0.40);
+
+    for (var i = 0; i < collisionDuration; i++) {
+        if (Math.abs(surfaceVel - perpVel) < kineticFriction) {
+            break;
+        }
+
+        if (surfaceVel > perpVel) {
+            surfaceVel -= kineticFriction;
+            perpVel += kineticFriction / 2;
+        }
+        else {
+            surfaceVel += kineticFriction / 2;
+            perpVel -= kineticFriction;
+        }
+    }
+
+    this.angularV = surfaceVel / this.R;
+
+    if (otherV) {
+        // Above was in other object's frame of reference
+        perpVel += otherV.dot(perpToNorm);
+    }
+
+    this.V = collisionNormal.multiplyNew(-normalVel * 0.8);
+    this.V.plusEq(perpToNorm.multiplyNew(perpVel));
+};
+
+Puck.prototype.center = function() {
+    this.pos = new Vector2(this.canvas.width / 2, this.canvas.height / 2);
+    this.V = new Vector2(0, 0);
+    this.angle = 0;
+    this.angularV = 0;
+};
+
+Puck.prototype.draw = function() {
+    this.ctx.save();
+    this.ctx.translate(this.pos.x, this.pos.y);
+    this.ctx.fillStyle = "red";
+
+    if (this.highRe) {
+        this.ctx.save();
+        this.ctx.globalAlpha = 0.5;
+        this.ctx.beginPath();
+        this.ctx.arc(-this.V.x * 16, -this.V.y * 16, this.R, 0, Math.PI * 2, true);
+        this.ctx.fill();
+        this.ctx.restore();
+    }
+
+    this.ctx.beginPath();
+    this.ctx.arc(0, 0, this.R, 0, Math.PI * 2, true);
+    this.ctx.closePath();
+    this.ctx.fill();
+
+    this.ctx.rotate(this.angle);
+
+    this.ctx.beginPath();
+    this.ctx.strokeStyle = "orange";
+    this.ctx.lineWidth = 3;
+    this.ctx.moveTo(0, -this.R);
+    this.ctx.lineTo(0, this.R);
+    this.ctx.stroke();
+
+    this.ctx.restore();
+};
