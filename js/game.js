@@ -58,7 +58,7 @@ function update(elapsed) {
         return;
     }
 
-    ai.think();
+    ai.think(elapsed);
 
     gravityWells.allWellsArray().forEach(function (well) {
         if (well.startPos) {
