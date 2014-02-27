@@ -12,13 +12,15 @@ function Puck(canvas, ctx, R) {
 }
 
 Puck.prototype.applyDrag = function(elapsed) {
-    var re = this.V.magnitude() + Math.abs(this.angularV * this.R);
-    this.highRe = re > 1.0;
+    var VmagSq = this.V.magnitudeSquared();
+    var Vmag = Math.sqrt(VmagSq);
+
+    this.highRe = Vmag > 0.7;
 
     if (this.V.x || this.V.y) {
         var drag = this.V.clone().normalise();
         var cd = this.highRe ? 0.0005 : 0.0010;
-        drag.multiplyEq(this.V.magnitudeSquared() * cd * elapsed);
+        drag.multiplyEq(VmagSq * cd * elapsed);
         this.V.minusEq(drag);
     }
     if (this.angularV !== 0) {
@@ -29,7 +31,7 @@ Puck.prototype.applyDrag = function(elapsed) {
         this.angularV += angularDragDir * angularDrag * elapsed;
 
         var magnusDir = this.V.clone().rotate(Math.PI * 0.5, true).normalise();
-        var magnus = this.V.magnitude() * this.angularV * 0.04;
+        var magnus = Vmag * this.angularV * 0.04;
         this.V.plusEq(magnusDir.multiplyEq(magnus * elapsed));
     }
 };
