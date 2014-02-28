@@ -18,6 +18,7 @@ function GravityWells(physics, canvas, ctx, gravityEnabled, R) {
     this.canvas = canvas;
     this.ctx = ctx;
     this.wells = {};
+    this.wells.touches = [];
     this.gravity = gravityEnabled;
     this.R = R;
 }
