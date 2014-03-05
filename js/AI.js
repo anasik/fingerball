@@ -12,16 +12,28 @@ function AI(gravityWells, puck, field) {
         new Vector2(field.margin + (field.width / 2),
                 field.margin + (field.height * 0.20));
 
-    this.myGravityWell = new GravityWell(this.startPos, 45);
-    this.maxV = 0.8;
-    this.arriveRadius = 50;
-    this.destination = new Vector2(-1, -1);
+    this.myGravityWell = new GravityWell(this.startPos.clone(), 45);
+    this.fieldCenter = new Vector2(
+            field.margin + (field.width / 2),
+            field.margin + (field.height / 2)
+            );
+    this.maxV = 1; // pixel/ms
+    this.arriveRadius = 50; // pixel
+    this.destination = new Vector2();
 }
 
 AI.prototype.arrive = function(elapsed) {
     var distanceV = this.destination.minusNew(this.myGravityWell.pos);
-    var distance = distanceV.magnitude();
+    var distanceSq = distanceV.magnitudeSquared();
+
+    if (distanceSq < 0.01) {
+        // We have arrived
+        return;
+    }
+
+    var distance = Math.sqrt(distanceSq);
     distanceV.normalise();
+
     var V;
     if (distance < this.arriveRadius) {
         V = distanceV.multiplyEq(this.maxV * elapsed * (distance / this.arriveRadius));
@@ -29,32 +41,53 @@ AI.prototype.arrive = function(elapsed) {
     else {
         V = distanceV.multiplyEq(this.maxV * elapsed);
     }
+
     this.myGravityWell.pos.plusEq(V);
 };
 
 AI.prototype.think = function(elapsed) {
+    var timeToArrive;
     if (this.field.landscape) {
-        if (this.puck.V.x > 0.1) {
-            this.gravityWells.wells.ai = this.myGravityWell;
-            this.destination.x = this.myGravityWell.pos.x;
-            this.destination.y = this.puck.pos.y;
-            this.arrive(elapsed);
-        }
-        else if (this.gravityWells.wells.ai &&
-                this.puck.pos.x + this.puck.R < this.startPos.x - this.myGravityWell.R) {
-            delete this.gravityWells.wells.ai;
-        }
+        var xDist = this.myGravityWell.pos.x - this.puck.pos.x;
+        timeToArrive = xDist / this.puck.V.x;
     }
     else {
-        if (this.puck.V.y < -0.1) {
+        var yDist = this.myGravityWell.pos.y - this.puck.pos.y;
+        timeToArrive = yDist / this.puck.V.y;
+    }
+
+    if (timeToArrive > 0 && timeToArrive < 2000) {
+        if (!this.gravityWells.wells.ai) {
             this.gravityWells.wells.ai = this.myGravityWell;
-            this.destination.x = this.puck.pos.x;
+        }
+
+        if (this.field.landscape) {
+            this.destination.x = this.myGravityWell.pos.x;
+            this.destination.y = this.puck.pos.y +
+                (this.puck.V.y * timeToArrive);
+            var maxY = (this.field.margin * 2) + this.field.height;
+            if (this.destination.y < 0 || this.destination.y > maxY) {
+                this.destination.y = this.fieldCenter.y;
+            }
+        }
+        else {
+            this.destination.x = this.puck.pos.x +
+                (this.puck.V.x * timeToArrive);
             this.destination.y = this.myGravityWell.pos.y;
-            this.arrive(elapsed);
+            var maxX = (this.field.margin * 2) + this.field.width;
+            if (this.destination.x < 0 || this.destination.x > maxX) {
+                this.destination.x = this.fieldCenter.x;
+            }
         }
-        else if (this.gravityWells.wells.ai &&
-                this.puck.pos.y - this.puck.R > this.startPos.y + this.myGravityWell.R) {
-            delete this.gravityWells.wells.ai;
-        }
+
+        this.arrive(elapsed);
+    }
+    else if (this.gravityWells.wells.ai &&
+            (this.puck.pos.x + this.puck.R < this.fieldCenter.x || this.puck.V.x < -0.5)) {
+        this.gravityWells.wells.ai = null;
+    }
+    else {
+        this.startPos.copyTo(this.destination);
+        this.arrive(elapsed);
     }
 };

@@ -21,6 +21,7 @@ function GravityWells(physics, canvas, ctx, gravityEnabled, R) {
     this.wells.touches = [];
     this.gravity = gravityEnabled;
     this.R = R;
+    this._accelV = new Vector2();
 }
 
 GravityWells.prototype.mouseDown = function(e) {
@@ -68,6 +69,9 @@ GravityWells.prototype.touchWells = function(e) {
 };
 
 GravityWells.prototype.applyForces = function(puck, elapsed) {
+    this._accelV.x = 0;
+    this._accelV.y = 0;
+
     this.allWellsArray().forEach(function(well) {
         var distanceV = puck.pos.minusNew(well.pos);
         var distance = distanceV.magnitude();
@@ -79,18 +83,19 @@ GravityWells.prototype.applyForces = function(puck, elapsed) {
                 var scaledMagnitude = distance / 10;
                 var force = 0.2 / (scaledMagnitude * scaledMagnitude);
                 var accelV = collisionNormal.multiplyNew(-force);
-
-                puck.V.plusEq(accelV.multiplyEq(elapsed));
+                accelV.multiplyEq(elapsed);
+                this._accelV.plusEq(accelV);
             }
         }
         else {
             var deltaT = this.physics.circlesTimeToCollision(puck, well, elapsed);
 
-            if (deltaT > -1 && well.timeout <= 0) {
+            if (deltaT > -5 && well.timeout <= 0) {
                 // Rewind time and re-calculate collision normal
                 puck.pos.plusEq(puck.V.multiplyNew(elapsed * deltaT));
                 well.pos.plusEq(well.V.multiplyNew(elapsed * deltaT));
                 collisionNormal = puck.pos.minusNew(well.pos).normalise();
+                puck.V.minusEq(puck.accelV);
 
                 // Calculate velocity
                 puck.collideWithNormal(collisionNormal, well.V);
@@ -109,6 +114,9 @@ GravityWells.prototype.applyForces = function(puck, elapsed) {
             }
         }
     }, this);
+
+    puck.V.plusEq(this._accelV);
+    this._accelV.copyTo(puck.accelV);
 };
 
 GravityWells.prototype.allWellsArray = function() {

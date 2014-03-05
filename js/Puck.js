@@ -6,6 +6,7 @@ function Puck(canvas, ctx, R) {
     this.pos = new Vector2(0, 0);
     this.R = R;
     this.V = new Vector2(0, 0);
+    this.accelV = new Vector2(0, 0);
     this.angle = 0;
     this.angularV = 0;
     this.highRe = false;
@@ -37,6 +38,7 @@ Puck.prototype.applyDrag = function(elapsed) {
 };
 
 Puck.prototype.collideWithNormal = function(collisionNormal, otherV) {
+    var bouncyness = 0.85;
     var relativeV = otherV ? this.V.minusNew(otherV) : this.V;
 
     var normalVel = relativeV.dot(collisionNormal);
@@ -46,7 +48,7 @@ Puck.prototype.collideWithNormal = function(collisionNormal, otherV) {
     var perpVel = relativeV.dot(perpToNorm);
 
     var collisionDuration = 300; // microsec
-    var normalForce = ((-normalVel * 0.8) - normalVel) / collisionDuration;
+    var normalForce = ((-normalVel * bouncyness) - normalVel) / collisionDuration;
 
     var kineticFriction = Math.abs(normalForce * 0.40);
 
@@ -72,7 +74,7 @@ Puck.prototype.collideWithNormal = function(collisionNormal, otherV) {
         perpVel += otherV.dot(perpToNorm);
     }
 
-    this.V = collisionNormal.multiplyNew(-normalVel * 0.8);
+    this.V = collisionNormal.multiplyNew(-normalVel * bouncyness);
     this.V.plusEq(perpToNorm.multiplyNew(perpVel));
 };
 
