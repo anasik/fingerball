@@ -82,9 +82,13 @@ AI.prototype.think = function(elapsed) {
 
         this.arrive(elapsed);
     }
-    else if (this.gravityWells.wells.ai &&
-            (this.puck.pos.x + this.puck.R < this.fieldCenter.x || this.puck.V.x < -0.5)) {
-        this.gravityWells.wells.ai = null;
+    else if (this.gravityWells.wells.ai) {
+        if ((this.field.landscape &&
+            (this.puck.pos.x + this.puck.R < this.fieldCenter.x || this.puck.V.x < 0)) ||
+            (!this.field.landscape &&
+            (this.puck.pos.y - this.puck.R > this.fieldCenter.y || this.puck.V.y > 0))) {
+            this.gravityWells.wells.ai = null;
+        }
     }
     else {
         this.startPos.copyTo(this.destination);
