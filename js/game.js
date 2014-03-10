@@ -144,7 +144,7 @@ function initGame() {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
     physics = new window.Physics();
-    gravityWells = new window.GravityWells(physics, canvas, ctx, true, 45);
+    gravityWells = new window.GravityWells(physics, canvas, ctx, false, 45);
     puck = new window.Puck(canvas, ctx, 30);
     puck.center(canvas);
     field = new window.Field(physics, canvas, ctx, 10, 20, 0.9);

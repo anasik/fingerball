@@ -32,7 +32,7 @@ Puck.prototype.applyDrag = function(elapsed) {
         this.angularV += angularDragDir * angularDrag * elapsed;
 
         var magnusDir = this.V.clone().rotate(Math.PI * 0.5, true).normalise();
-        var magnus = Vmag * this.angularV * 0.04;
+        var magnus = Vmag * this.angularV * 0.06;
         this.V.plusEq(magnusDir.multiplyEq(magnus * elapsed));
     }
 };
