@@ -58,6 +58,8 @@ function update(elapsed) {
         return;
     }
 
+    ai.think(elapsed);
+
     gravityWells.allWellsArray().forEach(function (well) {
         if (well.startPos) {
             well.V = well.pos.minusNew(well.startPos).divideEq(elapsed);
@@ -92,8 +94,6 @@ function update(elapsed) {
         puck.V = new Vector2(0, 0);
         puck.center(canvas);
     }
-
-    ai.think(elapsed);
 }
 
 function draw() {
