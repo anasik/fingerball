@@ -106,19 +106,7 @@ Field.prototype.collide = function(puck, elapsed) {
     }
 
     this.goalPosts.forEach(function (goalPost) {
-        var directionV = puck.pos.minusNew(goalPost.pos);
-        var directionMagnitude = directionV.magnitude();
-
-        if (directionV.isMagLessThan(puck.R + goalPost.R)) {
-            var deltaT = this.physics.circlesTimeToCollision(puck, goalPost, elapsed);
-            puck.pos.plusEq(puck.V.multiplyNew(elapsed * deltaT));
-
-            var collisionNormal = puck.pos.minusNew(goalPost.pos).normalise();
-            puck.collideWithNormal(collisionNormal);
-
-            puck.pos.plusEq(puck.V.multiplyNew(elapsed * -deltaT));
-            return;
-        }
+        this.physics.collidePuckCircle(puck, goalPost, elapsed);
     }, this);
 
     if (!this.landscape ||

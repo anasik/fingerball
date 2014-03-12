@@ -1,4 +1,34 @@
-var Physics = function() { };
+var Physics = function() {
+    this.epsilon = 0.1e-5;
+};
+
+Physics.prototype.collidePuckCircle = function(puck, circle, elapsed) {
+    var distanceV = puck.pos.minusNew(circle.pos); // cicrle to puck
+    var distanceSq = distanceV.magnitudeSquared();
+    var minDist = puck.R + circle.R;
+
+    if (distanceSq < minDist * minDist) {
+        var deltaT = this.circlesTimeToCollision(puck, circle, elapsed);
+
+        if (deltaT > -2) {
+            puck.pos.plusEq(puck.V.multiplyNew(elapsed * deltaT));
+            circle.pos.plusEq(circle.V.multiplyNew(elapsed * deltaT));
+
+            distanceV = puck.pos.minusNew(circle.pos);
+            distanceV.normalise();
+
+            puck.collideWithNormal(distanceV, circle.V);
+
+            puck.pos.plusEq(puck.V.multiplyNew(elapsed * -deltaT));
+            circle.pos.plusEq(circle.V.multiplyNew(elapsed * -deltaT));
+        }
+        else {
+            distanceV.normalise();
+            distanceV.multiplyEq(minDist - Math.sqrt(distanceSq));
+            puck.pos.plusEq(distanceV);
+        }
+    }
+};
 
 Physics.prototype.circlesTimeToCollision = function(c1, c2, elapsed) {
     if (!c1.hasOwnProperty('V') || !c2.hasOwnProperty('V')) {

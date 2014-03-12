@@ -90,7 +90,7 @@ GravityWells.prototype.applyForces = function(puck, elapsed) {
         else {
             var deltaT = this.physics.circlesTimeToCollision(puck, well, elapsed);
 
-            if (deltaT > -5 && well.timeout <= 0) {
+            if (deltaT > -2 && well.timeout <= 0) {
                 // Rewind time and re-calculate collision normal
                 puck.pos.plusEq(puck.V.multiplyNew(elapsed * deltaT));
                 well.pos.plusEq(well.V.multiplyNew(elapsed * deltaT));
