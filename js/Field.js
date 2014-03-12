@@ -81,10 +81,10 @@ Field.prototype.draw = function() {
     }
 
     this.ctx.lineWidth = 3;
-    this.ctx.strokeStyle = "red";
+    this.ctx.strokeStyle = "black";
     this.ctx.stroke();
 
-    this.ctx.fillStyle = "red";
+    this.ctx.fillStyle = "black";
     for (var i = 0; i < 4; i++) {
         this.ctx.circlePathV(this.goalPosts[i].pos, this.goalPostR);
         this.ctx.fill();

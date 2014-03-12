@@ -53,15 +53,15 @@ AI.prototype.arrive = function(elapsed) {
 AI.prototype.think = function(elapsed) {
     var timeToArrive;
     if (this.field.landscape) {
-        var xDist = (this.myGravityWell.pos.x - this.myGravityWell.R) - (this.puck.pos.x + this.puck.R);
+        var xDist = this.myGravityWell.pos.x - this.puck.pos.x;
         timeToArrive = xDist / this.puck.V.x;
     }
     else {
-        var yDist = (this.myGravityWell.pos.y + this.myGravityWell.R) - (this.puck.pos.y - this.puck.R);
+        var yDist = this.myGravityWell.pos.y - this.puck.pos.y;
         timeToArrive = yDist / this.puck.V.y;
     }
 
-    if (timeToArrive > 0 && timeToArrive < 2000) {
+    if (timeToArrive > 0 && timeToArrive < 1000) {
         if (!this.gravityWells.wells.ai) {
             this.gravityWells.wells.ai = this.myGravityWell;
         }
@@ -70,25 +70,36 @@ AI.prototype.think = function(elapsed) {
             var projY = this.puck.pos.y + (this.puck.V.y * timeToArrive);
             var maxY = (this.field.margin * 2) + this.field.height;
             if (projY < 0 || projY > maxY) {
-                this.destination.x = this.defPos.x;
-                this.destination.y = this.fieldCenter.y;
+                this.defPos.copyTo(this.destination);
             }
             else {
                 this.destination.y = projY;
+            }
+
+            if (this.puck.V.x * elapsed > 40) {
+                this.destination.x = this.defPos.x;
             }
         }
         else {
             var projX = this.puck.pos.x + (this.puck.V.x * timeToArrive);
             var maxX = (this.field.margin * 2) + this.field.width;
             if (projX < 0 || projX > maxX) {
-                this.destination.x = this.fieldCenter.x;
-                this.destination.y = this.defPos.y;
+                this.defPos.copyTo(this.destination);
             }
             else {
                 this.destination.x = projX;
             }
-        }
 
+            if (this.puck.V.y * elapsed < -40) {
+                this.destination.y = this.defPos.y;
+            }
+        }
+    }
+    else if (this.field.landscape && this.puck.pos.x > this.startPos.x) {
+        this.destination.x = this.defPos.x;
+    }
+    else if (!this.field.landscape && this.puck.pos.y < this.startPos.y) {
+        this.destination.y = this.defPos.y;
     }
     else {
         this.startPos.copyTo(this.destination);

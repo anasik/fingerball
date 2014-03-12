@@ -12,7 +12,6 @@ var canvas = document.createElement("canvas"),
     fps,
     puckV,
     puckAV,
-    firstWellV = 0,
     paused = false,
     debug = false;
 
@@ -98,7 +97,7 @@ function update(elapsed) {
 
 function draw() {
     // Clear screen
-    ctx.fillStyle = "lightblue";
+    ctx.fillStyle = "lightgray";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     field.draw();
@@ -123,20 +122,12 @@ function main(timestamp) {
 
         puckV = Math.round(puck.V.magnitude() * 1000);
         puckAV = Math.round(puck.angularV * 1000 * 100 / (Math.PI * 2)) / 100;
-        if (gravityWells.wells[0]) {
-            firstWellV = Math.round(gravityWells.wells[0].V.magnitude() * 1000);
-        }
-        else
-        {
-            firstWellV = 0;
-        }
     }
 
     ctx.fillStyle = "white";
     ctx.fillText("FPS: " + fps +
             " puckV: " + puckV +
-            " puckAV: " + puckAV +
-            " firstWellV: " + firstWellV,
+            " puckAV: " + puckAV,
             80, 14);
 }
 
