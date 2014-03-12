@@ -140,8 +140,8 @@ GravityWells.prototype.allWellsArray = function() {
     return activeWells;
 };
 
-GravityWells.prototype.draw = function() {
-    this.ctx.fillStyle = "black";
+GravityWells.prototype.draw = function(color) {
+    this.ctx.fillStyle = color;
     this.allWellsArray().forEach(function(well) {
         this.ctx.circlePathV(well.pos, well.R);
         this.ctx.fill();

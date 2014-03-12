@@ -100,9 +100,9 @@ function draw() {
     ctx.fillStyle = "lightgray";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    field.draw();
-    puck.draw();
-    gravityWells.draw();
+    field.draw("rgb(33,33,33)");
+    puck.draw("rgb(33,33,33)", "red");
+    gravityWells.draw("rgb(33,33,33)");
 }
 
 function main(timestamp) {

@@ -98,10 +98,10 @@ Puck.prototype.center = function() {
     this.angularV = 0;
 };
 
-Puck.prototype.draw = function() {
+Puck.prototype.draw = function(color, markColor) {
     this.ctx.save();
     this.ctx.translate(this.pos.x, this.pos.y);
-    this.ctx.fillStyle = "black";
+    this.ctx.fillStyle = color;
 
     if (this.highRe) {
         this.ctx.save();
@@ -120,7 +120,7 @@ Puck.prototype.draw = function() {
     this.ctx.rotate(this.angle);
 
     this.ctx.beginPath();
-    this.ctx.strokeStyle = "red";
+    this.ctx.strokeStyle = markColor;
     this.ctx.lineWidth = 3;
     this.ctx.moveTo(0, -this.R);
     this.ctx.lineTo(0, this.R);

@@ -45,7 +45,7 @@ Field.prototype.addGoals = function() {
     }
 };
 
-Field.prototype.draw = function() {
+Field.prototype.draw = function(color) {
     this.ctx.beginPath();
     this.ctx.moveToV(this.goalPosts[0].pos);
     this.ctx.lineTo(this.margin, this.margin);
@@ -81,10 +81,10 @@ Field.prototype.draw = function() {
     }
 
     this.ctx.lineWidth = 3;
-    this.ctx.strokeStyle = "black";
+    this.ctx.strokeStyle = color;
     this.ctx.stroke();
 
-    this.ctx.fillStyle = "black";
+    this.ctx.fillStyle = color;
     for (var i = 0; i < 4; i++) {
         this.ctx.circlePathV(this.goalPosts[i].pos, this.goalPostR);
         this.ctx.fill();
