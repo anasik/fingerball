@@ -16,8 +16,8 @@ function AI(gravityWells, puck, field) {
         new Vector2(halfWidth, field.margin + (field.height * 0.20));
 
     this.defPos = field.landscape ?
-        new Vector2(field.margin + (field.width * 0.95), halfHeight) :
-        new Vector2(halfWidth, field.margin + (field.height * 0.05));
+        new Vector2(field.margin + (field.width - 45), halfHeight) :
+        new Vector2(halfWidth, field.margin + 45);
 
     this.myGravityWell = new GravityWell(this.startPos.clone(), 45);
     this.maxV = 0.6; // pixel/ms
@@ -61,7 +61,9 @@ AI.prototype.think = function(elapsed) {
         timeToArrive = yDist / this.puck.V.y;
     }
 
-    if (timeToArrive > 0 && timeToArrive < 1000) {
+    if (timeToArrive > 0 && timeToArrive < 1000 &&
+        ((this.field.landscape && this.puck.pos.x < this.myGravityWell.pos.x) ||
+         (!this.field.landscape && this.puck.pos.y > this.myGravityWell.pos.y))) {
         if (!this.gravityWells.wells.ai) {
             this.gravityWells.wells.ai = this.myGravityWell;
         }
@@ -76,7 +78,7 @@ AI.prototype.think = function(elapsed) {
                 this.destination.y = projY;
             }
 
-            if (this.puck.V.x * elapsed > 40) {
+            if (this.puck.V.x * elapsed > 30) {
                 this.destination.x = this.defPos.x;
             }
         }
@@ -90,16 +92,10 @@ AI.prototype.think = function(elapsed) {
                 this.destination.x = projX;
             }
 
-            if (this.puck.V.y * elapsed < -40) {
+            if (this.puck.V.y * elapsed < -30) {
                 this.destination.y = this.defPos.y;
             }
         }
-    }
-    else if (this.field.landscape && this.puck.pos.x > this.startPos.x) {
-        this.destination.x = this.defPos.x;
-    }
-    else if (!this.field.landscape && this.puck.pos.y < this.startPos.y) {
-        this.destination.y = this.defPos.y;
     }
     else {
         this.startPos.copyTo(this.destination);
