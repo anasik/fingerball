@@ -24,6 +24,8 @@ function AI(gravityWells, puck, field) {
     this.arriveRadius = 50; // pixel
     this.destination = new Vector2();
     this._zeroVector = new Vector2(0, 0); // const
+
+    gravityWells.wells.ai = this.myGravityWell;
 }
 
 AI.prototype.arrive = function(elapsed) {
