@@ -51,7 +51,7 @@ Puck.prototype.applyDrag = function(elapsed) {
 };
 
 Puck.prototype.collideWithNormal = function(collisionNormal, otherV) {
-    var bouncyness = 0.85;
+    var bouncyness = 0.9;
     var relativeV = otherV ? this.V.minusNew(otherV) : this.V;
 
     var normalVel = relativeV.dot(collisionNormal);
