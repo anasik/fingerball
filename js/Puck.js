@@ -63,7 +63,7 @@ Puck.prototype.collideWithNormal = function(collisionNormal, otherV) {
     var collisionDuration = 300; // microsec
     var normalForce = ((-normalVel * bouncyness) - normalVel) / collisionDuration;
 
-    var kineticFriction = Math.abs(normalForce * 0.40);
+    var kineticFriction = Math.abs(normalForce * 0.3);
 
     for (var i = 0; i < collisionDuration; i++) {
         if (Math.abs(surfaceVel - perpVel) < kineticFriction) {
