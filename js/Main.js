@@ -1,8 +1,9 @@
 var canvas = document.createElement("canvas"),
     ctx = canvas.getContext("2d"),
     lastUpdate = 0,
+    elapsed = 0,
     framesRendered,
-    lastFPScheck = 0,
+    timeSinceLastFPScheck = 0,
     fps,
     debug = false,
     scene = new window.MenuScene(canvas, ctx);
@@ -47,17 +48,19 @@ function debugLog(msg) {
 function main(timestamp) {
     window.requestAnimationFrame(main);
 
-    scene.update(timestamp - lastUpdate);
-    scene.draw();
+    elapsed = timestamp - lastUpdate;
     lastUpdate = timestamp;
 
+    scene.update(elapsed);
+    scene.draw();
+
     framesRendered += 1;
-    var timeSinceLastFPScheck = timestamp - lastFPScheck;
+    timeSinceLastFPScheck += elapsed;
 
     if (timeSinceLastFPScheck > 200) {
         fps = Math.floor((framesRendered / timeSinceLastFPScheck) * 1000);
-        lastFPScheck = timestamp;
         framesRendered = 0;
+        timeSinceLastFPScheck = 0;
     }
 
     ctx.fillStyle = "white";
