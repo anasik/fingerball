@@ -53,54 +53,82 @@ AI.prototype.arrive = function(elapsed) {
 };
 
 AI.prototype.think = function(elapsed) {
-    var timeToArrive;
+    var goalAxisDist, goalAxisWellPos, goalAxisPos, goalAxisSpeed;
+
     if (this.field.landscape) {
-        var xDist = this.myGravityWell.pos.x - this.puck.pos.x;
-        timeToArrive = xDist / this.puck.V.x;
+        goalAxisDist = this.myGravityWell.pos.x - this.puck.pos.x;
+        goalAxisWellPos = this.myGravityWell.pos.x;
+        goalAxisPos = this.puck.pos.x;
+        goalAxisSpeed = this.puck.V.x;
     }
     else {
-        var yDist = this.myGravityWell.pos.y - this.puck.pos.y;
-        timeToArrive = yDist / this.puck.V.y;
+        goalAxisDist = this.myGravityWell.pos.y - this.puck.pos.y;
+        goalAxisWellPos = this.myGravityWell.pos.y;
+        goalAxisPos = this.puck.pos.y;
+        goalAxisSpeed = this.puck.V.y;
     }
 
-    if (timeToArrive > 0 && timeToArrive < 1000 &&
-        ((this.field.landscape && this.puck.pos.x < this.myGravityWell.pos.x) ||
-         (!this.field.landscape && this.puck.pos.y > this.myGravityWell.pos.y))) {
-        if (!this.gravityWells.wells.ai) {
-            this.gravityWells.wells.ai = this.myGravityWell;
+    var timeToArrive = goalAxisDist / goalAxisSpeed;
+
+    if (timeToArrive < 0 || timeToArrive > 1000) {
+        this.startPos.copyTo(this.destination);
+    }
+    else if ((this.field.landscape && this.puck.pos.x < this.myGravityWell.pos.x) ||
+         (!this.field.landscape && this.puck.pos.y > this.myGravityWell.pos.y)) {
+        var perpPos, perpSpeed, perpProj, perpMax, perpTarget;
+        if (this.field.landscape) {
+            perpPos = this.puck.pos.y;
+            perpSpeed = this.puck.V.y;
+            perpProj = this.puck.pos.y + (this.puck.V.y * timeToArrive);
+            perpMax = this.field.margin + this.field.height;
+        }
+        else {
+            perpPos = this.puck.pos.x;
+            perpSpeed = this.puck.V.x;
+            perpProj = this.puck.pos.x + (this.puck.V.x * timeToArrive);
+            perpMax = this.field.margin + this.field.width;
         }
 
-        if (this.field.landscape) {
-            var projY = this.puck.pos.y + (this.puck.V.y * timeToArrive);
-            var maxY = (this.field.margin * 2) + this.field.height;
-            if (projY < 0 || projY > maxY) {
-                this.defPos.copyTo(this.destination);
+        if (perpProj > this.field.margin && perpProj < perpMax) {
+            if (this.field.landscape) {
+                this.destination.y = perpProj;
             }
             else {
-                this.destination.y = projY;
-            }
-
-            if (this.puck.V.x * elapsed > 30) {
-                this.destination.x = this.defPos.x;
+                this.destination.x = perpProj;
             }
         }
         else {
-            var projX = this.puck.pos.x + (this.puck.V.x * timeToArrive);
-            var maxX = (this.field.margin * 2) + this.field.width;
-            if (projX < 0 || projX > maxX) {
+            if (perpProj < this.field.margin) {
+                perpTarget = this.field.margin;
+            }
+            else {
+                perpTarget = perpMax;
+            }
+
+            var borderArriveTime = (perpTarget - perpPos) / perpSpeed;
+            var goalAxisReflect = goalAxisPos + goalAxisSpeed * borderArriveTime;
+            var afterReflectDist = goalAxisWellPos - goalAxisReflect;
+
+            perpProj = perpTarget + (-perpSpeed * (afterReflectDist / goalAxisSpeed));
+
+            if (perpProj < this.field.margin || perpProj > perpMax) {
                 this.defPos.copyTo(this.destination);
             }
             else {
-                this.destination.x = projX;
-            }
-
-            if (this.puck.V.y * elapsed < -30) {
-                this.destination.y = this.defPos.y;
+                if (this.field.landscape) {
+                    this.destination.x = this.defPos.x;
+                    this.destination.y = perpProj;
+                }
+                else {
+                    this.destination.x = perpProj;
+                    this.destination.y = this.defPos.y;
+                }
             }
         }
-    }
-    else {
-        this.startPos.copyTo(this.destination);
+
+        if (!this.gravityWells.wells.ai) {
+            this.gravityWells.wells.ai = this.myGravityWell;
+        }
     }
 
     this.myGravityWell.pos.plusEq(this.arrive(elapsed));
