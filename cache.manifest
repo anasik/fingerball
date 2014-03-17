@@ -1,5 +1,5 @@
 CACHE MANIFEST
-# 2014-02-27:v1
+# 2014-03-17:v1
 
 /js/jquery-2.1.0.min.js
 /js/Vector2.js
@@ -8,4 +8,7 @@ CACHE MANIFEST
 /js/Puck.js
 /js/Field.js
 /js/AI.js
-/js/game.js
+/js/Scene.js
+/js/GameScene.js
+/js/MenuScene.js
+/js/Main.js
