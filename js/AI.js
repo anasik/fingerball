@@ -6,10 +6,10 @@ function AI(gravityWells, puck, field) {
     this.puck = puck;
     this.field = field;
 
-    var halfWidth = field.margin + (field.width / 2);
-    var halfHeight = field.margin + (field.height / 2);
+    var halfWidth = field.fieldCenterV.x;
+    var halfHeight = field.fieldCenterV.y;
 
-    this.fieldCenter = new Vector2(halfWidth, halfHeight);
+    this.fieldCenter = field.fieldCenterV;
 
     this.attackPos = field.landscape ?
         new Vector2(field.margin + (field.width * 0.80), halfHeight) :
