@@ -44,7 +44,9 @@ AI.STATE = {
 
 AI.prototype.think = function(elapsed) {
     if (!this.puck.V.isCloseTo(this.lastPuckV, 1)) {
-        this.reactionTimeout = this.reactionTime;
+        var twentyPercent = this.reactionTime * 0.2;
+        var modifier = (Math.random() * twentyPercent) - twentyPercent;
+        this.reactionTimeout = this.reactionTime + modifier;
     }
 
     this.puck.V.copyTo(this.lastPuckV);
