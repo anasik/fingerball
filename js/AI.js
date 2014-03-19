@@ -24,11 +24,19 @@ function AI(gravityWells, puck, field) {
         new Vector2(halfWidth, field.margin + field.height);
 
     this.myGravityWell = new GravityWell(this.defPos.clone(), 45, "P2");
-    this.maxV = 1.2; // pixel/ms
     this.arriveRadius = 50; // pixel
     this.destination = new Vector2();
 
-    this.reactionTime = 180;
+    this.enragePercent = 0;
+
+    this.maxVCalm = 0.8; // pixel/ms
+    this.maxVBonus = 0.6;
+    this.maxV = this.maxVCalm;
+
+    this.reactionTimeCalm = 350; // ms
+    this.reactionTimeBonus = 200;
+    this.reactionTime = this.reactionTimeCalm;
+
     this.lastPuckV = new Vector2();
     this.reactionTimeout = 0;
 
@@ -42,6 +50,15 @@ AI.STATE = {
     aligning: 4
 };
 
+AI.prototype.enrage = function() {
+    if (this.enragePercent + 0.33 <= 1) {
+        this.enragePercent += 0.33;
+    }
+    else {
+        this.enragePercent = 1;
+    }
+};
+
 AI.prototype.think = function(elapsed) {
     if (!this.puck.V.isCloseTo(this.lastPuckV, 1)) {
         var twentyPercent = this.reactionTime * 0.2;
@@ -50,6 +67,14 @@ AI.prototype.think = function(elapsed) {
     }
 
     this.puck.V.copyTo(this.lastPuckV);
+    if (this.enragePercent > 0) {
+        this.maxV = this.maxVCalm + (this.maxVBonus * this.enragePercent);
+        this.reactionTime = this.reactionTimeCalm - (this.reactionTimeBonus * this.enragePercent);
+        this.enragePercent -= elapsed / 30000; // decays in 30 seconds
+    }
+    else {
+        this.enragePercent = 0;
+    }
 
     if (this.reactionTimeout > 0) {
         this.reactionTimeout -= elapsed;

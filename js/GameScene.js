@@ -123,11 +123,24 @@ GameScene.prototype.update = function(elapsed) {
 
     this.field.collide(this.puck, elapsed);
 
-    if (this.puck.pos.x + this.puck.R < this.field.margin ||
-        this.puck.pos.x - this.puck.R > this.field.width + this.field.margin ||
-        this.puck.pos.y + this.puck.R < this.field.margin ||
-        this.puck.pos.y - this.puck.R > this.field.height + this.field.margin)
-    {
+    var leftPuckEdge = this.puck.pos.x - this.puck.R;
+    var rightPuckEdge = this.puck.pos.x + this.puck.R;
+    var bottomPuckEdge = this.puck.pos.y + this.puck.R;
+    var topPuckEdge = this.puck.pos.y - this.puck.R;
+    var fieldRightEdge = this.field.margin + this.field.width;
+    var fieldBottomEdge = this.field.margin + this.field.height;
+
+    if (rightPuckEdge < this.field.margin || leftPuckEdge > fieldRightEdge ||
+        bottomPuckEdge < this.field.margin || topPuckEdge > fieldBottomEdge) {
+        if (this.ai) {
+            if (this.field.landscape && leftPuckEdge > fieldRightEdge) {
+                this.ai.enrage();
+            }
+            if (!this.field.landscape && bottomPuckEdge < this.field.margin) {
+                this.ai.enrage();
+            }
+        }
+
         this.puck.V = new Vector2(0, 0);
         this.puck.center(this.canvas);
     }
