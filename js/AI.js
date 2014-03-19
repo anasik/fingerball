@@ -76,12 +76,15 @@ AI.prototype.think = function(elapsed) {
             }
 
             if (!this.posUnreachable(this.puck.pos)) {
-                if (this.puck.V.magnitude() * elapsed > 25) {
+                var towardsGoalSpeed = this.field.landscape ? goalAxisSpeed : -goalAxisSpeed;
+                if (towardsGoalSpeed >= this.maxV) {
                     this.state = AI.STATE.defending;
                     break;
                 }
-                else if ((this.field.landscape && this.puck.V.x > 0) ||
-                         (!this.field.landscape && this.puck.V.y < 0)) {
+                else if ((this.field.landscape && this.puck.pos.x < this.myGravityWell.pos.x &&
+                          this.puck.V.x > -(this.maxV / 2)) ||
+                         (!this.field.landscape && this.puck.pos.y > this.myGravityWell.pos.y &&
+                          this.puck.V.y < this.maxV / 2)) {
                     this.state = AI.STATE.aligning;
                     break;
                 }
@@ -91,8 +94,8 @@ AI.prototype.think = function(elapsed) {
             this.arrive(elapsed);
             break;
         case AI.STATE.defending:
-            if ((this.field.landscape && this.puck.V.x * elapsed <= 5) ||
-                (!this.field.landscape && this.puck.V.y * elapsed >= -5)) {
+            if ((this.field.landscape && this.puck.V.x < this.maxV) ||
+                (!this.field.landscape && this.puck.V.y > -this.maxV)) {
                 this.state = AI.STATE.idle;
                 break;
             }
@@ -117,8 +120,8 @@ AI.prototype.think = function(elapsed) {
             break;
         case AI.STATE.attacking:
             if (this.posUnreachable(this.puck.pos) ||
-                (this.field.landscape && this.puck.V.x < -0.3) ||
-                (!this.field.landscape && this.puck.V.y > 0.3) ||
+                (this.field.landscape && this.puck.V.x < -this.maxV / 2) ||
+                (!this.field.landscape && this.puck.V.y > this.maxV / 2) ||
                 (this.field.landscape && this.puck.pos.x > this.myGravityWell.pos.x) ||
                 (!this.field.landscape && this.puck.pos.y < this.myGravityWell.pos.y)) {
                 this.state = AI.STATE.idle;
@@ -133,6 +136,7 @@ AI.prototype.think = function(elapsed) {
 
             if (this.posUnreachable(puckProj)) {
                 this.state = AI.STATE.idle;
+                break;
             }
             else {
                 var hitDirection = this.enemyGoal.minusNew(puckProj).normalise();
