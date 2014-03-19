@@ -23,7 +23,7 @@ function AI(gravityWells, puck, field) {
         new Vector2(field.margin, halfHeight) :
         new Vector2(halfWidth, field.margin + field.height);
 
-    this.myGravityWell = new GravityWell(this.defPos.clone(), 45);
+    this.myGravityWell = new GravityWell(this.defPos.clone(), 45, "P2");
     this.maxV = 1.2; // pixel/ms
     this.arriveRadius = 50; // pixel
     this.destination = new Vector2();

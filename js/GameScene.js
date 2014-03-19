@@ -13,14 +13,6 @@ GameScene.prototype.init = function() {
     this.canvas.height = window.innerHeight;
 
     this.physics = new window.Physics();
-    this.gravityWells = new window.GravityWells(
-            this.physics,
-            this.canvas,
-            this.ctx,
-            false, 45
-            );
-    this.puck = new window.Puck(this.canvas, this.ctx, 30);
-    this.puck.center(this.canvas);
     this.field = new window.Field(
             this.physics,
             this.canvas,
@@ -28,6 +20,15 @@ GameScene.prototype.init = function() {
             10, 20, 0.9
             );
     this.field.addGoals();
+    this.gravityWells = new window.GravityWells(
+            this.physics,
+            this.canvas,
+            this.ctx,
+            this.field,
+            false, 45
+            );
+    this.puck = new window.Puck(this.canvas, this.ctx, 30);
+    this.puck.center(this.canvas);
 
     if (this.withAI) {
         this.ai = new window.AI(
@@ -64,6 +65,36 @@ GameScene.prototype.update = function(elapsed) {
     }
 
     this.gravityWells.allWellsArray().forEach(function (well) {
+        if (well.pos.x - well.R < this.field.margin) {
+            well.pos.x = this.field.margin + well.R;
+        }
+        else if (well.pos.x + well.R > this.field.margin + this.field.width) {
+            well.pos.x = (this.field.margin + this.field.width) - well.R;
+        }
+        else if (this.field.landscape && well.player === "P1" &&
+            well.pos.x + well.R > this.field.fieldCenterV.x) {
+            well.pos.x = this.field.fieldCenterV.x - well.R;
+        }
+        else if (this.field.landscape && well.player === "P2" &&
+            well.pos.x - well.R < this.field.fieldCenterV.x) {
+            well.pos.x = this.field.fieldCenterV.x + well.R;
+        }
+
+        if (well.pos.y - well.R < this.field.margin) {
+            well.pos.y = this.field.margin + well.R;
+        }
+        else if (well.pos.y + well.R > this.field.margin + this.field.height) {
+            well.pos.y = (this.field.margin + this.field.height) - well.R;
+        }
+        else if (!this.field.landscape && well.player === "P1" &&
+            well.pos.y - well.R < this.field.fieldCenterV.y) {
+            well.pos.y = this.field.fieldCenterV.y + well.R;
+        }
+        else if (!this.field.landscape && well.player === "P2" &&
+            well.pos.y + well.R > this.field.fieldCenterV.y) {
+            well.pos.y = this.field.fieldCenterV.y - well.R;
+        }
+
         if (well.startPos) {
             well.V = well.pos.minusNew(well.startPos).divideEq(elapsed);
         }
@@ -76,7 +107,7 @@ GameScene.prototype.update = function(elapsed) {
         if (well.timeout > 0) {
             well.timeout -= elapsed;
         }
-    });
+    }, this);
 
     this.puck.pos.plusEq(this.puck.V.multiplyNew(elapsed));
 

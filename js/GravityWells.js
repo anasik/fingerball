@@ -1,22 +1,27 @@
 var Vector2 = window.Vector2;
 
-function GravityWell(pos, R) {
+function GravityWell(pos, R, player) {
+    if (!pos || !R || !player) {
+        throw new Error('Missing arguments for GravityWell constructor');
+    }
     this.pos = pos;
     this.startPos = null;
     this.V = new Vector2(0,0);
     this.R = R;
     this.timeout = 0;
+    this.player = player;
 }
 
-function TouchGravityWell(pos, radius, identifier) {
-    GravityWell.call(this, pos, radius);
+function TouchGravityWell(pos, R, player, identifier) {
+    GravityWell.call(this, pos, R, player);
     this.identifier = identifier;
 }
 
-function GravityWells(physics, canvas, ctx, gravityEnabled, R) {
+function GravityWells(physics, canvas, ctx, field, gravityEnabled, R) {
     this.physics = physics;
     this.canvas = canvas;
     this.ctx = ctx;
+    this.field = field;
     this.wells = {};
     this.wells.touches = [];
     this.gravity = gravityEnabled;
@@ -26,7 +31,7 @@ function GravityWells(physics, canvas, ctx, gravityEnabled, R) {
 
 GravityWells.prototype.mouseDown = function(e) {
     var pos = new Vector2(e.clientX, e.clientY);
-    this.wells.mouse = new GravityWell(pos, this.R);
+    this.wells.mouse = new GravityWell(pos, this.R, 'P1');
     this.canvas.onmousemove = $.proxy(this.mouseMove, this);
 };
 
@@ -61,7 +66,15 @@ GravityWells.prototype.touchWells = function(e) {
             newWells.push(oldTouch);
         }
         else {
-            newWells.push(new TouchGravityWell(touchV, this.R, e.touches[i].identifier));
+            var player;
+            if (this.field.landscape) {
+                player = touchV.x < this.field.fieldCenterV.x ? "P1" : "P2";
+            }
+            else {
+                player = touchV.y > this.field.fieldCenterV.y ? "P1" : "P2";
+            }
+
+            newWells.push(new TouchGravityWell(touchV, this.R, player, e.touches[i].identifier));
         }
     }
 
