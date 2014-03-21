@@ -87,7 +87,7 @@ Puck.prototype.collideWithNormal = function(collisionNormal, otherV) {
         perpVel += otherV.dot(perpToNorm);
     }
 
-    this.V = collisionNormal.multiplyNew(-normalVel * bouncyness);
+    this.V = collisionNormal.multiplyNew(normalVel + (2 * -normalVel * bouncyness));
     this.V.plusEq(perpToNorm.multiplyNew(perpVel));
 };
 
@@ -96,6 +96,16 @@ Puck.prototype.center = function() {
     this.V = new Vector2(0, 0);
     this.angle = 0;
     this.angularV = 0;
+};
+
+Puck.prototype.giveToPlayer = function(player) {
+    this.center();
+    if (this.canvas.width > this.canvas.height) {
+        this.pos.x = this.canvas.width * (player === 1 ? 0.33 : 0.66);
+    }
+    else {
+        this.pos.y = this.canvas.height * (player === 1 ? 0.66 : 0.33);
+    }
 };
 
 Puck.prototype.draw = function(color, markColor) {

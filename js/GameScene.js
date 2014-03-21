@@ -4,6 +4,7 @@ var Scene = window.Scene,
 function GameScene(canvas, context, withAI) {
     Scene.call(this, canvas, context);
     this.withAI = withAI;
+    this.score = { P1: 0, P2: 0 };
 }
 
 GameScene.prototype.init = function() {
@@ -130,19 +131,37 @@ GameScene.prototype.update = function(elapsed) {
     var fieldRightEdge = this.field.margin + this.field.width;
     var fieldBottomEdge = this.field.margin + this.field.height;
 
-    if (rightPuckEdge < this.field.margin || leftPuckEdge > fieldRightEdge ||
-        bottomPuckEdge < this.field.margin || topPuckEdge > fieldBottomEdge) {
-        if (this.ai) {
-            if (this.field.landscape && leftPuckEdge > fieldRightEdge) {
-                this.ai.enrage();
-            }
-            if (!this.field.landscape && bottomPuckEdge < this.field.margin) {
-                this.ai.enrage();
-            }
-        }
+    if (this.field.landscape && leftPuckEdge > fieldRightEdge) {
+        this.score.P1++;
+        this.puck.giveToPlayer(2);
 
-        this.puck.V = new Vector2(0, 0);
-        this.puck.center(this.canvas);
+        if (this.ai) {
+            this.ai.enrage();
+        }
+    }
+    else if (this.field.landscape && rightPuckEdge < this.field.margin) {
+        this.score.P2++;
+        this.puck.giveToPlayer(1);
+
+        if (this.ai) {
+            this.ai.calmDown();
+        }
+    }
+    else if (!this.field.landscape && bottomPuckEdge < this.field.margin) {
+        this.score.P1++;
+        this.puck.giveToPlayer(2);
+
+        if (this.ai) {
+            this.ai.enrage();
+        }
+    }
+    else if (!this.field.landscape && topPuckEdge > fieldBottomEdge) {
+        this.score.P2++;
+        this.puck.giveToPlayer(1);
+
+        if (this.ai) {
+            this.ai.calmDown();
+        }
     }
 };
 
