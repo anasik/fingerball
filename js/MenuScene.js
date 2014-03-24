@@ -2,7 +2,7 @@ function MenuScene(canvas, context) {
     window.Scene.call(this, canvas, context);
 }
 
-MenuScene.prototype.createButton = function(text, point, action) {
+MenuScene.prototype.createButton = function(text, action) {
     var button = document.createElement("div");
 
     button.innerHTML = text;
@@ -10,20 +10,14 @@ MenuScene.prototype.createButton = function(text, point, action) {
     button.style.backgroundColor = "rgb(33,33,33)";
     button.style.color = "white";
     button.style.borderRadius = "15px";
+    button.style.display = "inline-block";
 
-    var width = this.canvas.width / 3;
-    var height = this.canvas.height / 7;
+    var height = this.canvas.height / 8;
 
-    button.style.width = width + "px";
-    button.style.height = height + "px";
-
-    button.style.lineHeight = button.style.height;
+    button.style.margin = (height / 3) + "px";
+    button.style.padding = (height / 3) + "px";
     button.style.fontSize = (height * 0.60) + "px";
     button.style.fontFamily = "sans-serif";
-
-    button.style.position = "absolute";
-    button.style.left = (point.x - (width / 2)) + "px";
-    button.style.top = (point.y - (height / 2)) + "px";
 
     button.onclick = $.proxy(action, this);
     button.style.cursor = "pointer";
@@ -37,27 +31,27 @@ MenuScene.prototype.init = function() {
     this.canvas.width = window.innerWidth;
     this.canvas.height = window.innerHeight;
 
+    this.menuDiv = document.createElement("div");
+    this.menuDiv.style.position = "absolute";
+    this.menuDiv.style.top = this.menuDiv.style.left = "0px";
+    this.menuDiv.style.width = "100%";
+    this.menuDiv.style.height = "100%";
+    this.menuDiv.style.textAlign = "center";
+    document.body.appendChild(this.menuDiv);
+
     var gameTitle = document.createElement("p");
     gameTitle.innerHTML = "Play";
     gameTitle.style.color = "rgb(33,33,33)";
-    gameTitle.style.width = "100%";
-    var titleHeight = window.innerHeight / 7;
+    var titleHeight = window.innerHeight / 8;
     gameTitle.style.fontSize = titleHeight + "px";
     gameTitle.style.fontFamily = "sans-serif";
-    gameTitle.style.textAlign = "center";
-    gameTitle.style.position = "absolute";
-    gameTitle.style.top = ((window.innerHeight / 4) - titleHeight / 2) +
-        "px";
-    gameTitle.style.left = "0px";
-    gameTitle.style.margin = "0px";
+    gameTitle.style.margin = (titleHeight / 3) + "px";
+    gameTitle.style.marginTop = titleHeight + "px";
     gameTitle.style.cursor = "default";
+    this.menuDiv.appendChild(gameTitle);
 
-    this.gameTitle = gameTitle;
-    document.body.appendChild(this.gameTitle);
-
-    this.vsAIButton = this.createButton(
-            "vs AI",
-            { x: window.innerWidth / 2, y: window.innerHeight / 2 },
+    var vsAIButton = this.createButton(
+            "Single player",
             function() {
                 this.tearDown();
                 window.scene = new window.GameScene(
@@ -65,9 +59,8 @@ MenuScene.prototype.init = function() {
                 window.scene.init();
             });
 
-    this.pvpButton = this.createButton(
-            "PvP",
-            { x: window.innerWidth / 2, y: (window.innerHeight * 3) / 4 },
+    var pvpButton = this.createButton(
+            "Versus mode",
             function() {
                 this.tearDown();
                 window.scene = new window.GameScene(
@@ -75,22 +68,14 @@ MenuScene.prototype.init = function() {
                 window.scene.init();
             });
 
-    document.body.appendChild(this.vsAIButton);
-    document.body.appendChild(this.pvpButton);
+    this.menuDiv.appendChild(vsAIButton);
+    this.menuDiv.appendChild(pvpButton);
 };
 
 MenuScene.prototype.tearDown = function() {
-    if (this.vsAIButton) {
-        document.body.removeChild(this.vsAIButton);
-        this.vsAIButton = null;
-    }
-    if (this.pvpButton) {
-        document.body.removeChild(this.pvpButton);
-        this.pvpButton = null;
-    }
-    if (this.gameTitle) {
-        document.body.removeChild(this.gameTitle);
-        this.gameTitle = null;
+    if (this.menuDiv) {
+        document.body.removeChild(this.menuDiv);
+        this.menuDiv = null;
     }
 };
 
