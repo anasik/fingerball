@@ -21,7 +21,7 @@ Puck.prototype.applyDrag = function(elapsed) {
 
     if (Math.abs(this.V.x) > epsilon || Math.abs(this.V.y) > epsilon) {
         var drag = this.V.clone().normalise();
-        var cd = this.highRe ? 0.5e-4 : 1.5e-4;
+        var cd = this.highRe ? 0.1e-3 : 0.3e-3;
         drag.multiplyEq(VmagSq * cd * elapsed);
         this.V.minusEq(drag);
     }
