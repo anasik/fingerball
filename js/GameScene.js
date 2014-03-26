@@ -35,6 +35,7 @@ GameScene.prototype.init = function() {
             false,
             gravityWellR);
     this.puck = new window.Puck(this.canvas, this.ctx, puckR);
+    window.assets.puck.reRender(puckR * 2, puckR * 2);
     this.puck.center(this.canvas);
 
     if (this.withAI) {

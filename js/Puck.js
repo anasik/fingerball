@@ -108,33 +108,37 @@ Puck.prototype.giveToPlayer = function(player) {
     }
 };
 
-Puck.prototype.draw = function(color, markColor) {
+Puck.prototype.draw = function() {
     this.ctx.save();
     this.ctx.translate(this.pos.x, this.pos.y);
-    this.ctx.fillStyle = color;
 
     if (this.highRe) {
         this.ctx.save();
-        this.ctx.globalAlpha = 0.5;
+        this.ctx.globalAlpha = 0.25;
+        this.ctx.fillStyle = 'white';
         this.ctx.beginPath();
         this.ctx.arc(-this.V.x * 16, -this.V.y * 16, this.R, 0, Math.PI * 2, true);
         this.ctx.fill();
         this.ctx.restore();
     }
 
-    this.ctx.beginPath();
+    /*this.ctx.beginPath();
     this.ctx.arc(0, 0, this.R, 0, Math.PI * 2, true);
     this.ctx.closePath();
-    this.ctx.fill();
+    this.ctx.fill();*/
 
     this.ctx.rotate(this.angle);
+    this.ctx.drawImage(
+            window.assets.puck.canvas,
+            -this.R, -this.R,
+            this.R * 2, this.R * 2);
 
-    this.ctx.beginPath();
+    /*this.ctx.beginPath();
     this.ctx.strokeStyle = markColor;
     this.ctx.lineWidth = 3;
     this.ctx.moveTo(0, -this.R);
     this.ctx.lineTo(0, this.R);
-    this.ctx.stroke();
+    this.ctx.stroke();*/
 
     this.ctx.restore();
 };

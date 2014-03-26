@@ -1,14 +1,21 @@
 function AssetManager() {
     var screenWidth = window.innerWidth,
         screenHeight = window.innerHeight;
-    this.field = new SvgAsset('stadium', screenWidth, screenHeight, true);
+    this.field = new SvgAsset(
+            'stadium',
+            screenWidth, screenHeight,
+            true, true);
+    this.puck = new SvgAsset(
+            'football',
+            100, 100,
+            false, false);
 }
 
 AssetManager.prototype.refresh = function() {
     this.field.reRender(window.innerWidth, window.innerHeight);
 };
 
-function SvgAsset(name, width, height, multiAspect) {
+function SvgAsset(name, width, height, multiAspect, autoRotate) {
     if (!name || !width || !height) {
         throw new Error('invalid parameters');
     }
@@ -16,7 +23,8 @@ function SvgAsset(name, width, height, multiAspect) {
     this.name = name;
     this.width = width;
     this.height = height;
-    this.multiAspect = multiAspect ? multiAspect : false;
+    this.multiAspect = multiAspect;
+    this.autoRotate = autoRotate;
     this.prevWide = this.getWide();
 
     this.image = new Image();
@@ -74,7 +82,7 @@ SvgAsset.prototype.reRender = function(width, height) {
         return;
     }
 
-    if (this.getLandscape()) {
+    if (this.getLandscape() || !this.autoRotate) {
         this.ctx.drawImage(this.image, 0, 0, width, height);
     }
     else {
