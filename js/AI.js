@@ -16,14 +16,14 @@ function AI(gravityWells, puck, field) {
         new Vector2(halfWidth, field.margin + (field.height * 0.20));
 
     this.defPos = field.landscape ?
-        new Vector2(field.margin + (field.width - 45), halfHeight) :
-        new Vector2(halfWidth, field.margin + 45);
+        new Vector2(field.margin + (field.width - gravityWells.R), halfHeight) :
+        new Vector2(halfWidth, field.margin + gravityWells.R);
 
     this.enemyGoal = field.landscape ?
         new Vector2(field.margin, halfHeight) :
         new Vector2(halfWidth, field.margin + field.height);
 
-    this.myGravityWell = new GravityWell(this.defPos.clone(), 45, "P2");
+    this.myGravityWell = new GravityWell(this.defPos.clone(), gravityWells.R, "P2");
     this.arriveRadius = 40; // pixel
     this.destination = new Vector2();
 

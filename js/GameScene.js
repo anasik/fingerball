@@ -13,30 +13,35 @@ GameScene.prototype.init = function() {
     this.canvas.width = window.innerWidth;
     this.canvas.height = window.innerHeight;
 
+    var shortSide = Math.min(this.canvas.width, this.canvas.height);
+
+    var goalPostR = shortSide * 0.015,
+        gravityWellR = shortSide * 0.0687,
+        puckR = shortSide * 0.0458,
+        margin = shortSide * 0.026;
+
     this.physics = new window.Physics();
     this.field = new window.Field(
             this.physics,
             this.canvas,
             this.ctx,
-            10, 20, 0.9
-            );
+            goalPostR, margin, 0.9);
     this.field.addGoals();
     this.gravityWells = new window.GravityWells(
             this.physics,
             this.canvas,
             this.ctx,
             this.field,
-            false, 45
-            );
-    this.puck = new window.Puck(this.canvas, this.ctx, 30);
+            false,
+            gravityWellR);
+    this.puck = new window.Puck(this.canvas, this.ctx, puckR);
     this.puck.center(this.canvas);
 
     if (this.withAI) {
         this.ai = new window.AI(
                 this.gravityWells,
                 this.puck,
-                this.field
-                );
+                this.field);
     }
 
     this.canvas.onmousedown = $.proxy(
