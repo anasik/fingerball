@@ -6,13 +6,15 @@ var canvas = document.createElement("canvas"),
     timeSinceLastFPScheck = 0,
     fps,
     debug = false,
-    scene = new window.MenuScene(canvas, ctx);
+    scene = new window.MenuScene(canvas, ctx),
+    assets = new window.AssetManager();
 
 window.requestAnimationFrame = window.requestAnimationFrame ||
     window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame ||
     window.msRequestAnimationFrame;
 
 window.onresize = function() {
+    assets.refresh();
     scene.init();
     scene.draw();
 };

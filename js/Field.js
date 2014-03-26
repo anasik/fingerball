@@ -50,6 +50,12 @@ Field.prototype.addGoals = function() {
 };
 
 Field.prototype.draw = function(color) {
+    var asset = window.assets.field;
+
+    this.ctx.drawImage(asset.canvas, 0, 0);
+
+    return;
+
     this.ctx.beginPath();
     this.ctx.moveToV(this.goalPosts[0].pos);
     this.ctx.lineTo(this.margin, this.margin);

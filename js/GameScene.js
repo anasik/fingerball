@@ -167,8 +167,8 @@ GameScene.prototype.update = function(elapsed) {
 
 GameScene.prototype.draw = function() {
     // Clear screen
-    this.ctx.fillStyle = "lightgray";
-    this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+    //this.ctx.fillStyle = "lightgray";
+    //this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
     this.field.draw("rgb(33,33,33)");
     this.puck.draw("rgb(33,33,33)", "red");
