@@ -83,7 +83,7 @@ AI.prototype.think = function(elapsed) {
 
         if (this.state === AI.STATE.attacking) {
             this.gravityWells.wells.ai = null;
-            this.defPos.copyTo(this.destination);
+            //this.defPos.copyTo(this.destination);
         }
     }
 
@@ -170,7 +170,17 @@ AI.prototype.think = function(elapsed) {
             this.arrive(elapsed);
             break;
         case AI.STATE.attacking:
-            if (!this.gravityWells.wells.ai || this.posUnreachable(this.puck.pos, this.puck.R) ||
+            var targetPos = this.puck.pos.clone(),
+                radiiSum = this.puck.R + this.myGravityWell.R;
+
+            if (this.field.landscape) {
+                targetPos.x += radiiSum;
+            }
+            else {
+                targetPos.y -= radiiSum;
+            }
+
+            if (!this.gravityWells.wells.ai || this.posUnreachable(targetPos, this.myGravityWell.R) ||
                 (this.field.landscape && this.puck.V.x < -this.maxV / 3) ||
                 (!this.field.landscape && this.puck.V.y > this.maxV / 3) ||
                 (this.field.landscape && this.puck.pos.x > this.myGravityWell.pos.x) ||
@@ -189,7 +199,7 @@ AI.prototype.think = function(elapsed) {
 
             var puckProj = this.puck.pos.plusNew(this.puck.V.multiplyNew(100));
 
-            if (this.posUnreachable(puckProj, this.puck.R)) {
+            if (this.posUnreachable(puckProj, 0)) {
                 this.state = AI.STATE.idle;
                 break;
             }
