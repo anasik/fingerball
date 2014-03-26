@@ -34,8 +34,8 @@ function AI(gravityWells, puck, field) {
     this.maxVBonus = 0.4;
     this.maxV = this.maxVCalm;
 
-    this.reactionTimeCalm = 400; // ms
-    this.reactionTimeBonus = 150;
+    this.reactionTimeCalm = 300; // ms
+    this.reactionTimeBonus = 100;
     this.reactionTime = this.reactionTimeCalm;
 
     this.lastPuckV = new Vector2();
@@ -180,7 +180,7 @@ AI.prototype.think = function(elapsed) {
                 targetPos.y -= radiiSum;
             }
 
-            if (!this.gravityWells.wells.ai || this.posUnreachable(targetPos, this.myGravityWell.R) ||
+            if (!this.gravityWells.wells.ai || this.posUnreachable(targetPos, this.puck.R) ||
                 (this.field.landscape && this.puck.V.x < -this.maxV / 3) ||
                 (!this.field.landscape && this.puck.V.y > this.maxV / 3) ||
                 (this.field.landscape && this.puck.pos.x > this.myGravityWell.pos.x) ||
