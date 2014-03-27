@@ -153,10 +153,19 @@ GravityWells.prototype.allWellsArray = function() {
     return activeWells;
 };
 
-GravityWells.prototype.draw = function(color) {
-    this.ctx.fillStyle = color;
+GravityWells.prototype.draw = function() {
     this.allWellsArray().forEach(function(well) {
-        this.ctx.circlePathV(well.pos, well.R);
-        this.ctx.fill();
+        var imageStartX = well.pos.x - this.R,
+            imageStartY = well.pos.y - this.R;
+        if (well.player === "P1") {
+            this.ctx.drawImage(
+                window.assets.redPlayer.canvas,
+                imageStartX, imageStartY);
+        }
+        else {
+            this.ctx.drawImage(
+                window.assets.bluePlayer.canvas,
+                imageStartX, imageStartY);
+        }
     }, this);
 };

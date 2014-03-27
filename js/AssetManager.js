@@ -9,6 +9,14 @@ function AssetManager() {
             'football',
             100, 100,
             false, false);
+    this.redPlayer = new SvgAsset(
+            'player-red',
+            150, 150,
+            false, true);
+    this.bluePlayer = new SvgAsset(
+            'player-blue',
+            150, 150,
+            false, true);
 }
 
 AssetManager.prototype.refresh = function() {

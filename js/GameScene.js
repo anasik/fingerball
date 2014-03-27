@@ -27,6 +27,7 @@ GameScene.prototype.init = function() {
             this.ctx,
             goalPostR, margin, 0.9);
     this.field.addGoals();
+
     this.gravityWells = new window.GravityWells(
             this.physics,
             this.canvas,
@@ -34,6 +35,9 @@ GameScene.prototype.init = function() {
             this.field,
             false,
             gravityWellR);
+    window.assets.redPlayer.reRender(gravityWellR * 2, gravityWellR * 2);
+    window.assets.bluePlayer.reRender(gravityWellR * 2, gravityWellR * 2);
+
     this.puck = new window.Puck(this.canvas, this.ctx, puckR);
     window.assets.puck.reRender(puckR * 2, puckR * 2);
     this.puck.center(this.canvas);
@@ -172,11 +176,7 @@ GameScene.prototype.update = function(elapsed) {
 };
 
 GameScene.prototype.draw = function() {
-    // Clear screen
-    //this.ctx.fillStyle = "lightgray";
-    //this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
-
-    this.field.draw("rgb(33,33,33)");
-    this.puck.draw("rgb(33,33,33)", "red");
-    this.gravityWells.draw("rgb(33,33,33)");
+    this.field.draw();
+    this.puck.draw();
+    this.gravityWells.draw();
 };

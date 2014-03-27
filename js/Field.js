@@ -49,56 +49,9 @@ Field.prototype.addGoals = function() {
     }
 };
 
-Field.prototype.draw = function(color) {
-    var asset = window.assets.field;
-
-    this.ctx.drawImage(asset.canvas, 0, 0);
-
+Field.prototype.draw = function() {
+    this.ctx.drawImage(window.assets.field.canvas, 0, 0);
     return;
-
-    this.ctx.beginPath();
-    this.ctx.moveToV(this.goalPosts[0].pos);
-    this.ctx.lineTo(this.margin, this.margin);
-
-    if (this.landscape) {
-        this.ctx.lineTo(this.width + this.margin, this.margin);
-    }
-    else {
-        this.ctx.lineTo(this.margin, this.height + this.margin);
-    }
-
-    this.ctx.lineToV(this.goalPosts[2].pos);
-    this.ctx.moveToV(this.goalPosts[3].pos);
-
-    if (this.landscape) {
-        this.ctx.lineTo(this.width + this.margin, this.height + this.margin);
-        this.ctx.lineTo(this.margin, this.height + this.margin);
-    }
-    else {
-        this.ctx.lineTo(this.width + this.margin, this.height + this.margin);
-        this.ctx.lineTo(this.width + this.margin, this.margin);
-    }
-
-    this.ctx.lineToV(this.goalPosts[1].pos);
-
-    if (this.landscape) {
-        this.ctx.moveTo((this.width / 2) + this.margin, this.margin);
-        this.ctx.lineTo((this.width / 2) + this.margin, this.height + this.margin);
-    }
-    else {
-        this.ctx.moveTo(this.margin, (this.height / 2) + this.margin);
-        this.ctx.lineTo(this.width + this.margin, (this.height / 2) + this.margin);
-    }
-
-    this.ctx.lineWidth = 3;
-    this.ctx.strokeStyle = color;
-    this.ctx.stroke();
-
-    this.ctx.fillStyle = color;
-    for (var i = 0; i < 4; i++) {
-        this.ctx.circlePathV(this.goalPosts[i].pos, this.goalPostR);
-        this.ctx.fill();
-    }
 };
 
 Field.prototype.collide = function(puck, elapsed) {
