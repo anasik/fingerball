@@ -24,8 +24,10 @@ function AI(gravityWells, puck, field) {
         new Vector2(halfWidth, field.margin + field.height);
 
     this.myGravityWell = new GravityWell(this.defPos.clone(), gravityWells.R, "P2");
-    this.arriveRadius = 40; // pixel
-    this.destination = new Vector2();
+    this.gravityWells.wells.ai = this.myGravityWell;
+
+    this.arriveRadius = 10; // pixel
+    this.destination = this.defPos.clone();
 
     this.enrageLevel = 0;
     this.enrageStep = 0.16;
@@ -42,6 +44,7 @@ function AI(gravityWells, puck, field) {
     this.reactionTimeout = 0;
 
     this.state = AI.STATE.idle;
+    this.react(750);
 }
 
 AI.STATE = {
@@ -75,16 +78,17 @@ AI.prototype.calmDown = function() {
     this.reactionTime = this.reactionTimeCalm - (this.reactionTimeBonus * this.enrageLevel);
 };
 
+AI.prototype.react = function(reactionTime) {
+    var rTime = reactionTime ? reactionTime : this.reactionTime,
+        oneFifth = rTime * 0.2,
+        modifier = (Math.random() * oneFifth * 2) - oneFifth;
+
+    this.reactionTimeout = rTime + modifier;
+};
+
 AI.prototype.think = function(elapsed) {
     if (!this.puck.V.isCloseTo(this.lastPuckV, 0.5)) {
-        var twentyPercent = this.reactionTime * 0.2;
-        var modifier = (Math.random() * twentyPercent) - twentyPercent;
-        this.reactionTimeout = this.reactionTime + modifier;
-
-        if (this.state === AI.STATE.attacking) {
-            this.gravityWells.wells.ai = null;
-            //this.defPos.copyTo(this.destination);
-        }
+        this.react();
     }
 
     this.puck.V.copyTo(this.lastPuckV);
@@ -171,7 +175,7 @@ AI.prototype.think = function(elapsed) {
             break;
         case AI.STATE.attacking:
             var targetPos = this.puck.pos.clone(),
-                radiiSum = this.puck.R + this.myGravityWell.R;
+                radiiSum = (this.puck.R + this.myGravityWell.R) * 0.8;
 
             if (this.field.landscape) {
                 targetPos.x += radiiSum;
@@ -180,7 +184,7 @@ AI.prototype.think = function(elapsed) {
                 targetPos.y -= radiiSum;
             }
 
-            if (!this.gravityWells.wells.ai || this.posUnreachable(targetPos, this.puck.R) ||
+            if (!this.gravityWells.wells.ai || this.posUnreachable(targetPos, this.myGravityWell.R) ||
                 (this.field.landscape && this.puck.V.x < -this.maxV / 3) ||
                 (!this.field.landscape && this.puck.V.y > this.maxV / 3) ||
                 (this.field.landscape && this.puck.pos.x > this.myGravityWell.pos.x) ||
@@ -189,7 +193,7 @@ AI.prototype.think = function(elapsed) {
                 break;
             }
 
-            this.puck.pos.copyTo(this.destination);
+            targetPos.copyTo(this.destination);
             this.arrive(elapsed);
             break;
         case AI.STATE.aligning:

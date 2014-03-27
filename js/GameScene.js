@@ -147,6 +147,7 @@ GameScene.prototype.update = function(elapsed) {
 
         if (this.ai) {
             this.ai.enrage();
+            this.ai.react(750);
         }
     }
     else if (this.field.landscape && rightPuckEdge < this.field.margin) {
@@ -163,6 +164,7 @@ GameScene.prototype.update = function(elapsed) {
 
         if (this.ai) {
             this.ai.enrage();
+            this.ai.react(750);
         }
     }
     else if (!this.field.landscape && topPuckEdge > fieldBottomEdge) {
