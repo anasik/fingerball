@@ -69,7 +69,9 @@ Field.prototype.collide = function(puck, elapsed) {
     }
 
     this.goalPosts.forEach(function (goalPost) {
-        this.physics.collidePuckCircle(puck, goalPost, elapsed);
+        if (this.physics.collidePuckCircle(puck, goalPost, elapsed)) {
+            window.wallHitSound.play();
+        }
     }, this);
 
     if (!this.landscape ||
@@ -78,10 +80,12 @@ Field.prototype.collide = function(puck, elapsed) {
         if (puck.pos.x + puck.R > this.width + this.margin) {
             puck.pos.x = (this.width + this.margin) - puck.R;
             puck.collideWithNormal(new Vector2(-1, 0));
+            window.wallHitSound.play();
         }
         else if (puck.pos.x - puck.R < this.margin) {
             puck.pos.x = puck.R + this.margin;
             puck.collideWithNormal(new Vector2(1, 0));
+            window.wallHitSound.play();
         }
     }
 
@@ -91,10 +95,12 @@ Field.prototype.collide = function(puck, elapsed) {
         if (puck.pos.y + puck.R > this.height + this.margin) {
             puck.pos.y = (this.height + this.margin) - puck.R;
             puck.collideWithNormal(new Vector2(0, -1));
+            window.wallHitSound.play();
         }
         else if (puck.pos.y - puck.R < this.margin) {
             puck.pos.y = puck.R + this.margin;
             puck.collideWithNormal(new Vector2(0, 1));
+            window.wallHitSound.play();
         }
     }
 };

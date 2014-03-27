@@ -21,6 +21,8 @@ Physics.prototype.collidePuckCircle = function(puck, circle, elapsed) {
 
             puck.pos.plusEq(puck.V.multiplyNew(elapsed * -deltaT));
             circle.pos.plusEq(circle.V.multiplyNew(elapsed * -deltaT));
+
+            return true;
         }
         else {
             distanceV.normalise();
@@ -28,6 +30,8 @@ Physics.prototype.collidePuckCircle = function(puck, circle, elapsed) {
             puck.pos.plusEq(distanceV);
         }
     }
+
+    return false;
 };
 
 Physics.prototype.circlesTimeToCollision = function(c1, c2, elapsed) {

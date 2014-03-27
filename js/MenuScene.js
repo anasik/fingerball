@@ -19,7 +19,10 @@ MenuScene.prototype.createButton = function(text, action) {
     button.style.fontSize = (height * 0.60) + "px";
     button.style.fontFamily = "sans-serif";
 
-    button.onclick = $.proxy(action, this);
+    button.onclick = $.proxy(function() {
+        window.wallHitSound.play();
+        action.call(this);
+    }, this);
     button.style.cursor = "pointer";
 
     return button;

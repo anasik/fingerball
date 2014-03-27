@@ -1,5 +1,15 @@
+window.requestAnimationFrame = window.requestAnimationFrame ||
+    window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame ||
+    window.msRequestAnimationFrame;
+window.AudioContext = window.AudioContext || window.webkitAudioContext;
+
 var canvas = document.createElement("canvas"),
     ctx = canvas.getContext("2d"),
+    audioCtx = new window.AudioContext(),
+    playerHitSound = document.getElementById('playerHit'),
+    playerHitSource = audioCtx.createMediaElementSource(playerHitSound),
+    wallHitSound = document.getElementById('wallHit'),
+    wallHitSource = audioCtx.createMediaElementSource(wallHitSound),
     lastUpdate = 0,
     elapsed = 0,
     framesRendered,
@@ -8,10 +18,6 @@ var canvas = document.createElement("canvas"),
     debug = false,
     scene = new window.MenuScene(canvas, ctx),
     assets = new window.AssetManager();
-
-window.requestAnimationFrame = window.requestAnimationFrame ||
-    window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame ||
-    window.msRequestAnimationFrame;
 
 window.onresize = function() {
     assets.refresh();
@@ -69,5 +75,7 @@ function main(timestamp) {
     ctx.fillText("FPS: " + fps, 60, 14);
 }
 
+playerHitSource.connect(audioCtx.destination);
+wallHitSource.connect(audioCtx.destination);
 scene.init();
 window.requestAnimationFrame(main);
