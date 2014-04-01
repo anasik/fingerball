@@ -27,7 +27,9 @@ Field.prototype.createGoalPost = function(pos) {
 
 Field.prototype.addGoals = function() {
     this.width = this.canvas.width - (2 * this.margin);
+    this.maxX = this.margin + this.width;
     this.height = this.canvas.height - (2 * this.margin);
+    this.maxY = this.margin + this.height;
     this.fieldCenterV = new Vector2(
             this.canvas.width / 2,
             this.canvas.height / 2

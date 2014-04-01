@@ -76,34 +76,55 @@ GameScene.prototype.update = function(elapsed) {
     }
 
     this.gravityWells.allWellsArray().forEach(function (well) {
-        if (well.pos.x - well.R < this.field.margin) {
-            well.pos.x = this.field.margin + well.R;
-        }
-        else if (well.pos.x + well.R > this.field.margin + this.field.width) {
-            well.pos.x = (this.field.margin + this.field.width) - well.R;
-        }
-        else if (this.field.landscape && well.player === "P1" &&
-            well.pos.x + well.R > this.field.fieldCenterV.x) {
-            well.pos.x = this.field.fieldCenterV.x - well.R;
-        }
-        else if (this.field.landscape && well.player === "P2" &&
-            well.pos.x - well.R < this.field.fieldCenterV.x) {
-            well.pos.x = this.field.fieldCenterV.x + well.R;
-        }
+        if (this.field.landscape) {
+            if (well.pos.y + well.R > this.field.maxY) {
+                well.pos.y = this.field.maxY - well.R;
+            }
+            else if (well.pos.y - well.R < this.field.margin) {
+                well.pos.y = this.field.margin + well.R;
+            }
 
-        if (well.pos.y - well.R < this.field.margin) {
-            well.pos.y = this.field.margin + well.R;
+            if (well.player === "P1") {
+                if (well.pos.x - well.R < this.field.margin) {
+                    well.pos.x = this.field.margin + well.R;
+                }
+                else if (well.pos.x + well.R > this.field.fieldCenterV.x) {
+                    well.pos.x = this.field.fieldCenterV.x - well.R;
+                }
+            }
+            else {
+                if (well.pos.x - well.R < this.field.fieldCenterV.x) {
+                    well.pos.x = this.field.fieldCenterV.x + well.R;
+                }
+                else if (well.pos.x + well.R > this.field.maxX) {
+                    well.pos.x = this.field.maxX - well.R;
+                }
+            }
         }
-        else if (well.pos.y + well.R > this.field.margin + this.field.height) {
-            well.pos.y = (this.field.margin + this.field.height) - well.R;
-        }
-        else if (!this.field.landscape && well.player === "P1" &&
-            well.pos.y - well.R < this.field.fieldCenterV.y) {
-            well.pos.y = this.field.fieldCenterV.y + well.R;
-        }
-        else if (!this.field.landscape && well.player === "P2" &&
-            well.pos.y + well.R > this.field.fieldCenterV.y) {
-            well.pos.y = this.field.fieldCenterV.y - well.R;
+        else {
+            if (well.pos.x + well.R > this.field.maxX) {
+                well.pos.x = this.field.maxX - well.R;
+            }
+            else if (well.pos.x - well.R < this.field.margin) {
+                well.pos.x = this.field.margin + well.R;
+            }
+
+            if (well.player === "P1") {
+                if (well.pos.y - well.R < this.field.fieldCenterV.y) {
+                    well.pos.y = this.field.fieldCenterV.y + well.R;
+                }
+                else if (well.pos.y + well.R > this.field.maxY) {
+                    well.pos.y = this.field.maxY - well.R;
+                }
+            }
+            else {
+                if (well.pos.y - well.R < this.field.margin) {
+                    well.pos.y = this.field.margin + well.R;
+                }
+                else if (well.pos.y + well.R > this.field.fieldCenterV.y) {
+                    well.pos.y = this.field.fieldCenterV.y - well.R;
+                }
+            }
         }
 
         if (well.startPos) {
