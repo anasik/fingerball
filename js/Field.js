@@ -11,6 +11,10 @@ function Field(physics, canvas, ctx, goalPostR, margin, bounce) {
     this.height = 0;
     this.margin = margin;
     this.wallBounceRatio = bounce;
+    this.rightWall = new Vector2(-1, 0);
+    this.leftWall = new Vector2(1, 0);
+    this.topWall = new Vector2(0, 1);
+    this.bottomWall = new Vector2(0, -1);
 }
 
 Field.prototype.createGoalPost = function(pos) {
@@ -70,7 +74,7 @@ Field.prototype.collide = function(puck, elapsed) {
 
     this.goalPosts.forEach(function (goalPost) {
         if (this.physics.collidePuckCircle(puck, goalPost, elapsed)) {
-            window.wallHitSound.play();
+            window.sounds.wallHit.impactSound(puck.V);
         }
     }, this);
 
@@ -79,13 +83,13 @@ Field.prototype.collide = function(puck, elapsed) {
             puck.pos.y > this.goalPosts[1].pos.y + this.goalPostR) {
         if (puck.pos.x + puck.R > this.width + this.margin) {
             puck.pos.x = (this.width + this.margin) - puck.R;
-            puck.collideWithNormal(new Vector2(-1, 0));
-            window.wallHitSound.play();
+            puck.collideWithNormal(this.rightWall);
+            window.sounds.wallHit.impactSound(puck.V.dot(this.rightWall));
         }
         else if (puck.pos.x - puck.R < this.margin) {
             puck.pos.x = puck.R + this.margin;
-            puck.collideWithNormal(new Vector2(1, 0));
-            window.wallHitSound.play();
+            puck.collideWithNormal(this.leftWall);
+            window.sounds.wallHit.impactSound(puck.V.dot(this.leftWall));
         }
     }
 
@@ -94,13 +98,13 @@ Field.prototype.collide = function(puck, elapsed) {
             puck.pos.x > this.goalPosts[1].pos.x + this.goalPostR) {
         if (puck.pos.y + puck.R > this.height + this.margin) {
             puck.pos.y = (this.height + this.margin) - puck.R;
-            puck.collideWithNormal(new Vector2(0, -1));
-            window.wallHitSound.play();
+            puck.collideWithNormal(this.bottomWall);
+            window.sounds.wallHit.impactSound(puck.V.dot(this.bottomWall));
         }
         else if (puck.pos.y - puck.R < this.margin) {
             puck.pos.y = puck.R + this.margin;
-            puck.collideWithNormal(new Vector2(0, 1));
-            window.wallHitSound.play();
+            puck.collideWithNormal(this.topWall);
+            window.sounds.wallHit.impactSound(puck.V.dot(this.topWall));
         }
     }
 };

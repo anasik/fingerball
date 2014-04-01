@@ -1,5 +1,5 @@
 CACHE MANIFEST
-# 2014-03-17:v1
+# 2014-04-01:v1
 
 /js/jquery-2.1.0.min.js
 /js/Vector2.js
@@ -11,4 +11,19 @@ CACHE MANIFEST
 /js/Scene.js
 /js/GameScene.js
 /js/MenuScene.js
+/js/AssetManager.js
+/js/AudioManager.js
 /js/Main.js
+
+/sounds/hit_player.mp3
+/sounds/hit_player.ogg
+/sounds/hit_player.wav
+/sounds/hit_wall.mp3
+/sounds/hit_wall.ogg
+/sounds/hit_wall.wav
+
+/images/football.svg
+/images/player-blue.svg
+/images/player-red.svg
+/images/stadium.svg
+/images/stadium-wide.svg

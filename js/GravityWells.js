@@ -118,7 +118,9 @@ GravityWells.prototype.applyForces = function(puck, elapsed) {
                 well.pos.plusEq(well.V.multiplyNew(elapsed * -deltaT));
 
                 well.timeout = 100;
-                window.playerHitSound.play();
+
+                var relativeV = well.V.minusNew(puck.V);
+                window.sounds.playerHit.impactSound(relativeV);
             }
             else {
                 // Collision more than 5 frames away; probably direct press on the puck

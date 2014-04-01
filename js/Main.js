@@ -6,10 +6,7 @@ window.AudioContext = window.AudioContext || window.webkitAudioContext;
 var canvas = document.createElement("canvas"),
     ctx = canvas.getContext("2d"),
     audioCtx = new window.AudioContext(),
-    playerHitSound = document.getElementById('playerHit'),
-    playerHitSource = audioCtx.createMediaElementSource(playerHitSound),
-    wallHitSound = document.getElementById('wallHit'),
-    wallHitSource = audioCtx.createMediaElementSource(wallHitSound),
+    sounds = new window.AudioManager(audioCtx),
     lastUpdate = 0,
     elapsed = 0,
     framesRendered,
@@ -75,7 +72,5 @@ function main(timestamp) {
     ctx.fillText("FPS: " + fps, 60, 14);
 }
 
-playerHitSource.connect(audioCtx.destination);
-wallHitSource.connect(audioCtx.destination);
 scene.init();
 window.requestAnimationFrame(main);
