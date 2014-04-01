@@ -26,7 +26,6 @@ function AI(gravityWells, puck, field) {
     this.myGravityWell = new GravityWell(this.defPos.clone(), gravityWells.R, "P2");
     this.gravityWells.wells.ai = this.myGravityWell;
 
-    this.arriveRadius = 10; // pixel
     this.destination = this.defPos.clone();
 
     this.enrageLevel = 0;
@@ -35,6 +34,8 @@ function AI(gravityWells, puck, field) {
     this.maxVCalm = 0.8; // pixel/ms
     this.maxVBonus = 0.4;
     this.maxV = this.maxVCalm;
+
+    this.arriveRadius = this.maxV * 20; // pixel
 
     this.reactionTimeCalm = 300; // ms
     this.reactionTimeBonus = 100;
@@ -62,8 +63,7 @@ AI.prototype.enrage = function() {
         this.enrageLevel = 1;
     }
 
-    this.maxV = this.maxVCalm + (this.maxVBonus * this.enrageLevel);
-    this.reactionTime = this.reactionTimeCalm - (this.reactionTimeBonus * this.enrageLevel);
+    this.updateParameters();
 };
 
 AI.prototype.calmDown = function() {
@@ -74,8 +74,13 @@ AI.prototype.calmDown = function() {
         this.enrageLevel = 0;
     }
 
+    this.updateParameters();
+};
+
+AI.prototype.updateParameters = function() {
     this.maxV = this.maxVCalm + (this.maxVBonus * this.enrageLevel);
     this.reactionTime = this.reactionTimeCalm - (this.reactionTimeBonus * this.enrageLevel);
+    this.arriveRadius = this.maxV * 20;
 };
 
 AI.prototype.react = function(reactionTime) {
