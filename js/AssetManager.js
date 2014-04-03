@@ -74,6 +74,9 @@ SvgAsset.prototype.loadImage = function(name) {
 };
 
 SvgAsset.prototype.reRender = function(width, height) {
+    width = Math.ceil(width);
+    height = Math.ceil(height);
+
     this.width = this.canvas.width = width;
     this.height = this.canvas.height = height;
 

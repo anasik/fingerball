@@ -140,10 +140,7 @@ Puck.prototype.draw = function() {
     }
 
     this.ctx.rotate(this.angle);
-    this.ctx.drawImage(
-            window.assets.puck.canvas,
-            -this.R, -this.R,
-            this.R * 2, this.R * 2);
+    this.ctx.drawImage(window.assets.puck.canvas, -this.R, -this.R);
 
     this.ctx.restore();
 };
