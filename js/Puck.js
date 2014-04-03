@@ -20,10 +20,13 @@ Puck.prototype.applyDrag = function(elapsed) {
     this.highRe = Vmag > 0.7;
 
     if (Math.abs(this.V.x) > epsilon || Math.abs(this.V.y) > epsilon) {
-        var drag = this.V.clone().normalise();
-        var cd = this.highRe ? 0.1e-3 : 0.3e-3;
-        drag.multiplyEq(VmagSq * cd * elapsed);
-        this.V.minusEq(drag);
+        var resist = this.V.clone().reverse().normalise();
+        var cd = this.highRe ? 0.0005 : 0.0008;
+        var drag = resist.multiplyNew(VmagSq * cd * elapsed);
+        var frict = resist.multiplyNew(Vmag * 0.0002 * elapsed);
+
+        this.V.plusEq(drag);
+        this.V.plusEq(frict);
     }
     else {
         this.V.x = 0;
@@ -31,11 +34,11 @@ Puck.prototype.applyDrag = function(elapsed) {
     }
 
     if (Math.abs(this.angularV) > epsilon) {
-        var ACd = this.highRe ? 0.05 : 0.10;
-
         var angularDragDir = -this.angularV / Math.abs(this.angularV);
-        var angularDrag = (this.angularV * this.angularV) * ACd;
+        var angularDrag = (this.angularV * this.angularV) * 0.05;
+        var angularFriction = Math.abs(this.angularV) * 0.00001;
         this.angularV += angularDragDir * angularDrag * elapsed;
+        this.angularV += angularDragDir * angularFriction * elapsed;
     }
     else {
         this.angularV = 0;
@@ -45,14 +48,14 @@ Puck.prototype.applyDrag = function(elapsed) {
         var magnusDir = this.V.clone().rotate(Math.PI * 0.5, true);
         magnusDir.normalise();
 
-        var magnus = Vmag * this.angularV * 0.08;
+        var magnus = Vmag * this.angularV * 0.05;
         this.V.plusEq(magnusDir.multiplyEq(magnus * elapsed));
     }
 };
 
-Puck.prototype.collideWithNormal = function(collisionNormal, otherV) {
+Puck.prototype.collideWithNormal = function(collisionNormal, other) {
     var bouncyness = 0.9;
-    var relativeV = otherV ? this.V.minusNew(otherV) : this.V;
+    var relativeV = (other && other.V) ? this.V.minusNew(other.V) : this.V;
 
     var normalVel = relativeV.dot(collisionNormal);
 
@@ -82,12 +85,26 @@ Puck.prototype.collideWithNormal = function(collisionNormal, otherV) {
 
     this.angularV = surfaceVel / this.R;
 
-    if (otherV) {
+    if (other) {
         // Above was in other object's frame of reference
-        perpVel += otherV.dot(perpToNorm);
+        perpVel += other.V.dot(perpToNorm);
     }
 
-    this.V = collisionNormal.multiplyNew(normalVel + (2 * -normalVel * bouncyness));
+    var puckNormal = this.V.dot(collisionNormal);
+    var wellNormal = other ? other.V.dot(collisionNormal) : 0;
+
+    if (other && other.mass) {
+        this.V = collisionNormal.multiplyNew(
+                (1 + bouncyness) * wellNormal * (4 / 5) +
+                puckNormal * ((1 - bouncyness * 4) / 5));
+        window.sounds.playerHit.impactSound(-puckNormal + wellNormal);
+    }
+    else {
+        this.V = collisionNormal.multiplyNew(
+                (1 + bouncyness) * wellNormal -
+                (puckNormal * bouncyness));
+        window.sounds.wallHit.impactSound(-puckNormal);
+    }
     this.V.plusEq(perpToNorm.multiplyNew(perpVel));
 };
 

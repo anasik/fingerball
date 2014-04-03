@@ -10,6 +10,7 @@ function GravityWell(pos, R, player) {
     this.R = R;
     this.timeout = 0;
     this.player = player;
+    this.mass = true;
 }
 
 function TouchGravityWell(pos, R, player, identifier) {
@@ -26,7 +27,6 @@ function GravityWells(physics, canvas, ctx, field, gravityEnabled, R) {
     this.wells.touches = [];
     this.gravity = gravityEnabled;
     this.R = R;
-    this._accelV = new Vector2();
 }
 
 GravityWells.prototype.mouseDown = function(e) {
@@ -82,57 +82,9 @@ GravityWells.prototype.touchWells = function(e) {
 };
 
 GravityWells.prototype.applyForces = function(puck, elapsed) {
-    this._accelV.x = 0;
-    this._accelV.y = 0;
-
     this.allWellsArray().forEach(function(well) {
-        var distanceV = puck.pos.minusNew(well.pos);
-        var distance = distanceV.magnitude();
-        var minimumDistance = puck.R + this.R;
-        var collisionNormal = distanceV.clone().normalise();
-
-        if (distance > minimumDistance) {
-            if (this.gravity) {
-                var scaledMagnitude = distance / 10;
-                var force = 0.2 / (scaledMagnitude * scaledMagnitude);
-                var accelV = collisionNormal.multiplyNew(-force);
-                accelV.multiplyEq(elapsed);
-                this._accelV.plusEq(accelV);
-            }
-        }
-        else {
-            var deltaT = this.physics.circlesTimeToCollision(puck, well, elapsed);
-
-            if (deltaT > -2 && well.timeout <= 0) {
-                // Rewind time and re-calculate collision normal
-                puck.pos.plusEq(puck.V.multiplyNew(elapsed * deltaT));
-                well.pos.plusEq(well.V.multiplyNew(elapsed * deltaT));
-                collisionNormal = puck.pos.minusNew(well.pos).normalise();
-                puck.V.minusEq(puck.accelV);
-
-                // Calculate velocity
-                puck.collideWithNormal(collisionNormal, well.V);
-
-                // Fast-forward time
-                puck.pos.plusEq(puck.V.multiplyNew(elapsed * -deltaT));
-                well.pos.plusEq(well.V.multiplyNew(elapsed * -deltaT));
-
-                well.timeout = 100;
-
-                var relativeV = well.V.minusNew(puck.V);
-                window.sounds.playerHit.impactSound(relativeV);
-            }
-            else {
-                // Collision more than 5 frames away; probably direct press on the puck
-                var minDist = puck.R + well.R;
-                var moveDist = collisionNormal.reverse().multiplyNew(minDist - distance);
-                puck.pos.minusEq(moveDist);
-            }
-        }
+        this.physics.collidePuckCircle(puck, well, elapsed);
     }, this);
-
-    puck.V.plusEq(this._accelV);
-    this._accelV.copyTo(puck.accelV);
 };
 
 GravityWells.prototype.allWellsArray = function() {

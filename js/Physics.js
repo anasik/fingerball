@@ -17,7 +17,7 @@ Physics.prototype.collidePuckCircle = function(puck, circle, elapsed) {
             distanceV = puck.pos.minusNew(circle.pos);
             distanceV.normalise();
 
-            puck.collideWithNormal(distanceV, circle.V);
+            puck.collideWithNormal(distanceV, circle);
 
             puck.pos.plusEq(puck.V.multiplyNew(elapsed * -deltaT));
             circle.pos.plusEq(circle.V.multiplyNew(elapsed * -deltaT));

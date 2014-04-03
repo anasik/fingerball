@@ -57,7 +57,6 @@ Field.prototype.addGoals = function() {
 
 Field.prototype.draw = function() {
     this.ctx.drawImage(window.assets.field.canvas, 0, 0);
-    return;
 };
 
 Field.prototype.collide = function(puck, elapsed) {
@@ -74,11 +73,9 @@ Field.prototype.collide = function(puck, elapsed) {
         }
     }
 
-    this.goalPosts.forEach(function (goalPost) {
-        if (this.physics.collidePuckCircle(puck, goalPost, elapsed)) {
-            window.sounds.wallHit.impactSound(puck.V);
-        }
-    }, this);
+    for (var i = 0; i < 4; i++) {
+        this.physics.collidePuckCircle(puck, this.goalPosts[i], elapsed);
+    }
 
     if (!this.landscape ||
             puck.pos.y < this.goalPosts[0].pos.y - this.goalPostR ||
@@ -86,12 +83,10 @@ Field.prototype.collide = function(puck, elapsed) {
         if (puck.pos.x + puck.R > this.width + this.margin) {
             puck.pos.x = (this.width + this.margin) - puck.R;
             puck.collideWithNormal(this.rightWall);
-            window.sounds.wallHit.impactSound(puck.V.dot(this.rightWall));
         }
         else if (puck.pos.x - puck.R < this.margin) {
             puck.pos.x = puck.R + this.margin;
             puck.collideWithNormal(this.leftWall);
-            window.sounds.wallHit.impactSound(puck.V.dot(this.leftWall));
         }
     }
 
@@ -101,12 +96,10 @@ Field.prototype.collide = function(puck, elapsed) {
         if (puck.pos.y + puck.R > this.height + this.margin) {
             puck.pos.y = (this.height + this.margin) - puck.R;
             puck.collideWithNormal(this.bottomWall);
-            window.sounds.wallHit.impactSound(puck.V.dot(this.bottomWall));
         }
         else if (puck.pos.y - puck.R < this.margin) {
             puck.pos.y = puck.R + this.margin;
             puck.collideWithNormal(this.topWall);
-            window.sounds.wallHit.impactSound(puck.V.dot(this.topWall));
         }
     }
 };

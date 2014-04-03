@@ -135,10 +135,6 @@ GameScene.prototype.update = function(elapsed) {
         }
 
         well.pos.copyTo(well.startPos);
-
-        if (well.timeout > 0) {
-            well.timeout -= elapsed;
-        }
     }, this);
 
     this.puck.pos.plusEq(this.puck.V.multiplyNew(elapsed));
@@ -149,11 +145,11 @@ GameScene.prototype.update = function(elapsed) {
             Math.PI * 2;
     }
 
-    this.puck.applyDrag(elapsed);
-
     this.gravityWells.applyForces(this.puck, elapsed);
 
     this.field.collide(this.puck, elapsed);
+
+    this.puck.applyDrag(elapsed);
 
     var leftPuckEdge = this.puck.pos.x - this.puck.R;
     var rightPuckEdge = this.puck.pos.x + this.puck.R;
