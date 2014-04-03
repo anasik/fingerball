@@ -7,9 +7,10 @@ MenuScene.prototype.createButton = function(text, action) {
 
     button.innerHTML = text;
     button.style.textAlign = "center";
-    button.style.backgroundColor = "rgb(33,33,33)";
-    button.style.color = "white";
+    button.style.backgroundColor = "white";
+    button.style.color = "rgb(33,33,33)";
     button.style.borderRadius = "15px";
+    button.style.border = "1px solid rgb(33,33,33)";
     button.style.display = "inline-block";
 
     var height = this.canvas.height / 8;
@@ -43,11 +44,13 @@ MenuScene.prototype.init = function() {
     document.body.appendChild(this.menuDiv);
 
     var gameTitle = document.createElement("p");
-    gameTitle.innerHTML = "Play";
-    gameTitle.style.color = "rgb(33,33,33)";
-    var titleHeight = window.innerHeight / 8;
+    gameTitle.innerHTML = "Airball";
+    gameTitle.style.color = "white";
+    gameTitle.style.textShadow = "-1px -1px 0 #333, 1px -1px 0 #333, -1px 1px 0 #333, 1px 1px 0 #333";
+    var titleHeight = window.innerHeight / 7;
     gameTitle.style.fontSize = titleHeight + "px";
     gameTitle.style.fontFamily = "sans-serif";
+    gameTitle.style.fontWeight = "bold";
     gameTitle.style.margin = (titleHeight / 3) + "px";
     gameTitle.style.marginTop = titleHeight + "px";
     gameTitle.style.cursor = "default";
@@ -85,6 +88,11 @@ MenuScene.prototype.tearDown = function() {
 MenuScene.prototype.update = function() { };
 
 MenuScene.prototype.draw = function() {
-    this.ctx.fillStyle = "lightgray";
-    this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+    if (!window.assets.field.loaded) {
+        this.ctx.fillStyle = "rgb(68,170,0)";
+        this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+    }
+    else {
+        this.ctx.drawImage(window.assets.field.canvas, 0, 0);
+    }
 };
