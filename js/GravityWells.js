@@ -11,12 +11,51 @@ function GravityWell(pos, R, player) {
     this.timeout = 0;
     this.player = player;
     this.mass = true;
+    this.smoothingBuffer = [
+        new Vector2(),
+        new Vector2(),
+        new Vector2(),
+        new Vector2(),
+        new Vector2()
+    ];
+    this.smoothingIndex = 0;
 }
+
+GravityWell.prototype.setV = function(newV) {
+    this.smoothingBuffer[this.smoothingIndex].x = newV.x;
+    this.smoothingBuffer[this.smoothingIndex].y = newV.y;
+
+    var sum = new Vector2();
+    var weight = 1;
+    var divideBy = 0;
+
+    for (var i = 0; i < 5; i++) {
+        var index = this.smoothingIndex - i;
+        if (index < 0) {
+            index = 5 + index;
+        }
+
+        sum.x += this.smoothingBuffer[index].x * weight;
+        sum.y += this.smoothingBuffer[index].y * weight;
+
+        divideBy += weight;
+        weight = weight * 0.5;
+    }
+
+    this.V = sum.divideEq(divideBy);
+
+    this.smoothingIndex++;
+    if (this.smoothingIndex % 5 === 0) {
+        this.smoothingIndex = 0;
+    }
+};
 
 function TouchGravityWell(pos, R, player, identifier) {
     GravityWell.call(this, pos, R, player);
     this.identifier = identifier;
 }
+
+TouchGravityWell.prototype = GravityWell.prototype;
 
 function GravityWells(physics, canvas, ctx, field, gravityEnabled, R) {
     this.physics = physics;

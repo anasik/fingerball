@@ -128,7 +128,7 @@ GameScene.prototype.update = function(elapsed) {
         }
 
         if (well.startPos) {
-            well.V = well.pos.minusNew(well.startPos).divideEq(elapsed);
+            well.setV(well.pos.minusNew(well.startPos).divideEq(elapsed));
         }
         else {
             well.startPos = new Vector2();
