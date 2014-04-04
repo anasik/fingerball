@@ -13,6 +13,7 @@ CACHE MANIFEST
 /js/MenuScene.js
 /js/AssetManager.js
 /js/AudioManager.js
+/js/Scoreboard.js
 /js/Main.js
 
 /sounds/hit_player.mp3

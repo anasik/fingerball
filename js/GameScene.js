@@ -1,5 +1,6 @@
 var Scene = window.Scene,
-    Vector2 = window.Vector2;
+    Vector2 = window.Vector2,
+    Scoreboard = window.Scoreboard;
 
 function GameScene(canvas, context, withAI) {
     Scene.call(this, canvas, context);
@@ -64,6 +65,8 @@ GameScene.prototype.init = function() {
     this.canvas.ontouchstart = touchWellsProxy;
     this.canvas.ontouchmove = touchWellsProxy;
     this.canvas.ontouchend = touchWellsProxy;
+
+    this.scoreboard = new Scoreboard(this);
 };
 
 GameScene.prototype.update = function(elapsed) {
@@ -164,7 +167,6 @@ GameScene.prototype.update = function(elapsed) {
 
         if (this.ai) {
             this.ai.enrage();
-            this.ai.react(750);
         }
     }
     else if (this.field.landscape && rightPuckEdge < this.field.margin) {
@@ -181,7 +183,6 @@ GameScene.prototype.update = function(elapsed) {
 
         if (this.ai) {
             this.ai.enrage();
-            this.ai.react(750);
         }
     }
     else if (!this.field.landscape && topPuckEdge > fieldBottomEdge) {
@@ -192,6 +193,11 @@ GameScene.prototype.update = function(elapsed) {
             this.ai.calmDown();
         }
     }
+    else {
+        return;
+    }
+
+    this.scoreboard.show();
 };
 
 GameScene.prototype.draw = function() {

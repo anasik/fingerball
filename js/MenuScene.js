@@ -41,6 +41,8 @@ MenuScene.prototype.init = function() {
     this.menuDiv.style.width = "100%";
     this.menuDiv.style.height = "100%";
     this.menuDiv.style.textAlign = "center";
+    this.menuDiv.style.background = "rgba(0,0,0,0.6)";
+    this.menuDiv.ontouchmove = function(e) { e.preventDefault(); };
     document.body.appendChild(this.menuDiv);
 
     var gameTitle = document.createElement("p");
