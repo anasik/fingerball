@@ -10,6 +10,7 @@ function Puck(canvas, ctx, R) {
     this.angle = 0;
     this.angularV = 0;
     this.highRe = false;
+    this.collisionEvent = null;
 }
 
 Puck.prototype.applyDrag = function(elapsed) {
@@ -106,6 +107,10 @@ Puck.prototype.collideWithNormal = function(collisionNormal, other) {
         window.sounds.wallHit.impactSound(-puckNormal);
     }
     this.V.plusEq(perpToNorm.multiplyNew(perpVel));
+
+    if (this.collisionEvent && this.collisionEvent instanceof Function) {
+        this.collisionEvent();
+    }
 };
 
 Puck.prototype.center = function() {

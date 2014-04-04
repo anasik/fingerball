@@ -46,13 +46,29 @@ function AI(gravityWells, puck, field) {
 
     this.state = AI.STATE.idle;
     this.react(750);
+
+    puck.collisionEvent = $.proxy(this.ballHit, this);
 }
 
 AI.STATE = {
     idle: 1,
     defending: 2,
     attacking: 3,
-    aligning: 4
+    aligning: 4,
+    unsticking: 5,
+    avoiding: 6
+};
+
+AI.prototype.ballHit = function() {
+    if (this.state === AI.STATE.unsticking) {
+        this.state = AI.STATE.avoiding;
+    }
+    else if (this.state === AI.STATE.attacking) {
+        this.state = AI.STATE.idle;
+    }
+    else if (!this.puck.V.isCloseTo(this.lastPuckV, 0.5)) {
+        this.react();
+    }
 };
 
 AI.prototype.enrage = function() {
@@ -92,12 +108,6 @@ AI.prototype.react = function(reactionTime) {
 };
 
 AI.prototype.think = function(elapsed) {
-    if (!this.puck.V.isCloseTo(this.lastPuckV, 0.5)) {
-        this.react();
-    }
-
-    this.puck.V.copyTo(this.lastPuckV);
-
     if (this.reactionTimeout > 0) {
         this.reactionTimeout -= elapsed;
         this.arrive(elapsed);
@@ -149,6 +159,11 @@ AI.prototype.think = function(elapsed) {
                 this.state = AI.STATE.defending;
                 break;
             }
+            else if (!this.posUnreachable(this.puck.pos, this.puck.R) &&
+                    this.puck.V.isMagLessThan(this.maxV / 5)) {
+                this.state = AI.STATE.unsticking;
+                break;
+            }
 
             this.defPos.copyTo(this.destination);
             this.arrive(elapsed);
@@ -189,9 +204,7 @@ AI.prototype.think = function(elapsed) {
                 targetPos.y -= radiiSum;
             }
 
-            if (!this.gravityWells.wells.ai || this.posUnreachable(targetPos, this.myGravityWell.R) ||
-                (this.field.landscape && this.puck.V.x < -this.maxV / 3) ||
-                (!this.field.landscape && this.puck.V.y > this.maxV / 3) ||
+            if (!this.gravityWells.wells.ai || this.posUnreachable(targetPos, this.puck.R) ||
                 (this.field.landscape && this.puck.pos.x > this.myGravityWell.pos.x) ||
                 (!this.field.landscape && this.puck.pos.y < this.myGravityWell.pos.y)) {
                 this.state = AI.STATE.idle;
@@ -243,6 +256,24 @@ AI.prototype.think = function(elapsed) {
                     break;
                 }
             }
+            break;
+        case AI.STATE.unsticking:
+            this.puck.pos.copyTo(this.destination);
+            this.arrive(elapsed);
+            break;
+        case AI.STATE.avoiding:
+            var dist = this.myGravityWell.pos.minusNew(this.puck.pos);
+
+            if (!dist.isMagLessThan((this.puck.R + this.myGravityWell.R) * 2)) {
+                this.state = AI.STATE.idle;
+                break;
+            }
+
+            dist.normalise();
+            dist.multiplyEq(this.maxV * 20)
+                .plusEq(this.myGravityWell.pos)
+                .copyTo(this.destination);
+            this.arrive(elapsed);
             break;
     }
 };
