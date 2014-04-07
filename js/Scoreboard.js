@@ -26,6 +26,7 @@ function Scoreboard(game) {
 }
 
 Scoreboard.prototype.show = function() {
+    this.game.draw();
     this.game.paused = true;
     this.scoreDiv.innerHTML = "<p>" + this.score.P1 + ":" + this.score.P2 + "</p>";
     document.body.appendChild(this.scoreDiv);
