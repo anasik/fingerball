@@ -201,6 +201,10 @@ GameScene.prototype.update = function(elapsed) {
 };
 
 GameScene.prototype.draw = function() {
+    if (this.paused) {
+        return;
+    }
+
     this.field.draw();
     this.puck.draw();
     this.gravityWells.draw();

@@ -78,6 +78,9 @@ MenuScene.prototype.init = function() {
 
     this.menuDiv.appendChild(vsAIButton);
     this.menuDiv.appendChild(pvpButton);
+
+    this.loFiBackgroundDrawn = false;
+    this.hiFiBackgroundDrawn = false;
 };
 
 MenuScene.prototype.tearDown = function() {
@@ -90,11 +93,13 @@ MenuScene.prototype.tearDown = function() {
 MenuScene.prototype.update = function() { };
 
 MenuScene.prototype.draw = function() {
-    if (!window.assets.field.loaded) {
+    if (!window.assets.field.loaded && !this.loFiBackgroundDrawn) {
         this.ctx.fillStyle = "rgb(68,170,0)";
         this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+        this.loFiBackgroundDrawn = true;
     }
-    else {
+    else if (window.assets.field.loaded && !this.hiFiBackgroundDrawn) {
         this.ctx.drawImage(window.assets.field.canvas, 0, 0);
+        this.hiFiBackgroundDrawn = true;
     }
 };

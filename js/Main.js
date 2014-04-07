@@ -3,6 +3,24 @@ window.requestAnimationFrame = window.requestAnimationFrame ||
     window.msRequestAnimationFrame;
 window.AudioContext = window.AudioContext || window.webkitAudioContext;
 
+var hidden, visibilityChange;
+if (typeof document.hidden !== "undefined") {
+    hidden = "hidden";
+    visibilityChange = "visibilitychange";
+}
+else if (typeof document.mozHidden !== "undefined") {
+    hidden = "mozHidden";
+    visibilityChange = "mozvisibilitychange";
+}
+else if (typeof document.msHidden !== "undefined") {
+    hidden = "msHidden";
+    visibilityChange = "msvisibilitychange";
+}
+else if (typeof document.webkitHidden !== "undefined") {
+    hidden = "webkitHidden";
+    visibilityChange = "webkitvisibilitychange";
+}
+
 var canvas = document.createElement("canvas"),
     ctx = canvas.getContext("2d"),
     audioCtx = new window.AudioContext(),
@@ -21,6 +39,18 @@ window.onresize = function() {
     scene.init();
     scene.draw();
 };
+
+function handleVisibilityChange() {
+    if (window.scene && window.scene.hasOwnProperty("paused")) {
+        if (document[hidden]) {
+            window.scene.paused = true;
+        }
+        else {
+            window.scene.paused = false;
+        }
+    }
+}
+document.addEventListener(visibilityChange, handleVisibilityChange, false);
 
 document.body.appendChild(canvas);
 
@@ -59,17 +89,20 @@ function main(timestamp) {
     scene.update(elapsed);
     scene.draw();
 
-    framesRendered += 1;
-    timeSinceLastFPScheck += elapsed;
+    if (debug) {
+        framesRendered += 1;
+        timeSinceLastFPScheck += elapsed;
 
-    if (timeSinceLastFPScheck > 200) {
-        fps = Math.floor((framesRendered / timeSinceLastFPScheck) * 1000);
-        framesRendered = 0;
-        timeSinceLastFPScheck = 0;
+        if (timeSinceLastFPScheck > 200) {
+            fps = Math.floor(
+                    (framesRendered / timeSinceLastFPScheck) * 1000);
+            framesRendered = 0;
+            timeSinceLastFPScheck = 0;
+        }
+
+        ctx.fillStyle = "white";
+        ctx.fillText("FPS: " + fps, 60, 14);
     }
-
-    ctx.fillStyle = "white";
-    ctx.fillText("FPS: " + fps, 60, 14);
 }
 
 scene.init();

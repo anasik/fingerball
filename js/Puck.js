@@ -135,13 +135,10 @@ Puck.prototype.draw = function() {
     this.ctx.translate(this.pos.x, this.pos.y);
 
     if (this.highRe) {
-        this.ctx.save();
-        this.ctx.globalAlpha = 0.25;
-        this.ctx.fillStyle = 'white';
+        this.ctx.fillStyle = 'rgba(255,255,255,0.25)';
         this.ctx.beginPath();
         this.ctx.arc(-this.V.x * 16, -this.V.y * 16, this.R, 0, Math.PI * 2, true);
         this.ctx.fill();
-        this.ctx.restore();
     }
 
     this.ctx.rotate(this.angle);
