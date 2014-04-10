@@ -30,9 +30,14 @@ var canvas = document.createElement("canvas"),
     framesRendered,
     timeSinceLastFPScheck = 0,
     fps,
-    debug = false,
+    debug = true,
     scene = new window.MenuScene(canvas, ctx),
     assets = new window.AssetManager();
+
+if (debug) {
+    window.gameConsole = new window.GameConsole(canvas);
+    window.gameConsole.message("Game loaded.");
+}
 
 window.onresize = function() {
     assets.refresh();
@@ -66,19 +71,6 @@ crc2DProto.circlePathV = function(pos, r) {
     this.arc(pos.x, pos.y, r, 0, Math.PI * 2, true);
     this.closePath();
 };
-
-function debugAlert(msg) {
-    if (debug) {
-        scene.draw();
-        alert(msg);
-    }
-}
-
-function debugLog(msg) {
-    if (debug) {
-        console.log(msg);
-    }
-}
 
 function main(timestamp) {
     window.requestAnimationFrame(main);

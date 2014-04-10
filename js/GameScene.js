@@ -6,6 +6,10 @@ function GameScene(canvas, context, withAI) {
     Scene.call(this, canvas, context);
     this.withAI = withAI;
     this.score = { P1: 0, P2: 0 };
+
+    if (window.gameConsole) {
+        window.gameConsole.message("Game started.");
+    }
 }
 
 GameScene.prototype.init = function() {
