@@ -2,7 +2,14 @@ function GameConsole(gameCanvas) {
     this.gameCanvas = gameCanvas;
 
     this.consoleDiv = document.createElement("div");
-    this.consoleDiv.style = "background: rgba(0,0,0,0.6); position: absolute; bottom: 0px; left: 0px; margin: 20px; padding: 0 20px; color: white; -webkit-user-select: none; -khtml-user-select: none; -moz-user-select: none; -o-user-select: none; user-select: none;";
+    this.consoleDiv.style.background = "rgba(0,0,0,0.6)";
+    this.consoleDiv.style.position = "absolute";
+    this.consoleDiv.style.bottom = "0px";
+    this.consoleDiv.style.left = "0px";
+    this.consoleDiv.style.margin = "20px";
+    this.consoleDiv.style.padding = "0 20px";
+    this.consoleDiv.style.color = "white";
+    this.consoleDiv.style.fontFamily = "sans-serif";
 
     this.consoleDiv.onmousedown = this.forwardEvent("onmousedown");
     this.consoleDiv.onmousemove = this.forwardEvent("onmousemove");
