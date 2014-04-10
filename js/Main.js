@@ -30,7 +30,7 @@ var canvas = document.createElement("canvas"),
     framesRendered,
     timeSinceLastFPScheck = 0,
     fps,
-    debug = true,
+    debug = false,
     scene = new window.MenuScene(canvas, ctx),
     assets = new window.AssetManager();
 

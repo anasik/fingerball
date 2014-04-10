@@ -28,6 +28,10 @@ Physics.prototype.collidePuckCircle = function(puck, circle, elapsed) {
             distanceV.normalise();
             distanceV.multiplyEq(minDist - Math.sqrt(distanceSq));
             puck.pos.plusEq(distanceV);
+
+            if (puck.collisionEvent && $.isFunction(puck.collisionEvent)) {
+                puck.collisionEvent();
+            }
         }
     }
 

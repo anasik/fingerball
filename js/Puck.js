@@ -22,7 +22,7 @@ Puck.prototype.applyDrag = function(elapsed) {
 
     if (Math.abs(this.V.x) > epsilon || Math.abs(this.V.y) > epsilon) {
         var resist = this.V.clone().reverse().normalise();
-        var cd = this.highRe ? 0.0003 : 0.0006;
+        var cd = this.highRe ? 0.0004 : 0.0007;
         var drag = resist.multiplyNew(VmagSq * cd * elapsed);
         var frict = resist.multiplyNew(Vmag * 0.0002 * elapsed);
 

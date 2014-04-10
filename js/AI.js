@@ -12,8 +12,8 @@ function AI(gravityWells, puck, field) {
     this.fieldCenter = field.fieldCenterV;
 
     this.attackPos = field.landscape ?
-        new Vector2(field.margin + (field.width * 0.80), halfHeight) :
-        new Vector2(halfWidth, field.margin + (field.height * 0.20));
+        new Vector2(field.margin + (field.width * 0.85), halfHeight) :
+        new Vector2(halfWidth, field.margin + (field.height * 0.15));
 
     this.defPos = field.landscape ?
         new Vector2(field.margin + (field.width - gravityWells.R), halfHeight) :
@@ -31,21 +31,23 @@ function AI(gravityWells, puck, field) {
     this.enrageLevel = 0;
     this.enrageStep = 0.16;
 
-    this.maxVCalm = 0.8; // pixel/ms
-    this.maxVBonus = 0.4;
+    this.maxVCalm = this.field.landscape ?
+        this.field.height * 0.001288 :
+        this.field.width * 0.001288;
+    this.maxVBonus = this.maxVCalm / 3;
     this.maxV = this.maxVCalm;
 
     this.arriveRadius = this.maxV * 20; // pixel
 
-    this.reactionTimeCalm = 300; // ms
-    this.reactionTimeBonus = 100;
+    this.reactionTimeCalm = 250; // ms
+    this.reactionTimeBonus = 150;
     this.reactionTime = this.reactionTimeCalm;
 
     this.lastPuckV = new Vector2();
     this.reactionTimeout = 0;
 
     this.state = AI.STATE.idle;
-    this.react(750);
+    this.react(1500);
 
     puck.collisionEvent = $.proxy(this.ballHit, this);
 }
@@ -56,15 +58,25 @@ AI.STATE = {
     attacking: 3,
     aligning: 4,
     unsticking: 5,
-    avoiding: 6
+    avoiding: 6,
+    blocking: 7
 };
 
 AI.prototype.ballHit = function() {
     if (this.state === AI.STATE.unsticking) {
+        this.gravityWells.wells.ai = null;
         this.state = AI.STATE.avoiding;
+        if (window.gameConsole) {
+            window.gameConsole.message("AI: ball hit: unsticking -> avoiding");
+        }
     }
     else if (this.state === AI.STATE.attacking) {
         this.state = AI.STATE.idle;
+        if (window.gameConsole) {
+            window.gameConsole.message("AI: ball hit: attacking -> idle");
+        }
+        this.defPos.copyTo(this.destination);
+        this.react();
     }
     else if (!this.puck.V.isCloseTo(this.lastPuckV, 0.5)) {
         this.react();
@@ -126,6 +138,7 @@ AI.prototype.think = function(elapsed) {
     }
 
     var timeToArrive = goalAxisDist / goalAxisSpeed;
+    var towardsGoalSpeed = this.field.landscape ? goalAxisSpeed : -goalAxisSpeed;
 
     switch (this.state) {
         case AI.STATE.idle:
@@ -141,27 +154,46 @@ AI.prototype.think = function(elapsed) {
                 behindPuckPos.y -= this.myGravityWell.R + this.puck.R;
             }
 
-            var towardsGoalSpeed = this.field.landscape ? goalAxisSpeed : -goalAxisSpeed;
-
-            if (!this.posUnreachable(behindPuckPos, this.puck.R)) {
-                if (towardsGoalSpeed >= this.maxV * 1.5) {
+            if (!this.posUnreachable(behindPuckPos, this.puck.R / 2)) {
+                if (towardsGoalSpeed >= this.maxV) {
                     this.state = AI.STATE.defending;
+                    if (window.gameConsole) {
+                        window.gameConsole.message('AI: idle -> defending');
+                    }
                     break;
                 }
                 else if ((this.field.landscape && this.puck.V.x > -(this.maxV / 3)) ||
                          (!this.field.landscape && this.puck.V.y < this.maxV / 3)) {
                     this.state = AI.STATE.aligning;
+                    if (window.gameConsole) {
+                        window.gameConsole.message('AI: idle -> aligning');
+                    }
                     break;
                 }
             }
-            else if (this.posUnreachable(this.puck.pos, this.puck.R) && towardsGoalSpeed >= this.maxV) {
-                // the puck is in the other half of the field
-                this.state = AI.STATE.defending;
-                break;
+            else if (this.posUnreachable(this.puck.pos, 0)) {
+                if (towardsGoalSpeed >= this.maxV / 2) {
+                    // the puck is in the other half of the field
+                    this.state = AI.STATE.defending;
+                    if (window.gameConsole) {
+                        window.gameConsole.message('AI: idle -> defending');
+                    }
+                    break;
+                }
+                else {
+                    this.state = AI.STATE.blocking;
+                    if (window.gameConsole) {
+                        window.gameConsole.message('AI: idle -> blocking');
+                    }
+                    break;
+                }
             }
-            else if (!this.posUnreachable(this.puck.pos, this.puck.R) &&
+            else if (!this.posUnreachable(this.puck.pos, this.puck.R * 0.9) &&
                     this.puck.V.isMagLessThan(this.maxV / 5)) {
                 this.state = AI.STATE.unsticking;
+                if (window.gameConsole) {
+                    window.gameConsole.message("AI: idle -> unsticking");
+                }
                 break;
             }
 
@@ -169,9 +201,12 @@ AI.prototype.think = function(elapsed) {
             this.arrive(elapsed);
             break;
         case AI.STATE.defending:
-            if ((this.field.landscape && this.puck.V.x < this.maxV) ||
-                (!this.field.landscape && this.puck.V.y > -this.maxV)) {
+            if ((this.field.landscape && this.puck.V.x < this.maxV / 2) ||
+                (!this.field.landscape && this.puck.V.y > -this.maxV / 2)) {
                 this.state = AI.STATE.idle;
+                if (window.gameConsole) {
+                    window.gameConsole.message('AI: defending -> idle');
+                }
                 break;
             }
 
@@ -193,6 +228,35 @@ AI.prototype.think = function(elapsed) {
 
             this.arrive(elapsed);
             break;
+        case AI.STATE.blocking:
+            if (goalAxisSpeed >= this.maxV / 2 || !this.posUnreachable(this.puck.pos, 0)) {
+                this.state = AI.STATE.idle;
+                if (window.gameConsole) {
+                    window.gameConsole.message('AI: blocking -> idle');
+                }
+                break;
+            }
+            else {
+                var slope, goalAxisToGoal, perpAxisToGoal, goalAxisToMe;
+                if (this.field.landscape) {
+                    goalAxisToGoal = this.field.maxX - this.puck.pos.x;
+                    perpAxisToGoal = this.field.fieldCenterV.y - this.puck.pos.y;
+                    slope = perpAxisToGoal / goalAxisToGoal;
+                    goalAxisToMe = this.attackPos.x - this.puck.pos.x;
+                    this.destination.x = this.attackPos.x;
+                    this.destination.y = this.puck.pos.y + goalAxisToMe * slope;
+                }
+                else {
+                    goalAxisToGoal = this.puck.pos.y - this.field.margin;
+                    perpAxisToGoal = this.field.fieldCenterV.x - this.puck.pos.x;
+                    slope = perpAxisToGoal / goalAxisToGoal;
+                    goalAxisToMe = this.puck.pos.y - this.attackPos.y;
+                    this.destination.x = this.puck.pos.x + goalAxisToMe * slope;
+                    this.destination.y = this.attackPos.y;
+                }
+                this.arrive(elapsed);
+            }
+            break;
         case AI.STATE.attacking:
             var targetPos = this.puck.pos.clone(),
                 radiiSum = (this.puck.R + this.myGravityWell.R) * 0.8;
@@ -208,6 +272,9 @@ AI.prototype.think = function(elapsed) {
                 (this.field.landscape && this.puck.pos.x > this.myGravityWell.pos.x) ||
                 (!this.field.landscape && this.puck.pos.y < this.myGravityWell.pos.y)) {
                 this.state = AI.STATE.idle;
+                if (window.gameConsole) {
+                    window.gameConsole.message('AI: attacking -> idle');
+                }
                 break;
             }
 
@@ -221,8 +288,11 @@ AI.prototype.think = function(elapsed) {
 
             var puckProj = this.puck.pos.plusNew(this.puck.V.multiplyNew(100));
 
-            if (this.posUnreachable(puckProj, 0)) {
+            if (this.posUnreachable(this.puck.pos, 0)) {
                 this.state = AI.STATE.idle;
+                if (window.gameConsole) {
+                    window.gameConsole.message('AI: aligning -> idle');
+                }
                 break;
             }
             else {
@@ -248,29 +318,47 @@ AI.prototype.think = function(elapsed) {
                 }
                 else {
                     this.state = AI.STATE.idle;
+                    if (window.gameConsole) {
+                        window.gameConsole.message('AI: candidate unreachable: aligning -> idle');
+                    }
+                    this.react();
                     break;
                 }
 
                 if (this.myGravityWell.pos.isCloseTo(candidateDestination, this.maxV * 100)) {
                     this.state = AI.STATE.attacking;
+                    if (window.gameConsole) {
+                        window.gameConsole.message('AI: aligning -> attacking');
+                    }
                     break;
                 }
             }
             break;
         case AI.STATE.unsticking:
+            if (!this.puck.V.isMagLessThan(this.maxV / 5)) {
+                this.state = AI.STATE.idle;
+                if (window.gameConsole) {
+                    window.gameConsole.message('AI: unsticking -> idle');
+                }
+                break;
+            }
+
             this.puck.pos.copyTo(this.destination);
             this.arrive(elapsed);
             break;
         case AI.STATE.avoiding:
             var dist = this.myGravityWell.pos.minusNew(this.puck.pos);
 
-            if (!dist.isMagLessThan((this.puck.R + this.myGravityWell.R) * 2)) {
+            if (!dist.isMagLessThan((this.puck.R + this.myGravityWell.R) * 3)) {
                 this.state = AI.STATE.idle;
+                if (window.gameConsole) {
+                    window.gameConsole.message('AI: avoiding -> idle');
+                }
                 break;
             }
 
             dist.normalise();
-            dist.multiplyEq(this.maxV * 20)
+            dist.multiplyEq(this.maxV * 100)
                 .plusEq(this.myGravityWell.pos)
                 .copyTo(this.destination);
             this.arrive(elapsed);
