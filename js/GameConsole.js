@@ -16,14 +16,14 @@ function GameConsole(gameCanvas) {
     this.consoleDiv.onmouseup = this.forwardEvent("onmouseup");
     this.consoleDiv.ontouchstart = this.forwardEvent("ontouchstart");
     this.consoleDiv.ontouchmove = this.forwardEvent("ontouchmove");
-    this.consoleDiv.ontouchup = this.forwardEvent("ontouchup");
+    this.consoleDiv.ontouchend = this.forwardEvent("ontouchend");
 
     document.body.appendChild(this.consoleDiv);
 
     this.messages = [];
     this.paragraphs = [];
 
-    for (var i = 0; i < 5; i++) {
+    for (var i = 0; i < 10; i++) {
         var newP = document.createElement("p");
         this.paragraphs.push(newP);
         this.consoleDiv.appendChild(newP);
@@ -43,7 +43,7 @@ GameConsole.prototype.forwardEvent = function(eventName) {
 GameConsole.prototype.message = function(message) {
     this.messages.push(message);
 
-    if (this.messages.length > 5) {
+    if (this.messages.length > 10) {
         this.messages.shift();
     }
 
