@@ -46,7 +46,7 @@ MenuScene.prototype.init = function() {
     document.body.appendChild(this.menuDiv);
 
     var gameTitle = document.createElement("p");
-    gameTitle.innerHTML = "Airball";
+    gameTitle.innerHTML = "Finger Ball";
     gameTitle.style.color = "white";
     gameTitle.style.textShadow = "-1px -1px 0 #333, 1px -1px 0 #333, -1px 1px 0 #333, 1px 1px 0 #333";
     var titleHeight = window.innerHeight / 7;
@@ -54,7 +54,7 @@ MenuScene.prototype.init = function() {
     gameTitle.style.fontFamily = "sans-serif";
     gameTitle.style.fontWeight = "bold";
     gameTitle.style.margin = (titleHeight / 3) + "px";
-    gameTitle.style.marginTop = titleHeight + "px";
+    //gameTitle.style.marginTop = titleHeight + "px";
     gameTitle.style.cursor = "default";
     this.menuDiv.appendChild(gameTitle);
 
