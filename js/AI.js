@@ -84,24 +84,12 @@ AI.prototype.ballHit = function() {
 };
 
 AI.prototype.enrage = function() {
-    if (this.enrageLevel + this.enrageStep <= 1) {
-        this.enrageLevel += this.enrageStep;
-    }
-    else {
-        this.enrageLevel = 1;
-    }
-
+    this.enrageLevel += this.enrageStep;
     this.updateParameters();
 };
 
 AI.prototype.calmDown = function() {
-    if (this.enrageLevel - this.enrageStep >= 0) {
-        this.enrageLevel -= this.enrageStep;
-    }
-    else {
-        this.enrageLevel = 0;
-    }
-
+    this.enrageLevel -= this.enrageStep;
     this.updateParameters();
 };
 
