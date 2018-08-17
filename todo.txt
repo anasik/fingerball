@@ -1,0 +1,8 @@
+- vs AI - disable touch in upper field
+- one player touch per field
+- choose t-shirt color
+- how to play
+- both players face center
+- add centering div to the menu (margin: auto)
+- make the player avatar stay on the field and move to touch?
+- bug when pressing on the score screen and releasing after it has been removed

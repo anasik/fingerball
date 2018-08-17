@@ -1,8 +1,8 @@
-function MenuScene(canvas, context) {
+function P2PMenuScene(canvas, context) {
     window.Scene.call(this, canvas, context);
 }
 
-MenuScene.prototype.createButton = function(text, action) {
+P2PMenuScene.prototype.createButton = function(text, action) {
     var button = document.createElement("div");
 
     button.innerHTML = text;
@@ -29,7 +29,7 @@ MenuScene.prototype.createButton = function(text, action) {
     return button;
 };
 
-MenuScene.prototype.init = function() {
+P2PMenuScene.prototype.init = function() {
     this.tearDown();
 
     this.canvas.width = window.innerWidth;
@@ -58,8 +58,8 @@ MenuScene.prototype.init = function() {
     gameTitle.style.cursor = "default";
     this.menuDiv.appendChild(gameTitle);
 
-    var vsAIButton = this.createButton(
-            "Single player",
+    var createButton = this.createButton(
+            "Create Game",
             function() {
                 this.tearDown();
                 window.scene = new window.GameScene(
@@ -67,60 +67,32 @@ MenuScene.prototype.init = function() {
                 window.scene.init();
             });
 
-    var pvpButton = this.createButton(
-            "Versus mode",
+    var joinButton = this.createButton(
+            "Join Game",
             function() {
                 this.tearDown();
                 window.scene = new window.GameScene(
                     this.canvas, this.ctx, 1);
                 window.scene.init();
             });
-    var p2pButton = this.createButton(
-        "Versus mode (Online)",
-        function() {
-            this.menuDiv.removeChild(vsAIButton);
-            this.menuDiv.removeChild(pvpButton);
-            this.menuDiv.removeChild(p2pButton);
-            this.menuDiv.appendChild(createButton);
-            this.menuDiv.appendChild(joinButton);
-        });
-    var createButton = this.createButton(
-        "Create Game",
-        function() {
-            this.tearDown();
-            window.scene = new window.GameScene(
-                this.canvas, this.ctx, 0);
-            window.scene.init();
-        });
 
-    var joinButton = this.createButton(
-        "Join Game",
-        function() {
-            this.tearDown();
-            window.scene = new window.GameScene(
-                this.canvas, this.ctx, 1);
-            window.scene.init();
-        });
-
-
-    this.menuDiv.appendChild(vsAIButton);
-    this.menuDiv.appendChild(pvpButton);
-    this.menuDiv.appendChild(p2pButton);
+    this.menuDiv.appendChild(createButton);
+    this.menuDiv.appendChild(joinButton);
 
     this.loFiBackgroundDrawn = false;
     this.hiFiBackgroundDrawn = false;
 };
 
-MenuScene.prototype.tearDown = function() {
+P2PMenuScene.prototype.tearDown = function() {
     if (this.menuDiv) {
         document.body.removeChild(this.menuDiv);
         this.menuDiv = null;
     }
 };
 
-MenuScene.prototype.update = function() { };
+P2PMenuScene.prototype.update = function() { };
 
-MenuScene.prototype.draw = function() {
+P2PMenuScene.prototype.draw = function() {
     if (!window.assets.field.loaded && !this.loFiBackgroundDrawn) {
         this.ctx.fillStyle = "rgb(68,170,0)";
         this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);

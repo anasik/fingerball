@@ -2,9 +2,9 @@ var Scene = window.Scene,
     Vector2 = window.Vector2,
     Scoreboard = window.Scoreboard;
 
-function GameScene(canvas, context, withAI) {
+function GameScene(canvas, context, choice) {
     Scene.call(this, canvas, context);
-    this.withAI = withAI;
+    this.choice = choice;
     this.score = { P1: 0, P2: 0 };
 
     if (window.gameConsole) {
@@ -47,11 +47,13 @@ GameScene.prototype.init = function() {
     window.assets.puck.reRender(puckR * 2, puckR * 2);
     this.puck.center(this.canvas);
 
-    if (this.withAI) {
+    if (this.choice === 0) {
         this.ai = new window.AI(
                 this.gravityWells,
                 this.puck,
                 this.field);
+    } else if(this.choice === 2){
+
     }
 
     this.canvas.onmousedown = $.proxy(

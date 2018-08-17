@@ -1,0 +1,113 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.9~svn20110310	//
+AI	js/AI.js	/^function AI(gravityWells, puck, field) {$/;"	c
+AI.STATE.aligning	js/AI.js	/^    attacking: 3,$/;"	p
+AI.STATE.attacking	js/AI.js	/^    defending: 2,$/;"	p
+AI.STATE.defending	js/AI.js	/^    idle: 1,$/;"	p
+AI.STATE.idle	js/AI.js	/^AI.STATE = {$/;"	p
+AI.arrive	js/AI.js	/^AI.prototype.arrive = function(elapsed) {$/;"	m
+AI.calmDown	js/AI.js	/^AI.prototype.calmDown = function() {$/;"	m
+AI.enrage	js/AI.js	/^AI.prototype.enrage = function() {$/;"	m
+AI.posUnreachable	js/AI.js	/^AI.prototype.posUnreachable = function(pos, R) {$/;"	m
+AI.projectPuck	js/AI.js	/^AI.prototype.projectPuck = function(puck, field, goalAxisTarget) {$/;"	m
+AI.react	js/AI.js	/^AI.prototype.react = function(reactionTime) {$/;"	m
+AI.think	js/AI.js	/^AI.prototype.think = function(elapsed) {$/;"	m
+AI.updateParameters	js/AI.js	/^AI.prototype.updateParameters = function() {$/;"	m
+AssetManager	js/AssetManager.js	/^function AssetManager() {$/;"	c
+AssetManager.refresh	js/AssetManager.js	/^AssetManager.prototype.refresh = function() {$/;"	m
+AudioAsset	js/AudioManager.js	/^function AudioAsset(elementId, audioMgr) {$/;"	c
+AudioAsset.impactSound	js/AudioManager.js	/^AudioAsset.prototype.impactSound = function(V) {$/;"	m
+AudioAsset.play	js/AudioManager.js	/^AudioAsset.prototype.play = function(volume) {$/;"	m
+AudioManager	js/AudioManager.js	/^function AudioManager(audioContext) {$/;"	c
+Field	js/Field.js	/^function Field(physics, canvas, ctx, goalPostR, margin, bounce) {$/;"	c
+Field.addGoals	js/Field.js	/^Field.prototype.addGoals = function() {$/;"	m
+Field.collide	js/Field.js	/^Field.prototype.collide = function(puck, elapsed) {$/;"	m
+Field.createGoalPost	js/Field.js	/^Field.prototype.createGoalPost = function(pos) {$/;"	m
+Field.draw	js/Field.js	/^Field.prototype.draw = function() {$/;"	m
+GameScene	js/GameScene.js	/^function GameScene(canvas, context, withAI) {$/;"	c
+GameScene.draw	js/GameScene.js	/^GameScene.prototype.draw = function() {$/;"	m
+GameScene.init	js/GameScene.js	/^GameScene.prototype.init = function() {$/;"	m
+GameScene.score.P1	js/GameScene.js	/^    this.score = { P1: 0, P2: 0 };$/;"	p
+GameScene.score.P2	js/GameScene.js	/^    this.score = { P1: 0, P2: 0 };$/;"	p
+GameScene.update	js/GameScene.js	/^GameScene.prototype.update = function(elapsed) {$/;"	m
+GravityWell	js/GravityWells.js	/^function GravityWell(pos, R, player) {$/;"	c
+GravityWells	js/GravityWells.js	/^function GravityWells(physics, canvas, ctx, field, gravityEnabled, R) {$/;"	c
+GravityWells.allWellsArray	js/GravityWells.js	/^GravityWells.prototype.allWellsArray = function() {$/;"	m
+GravityWells.applyForces	js/GravityWells.js	/^GravityWells.prototype.applyForces = function(puck, elapsed) {$/;"	m
+GravityWells.draw	js/GravityWells.js	/^GravityWells.prototype.draw = function() {$/;"	m
+GravityWells.mouseDown	js/GravityWells.js	/^GravityWells.prototype.mouseDown = function(e) {$/;"	m
+GravityWells.mouseMove	js/GravityWells.js	/^GravityWells.prototype.mouseMove = function(e) {$/;"	m
+GravityWells.mouseUp	js/GravityWells.js	/^GravityWells.prototype.mouseUp = function() {$/;"	m
+GravityWells.touchWells	js/GravityWells.js	/^GravityWells.prototype.touchWells = function(e) {$/;"	m
+MenuScene	js/MenuScene.js	/^function MenuScene(canvas, context) {$/;"	f
+MenuScene	js/MenuScene.js	/^}$/;"	c
+MenuScene.createButton	js/MenuScene.js	/^MenuScene.prototype.createButton = function(text, action) {$/;"	m
+MenuScene.draw	js/MenuScene.js	/^MenuScene.prototype.draw = function() {$/;"	m
+MenuScene.init	js/MenuScene.js	/^MenuScene.prototype.init = function() {$/;"	m
+MenuScene.tearDown	js/MenuScene.js	/^MenuScene.prototype.tearDown = function() {$/;"	m
+MenuScene.update	js/MenuScene.js	/^MenuScene.prototype.update = function() { };$/;"	m
+Physics	js/Physics.js	/^var Physics = function() {$/;"	c
+Physics.circlesTimeToCollision	js/Physics.js	/^Physics.prototype.circlesTimeToCollision = function(c1, c2, elapsed) {$/;"	m
+Physics.collidePuckCircle	js/Physics.js	/^Physics.prototype.collidePuckCircle = function(puck, circle, elapsed) {$/;"	m
+Puck	js/Puck.js	/^function Puck(canvas, ctx, R) {$/;"	c
+Puck.applyDrag	js/Puck.js	/^Puck.prototype.applyDrag = function(elapsed) {$/;"	m
+Puck.center	js/Puck.js	/^Puck.prototype.center = function() {$/;"	m
+Puck.collideWithNormal	js/Puck.js	/^Puck.prototype.collideWithNormal = function(collisionNormal, other) {$/;"	m
+Puck.draw	js/Puck.js	/^Puck.prototype.draw = function() {$/;"	m
+Puck.giveToPlayer	js/Puck.js	/^Puck.prototype.giveToPlayer = function(player) {$/;"	m
+Scene	js/GameScene.js	/^var Scene = window.Scene,$/;"	v
+Scene	js/Scene.js	/^function Scene(canvas, context) {$/;"	c
+Scene.draw	js/Scene.js	/^Scene.prototype.draw = null;$/;"	m
+Scene.init	js/Scene.js	/^Scene.prototype.init = null;$/;"	m
+Scene.update	js/Scene.js	/^Scene.prototype.update = null;$/;"	m
+SvgAsset	js/AssetManager.js	/^function SvgAsset(name, width, height, multiAspect, autoRotate) {$/;"	c
+SvgAsset.getLandscape	js/AssetManager.js	/^SvgAsset.prototype.getLandscape = function() {$/;"	m
+SvgAsset.getWide	js/AssetManager.js	/^SvgAsset.prototype.getWide = function() {$/;"	m
+SvgAsset.loadImage	js/AssetManager.js	/^SvgAsset.prototype.loadImage = function(name) {$/;"	m
+SvgAsset.reRender	js/AssetManager.js	/^SvgAsset.prototype.reRender = function(width, height) {$/;"	m
+TouchGravityWell	js/GravityWells.js	/^function TouchGravityWell(pos, R, player, identifier) {$/;"	c
+Vector2	js/AI.js	/^var Vector2 = window.Vector2,$/;"	v
+Vector2	js/Field.js	/^var Vector2 = window.Vector2;$/;"	v
+Vector2	js/GravityWells.js	/^var Vector2 = window.Vector2;$/;"	v
+Vector2	js/Puck.js	/^var Vector2 = window.Vector2;$/;"	v
+Vector2	js/Vector2.js	/^var Vector2 = function (x,y) {$/;"	c
+Vector2.angle	js/Vector2.js	/^	},$/;"	m
+Vector2.clone	js/Vector2.js	/^	},$/;"	m
+Vector2.copyFrom	js/Vector2.js	/^	},$/;"	m
+Vector2.copyTo	js/Vector2.js	/^	},$/;"	m
+Vector2.divideEq	js/Vector2.js	/^	},$/;"	m
+Vector2.divideNew	js/Vector2.js	/^	},$/;"	m
+Vector2.dot	js/Vector2.js	/^	},$/;"	m
+Vector2.equals	js/Vector2.js	/^	},	$/;"	m
+Vector2.isCloseTo	js/Vector2.js	/^	},$/;"	m
+Vector2.isMagGreaterThan	js/Vector2.js	/^	},$/;"	m
+Vector2.isMagLessThan	js/Vector2.js	/^	}, $/;"	m
+Vector2.magnitude	js/Vector2.js	/^	},	$/;"	m
+Vector2.magnitudeSquared	js/Vector2.js	/^	},$/;"	m
+Vector2.minusEq	js/Vector2.js	/^	},$/;"	m
+Vector2.minusNew	js/Vector2.js	/^	},$/;"	m
+Vector2.multiplyEq	js/Vector2.js	/^	},	$/;"	m
+Vector2.multiplyNew	js/Vector2.js	/^	},$/;"	m
+Vector2.normalise	js/Vector2.js	/^	},$/;"	m
+Vector2.plusEq	js/Vector2.js	/^	},$/;"	m
+Vector2.plusNew	js/Vector2.js	/^	},$/;"	m
+Vector2.reflect	js/Vector2.js	/^	},$/;"	m
+Vector2.reset	js/Vector2.js	/^Vector2.prototype = {$/;"	m
+Vector2.reverse	js/Vector2.js	/^	},$/;"	m
+Vector2.rotate	js/Vector2.js	/^	},$/;"	m
+Vector2.rotateAroundPoint	js/Vector2.js	/^	},$/;"	m
+Vector2.toString	js/Vector2.js	/^	},$/;"	m
+Vector2Const.TO_DEGREES	js/Vector2.js	/^Vector2Const = {$/;"	p
+canvas	js/Main.js	/^var canvas = document.createElement("canvas"),$/;"	v
+crc2DProto	js/Main.js	/^var crc2DProto = CanvasRenderingContext2D.prototype;$/;"	v
+crc2DProto.circlePathV	js/Main.js	/^};$/;"	c
+crc2DProto.lineToV	js/Main.js	/^var crc2DProto = CanvasRenderingContext2D.prototype;$/;"	c
+crc2DProto.moveToV	js/Main.js	/^};$/;"	c
+debugAlert	js/Main.js	/^function debugAlert(msg) {$/;"	f
+debugLog	js/Main.js	/^function debugLog(msg) {$/;"	f
+main	js/Main.js	/^function main(timestamp) {$/;"	f
+window.onresize	js/Main.js	/^    assets = new window.AssetManager();$/;"	f
