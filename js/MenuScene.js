@@ -87,19 +87,50 @@ MenuScene.prototype.init = function() {
     var createButton = this.createButton(
         "Create Game",
         function() {
-            this.tearDown();
-            window.scene = new window.GameScene(
-                this.canvas, this.ctx, 0);
-            window.scene.init();
+            this.menuDiv.removeChild(joinButton);
+            this.menuDiv.removeChild(createButton);
+            var ginput = document.createElement("input");
+            ginput.style.textAlign = "center";
+            ginput.style.backgroundColor = "white";
+            ginput.style.color = "rgb(33,33,33)";
+            ginput.style.borderRadius = "15px";
+            ginput.style.border = "1px solid rgb(33,33,33)";
+            ginput.style.display = "inline-block";
+
+            var height = this.canvas.height / 8;
+
+            ginput.style.margin = (height / 3) + "px";
+            ginput.style.padding = (height / 3) + "px";
+            ginput.style.fontSize = (height * 0.60) + "px";
+            ginput.style.fontFamily = "sans-serif";
+            ginput.value = Math.random().toString(36).substr(2, 5);
+            this.menuDiv.appendChild(ginput);
+            this.menuDiv.appendChild(createButton);
+
         });
 
     var joinButton = this.createButton(
         "Join Game",
         function() {
-            this.tearDown();
-            window.scene = new window.GameScene(
-                this.canvas, this.ctx, 1);
-            window.scene.init();
+            this.menuDiv.removeChild(joinButton);
+            this.menuDiv.removeChild(createButton);
+            var ginput = document.createElement("input");
+            ginput.style.textAlign = "center";
+            ginput.style.backgroundColor = "white";
+            ginput.style.color = "rgb(33,33,33)";
+            ginput.style.borderRadius = "15px";
+            ginput.style.border = "1px solid rgb(33,33,33)";
+            ginput.style.display = "inline-block";
+
+            var height = this.canvas.height / 8;
+
+            ginput.style.margin = (height / 3) + "px";
+            ginput.style.padding = (height / 3) + "px";
+            ginput.style.fontSize = (height * 0.60) + "px";
+            ginput.style.fontFamily = "sans-serif";
+            // ginput.value = Math.random().toString(36).substr(2, 5);
+            this.menuDiv.appendChild(ginput);
+            this.menuDiv.appendChild(joinButton);
         });
 
 
