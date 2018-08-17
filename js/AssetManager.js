@@ -66,10 +66,10 @@ SvgAsset.prototype.loadImage = function(name) {
     this.loaded = false;
 
     if (this.multiAspect && this.getWide()) {
-        this.image.src = '/images/' + name + '-wide.svg';
+        this.image.src = 'images/' + name + '-wide.svg';
     }
     else {
-        this.image.src = '/images/' + name + '.svg';
+        this.image.src = 'images/' + name + '.svg';
     }
 };
 
