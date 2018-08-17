@@ -75,20 +75,22 @@ MenuScene.prototype.init = function() {
                     this.canvas, this.ctx, 1);
                 window.scene.init();
             });
+    var playButton = this.createButton(
+        "Join and Play",
+        function() {
+            this.tearDown();
+            window.scene = new window.GameScene(
+                this.canvas, this.ctx, 2);
+            window.scene.init();
+        });
     var p2pButton = this.createButton(
         "Versus mode (Online)",
         function() {
             this.menuDiv.removeChild(vsAIButton);
             this.menuDiv.removeChild(pvpButton);
             this.menuDiv.removeChild(p2pButton);
-            this.menuDiv.appendChild(createButton);
-            this.menuDiv.appendChild(joinButton);
-        });
-    var createButton = this.createButton(
-        "Create Game",
-        function() {
-            this.menuDiv.removeChild(joinButton);
-            this.menuDiv.removeChild(createButton);
+            // this.menuDiv.appendChild(createButton);
+            // this.menuDiv.appendChild(joinButton);
             var ginput = document.createElement("input");
             ginput.style.textAlign = "center";
             ginput.style.backgroundColor = "white";
@@ -105,33 +107,56 @@ MenuScene.prototype.init = function() {
             ginput.style.fontFamily = "sans-serif";
             ginput.value = Math.random().toString(36).substr(2, 5);
             this.menuDiv.appendChild(ginput);
-            this.menuDiv.appendChild(createButton);
-
+            this.menuDiv.appendChild(playButton);
         });
-
-    var joinButton = this.createButton(
-        "Join Game",
-        function() {
-            this.menuDiv.removeChild(joinButton);
-            this.menuDiv.removeChild(createButton);
-            var ginput = document.createElement("input");
-            ginput.style.textAlign = "center";
-            ginput.style.backgroundColor = "white";
-            ginput.style.color = "rgb(33,33,33)";
-            ginput.style.borderRadius = "15px";
-            ginput.style.border = "1px solid rgb(33,33,33)";
-            ginput.style.display = "inline-block";
-
-            var height = this.canvas.height / 8;
-
-            ginput.style.margin = (height / 3) + "px";
-            ginput.style.padding = (height / 3) + "px";
-            ginput.style.fontSize = (height * 0.60) + "px";
-            ginput.style.fontFamily = "sans-serif";
-            // ginput.value = Math.random().toString(36).substr(2, 5);
-            this.menuDiv.appendChild(ginput);
-            this.menuDiv.appendChild(joinButton);
-        });
+    // var createButton = this.createButton(
+    //     "Create Game",
+    //     function() {
+    //         this.menuDiv.removeChild(joinButton);
+    //         this.menuDiv.removeChild(createButton);
+    //         var ginput = document.createElement("input");
+    //         ginput.style.textAlign = "center";
+    //         ginput.style.backgroundColor = "white";
+    //         ginput.style.color = "rgb(33,33,33)";
+    //         ginput.style.borderRadius = "15px";
+    //         ginput.style.border = "1px solid rgb(33,33,33)";
+    //         ginput.style.display = "inline-block";
+    //
+    //         var height = this.canvas.height / 8;
+    //
+    //         ginput.style.margin = (height / 3) + "px";
+    //         ginput.style.padding = (height / 3) + "px";
+    //         ginput.style.fontSize = (height * 0.60) + "px";
+    //         ginput.style.fontFamily = "sans-serif";
+    //         ginput.value = Math.random().toString(36).substr(2, 5);
+    //         this.menuDiv.appendChild(ginput);
+    //         this.menuDiv.appendChild(playButton);
+    //
+    //     });
+    //
+    // var joinButton = this.createButton(
+    //     "Join Game",
+    //     function() {
+    //         this.menuDiv.removeChild(joinButton);
+    //         this.menuDiv.removeChild(createButton);
+    //         var ginput = document.createElement("input");
+    //         ginput.style.textAlign = "center";
+    //         ginput.style.backgroundColor = "white";
+    //         ginput.style.color = "rgb(33,33,33)";
+    //         ginput.style.borderRadius = "15px";
+    //         ginput.style.border = "1px solid rgb(33,33,33)";
+    //         ginput.style.display = "inline-block";
+    //
+    //         var height = this.canvas.height / 8;
+    //
+    //         ginput.style.margin = (height / 3) + "px";
+    //         ginput.style.padding = (height / 3) + "px";
+    //         ginput.style.fontSize = (height * 0.60) + "px";
+    //         ginput.style.fontFamily = "sans-serif";
+    //         // ginput.value = Math.random().toString(36).substr(2, 5);
+    //         this.menuDiv.appendChild(ginput);
+    //         this.menuDiv.appendChild(playButton);
+    //     });
 
 
     this.menuDiv.appendChild(vsAIButton);
