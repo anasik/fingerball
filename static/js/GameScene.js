@@ -75,9 +75,15 @@ GameScene.prototype.init = function() {
             this.gravityWells.wells.ai.pos.x = x;
             this.gravityWells.wells.ai.pos.y = y;
         };
+        var orient = this.field.landscape;
         this.io.on("blue", function(vector){
-            var x = (2*halfWidth)-(vector.x*halfWidth);
-            var y = vector.y*halfHeight*2;
+            if (!orient /* if portrait */) {
+                var x = (2*halfWidth)-(vector.y*halfWidth*2);
+                var y = vector.x * halfHeight;
+            } else {
+                var x = (2 * halfWidth) - (vector.x * halfWidth);
+                var y = (2*halfHeight)-(vector.y * halfHeight * 2);
+            }
             wupdate(x,y);
         });
         // this.gravityWells.wells.mouse.watch('pos', function(id,newval,oldval){

@@ -74,8 +74,13 @@ GravityWells2.prototype.mouseDown = function(e) {
     this.wells.mouse = new GravityWell(pos, this.R, 'P1');
     this.canvas.onmousemove = $.proxy(this.mouseMove, this);
     var posp = pos.clone();
-    posp.x /= this.field.fieldCenterV.x;
-    posp.y /= this.field.fieldCenterV.y*2;
+    if(!this.field.landscape /*if portrait*/){
+        posp.x = ((2*this.field.fieldCenterV.y)-posp.y) / this.field.fieldCenterV.y;
+        posp.y = posp.x / this.field.fieldCenterV.x*2;
+    } else {
+        posp.x /= this.field.fieldCenterV.x;
+        posp.y /= this.field.fieldCenterV.y*2;
+    }
     this.io.emit('red',posp);
 };
 
@@ -90,8 +95,8 @@ GravityWells2.prototype.mouseMove = function(e) {
 };
 
 GravityWells2.prototype.mouseUp = function() {
-    // this.wells.mouse = null;
-    // this.canvas.onmousemove = null;
+    this.wells.mouse = null;
+    this.canvas.onmousemove = null;
 };
 
 GravityWells2.prototype.touchWells = function(e) {

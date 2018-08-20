@@ -2,15 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="693ab401-4ab0-4a76-9b40-525aff4351a1" name="Default" comment="">
-      <change beforePath="" afterPath="$PROJECT_DIR$/static/js/GravityWells2.js" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/static/js/Vector3.js" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change beforePath="$PROJECT_DIR$/ioevents.js" afterPath="$PROJECT_DIR$/ioevents.js" />
-      <change beforePath="$PROJECT_DIR$/static/index.html" afterPath="$PROJECT_DIR$/static/index.html" />
+      <change beforePath="$PROJECT_DIR$/static/js/Field.js" afterPath="$PROJECT_DIR$/static/js/Field.js" />
       <change beforePath="$PROJECT_DIR$/static/js/GameScene.js" afterPath="$PROJECT_DIR$/static/js/GameScene.js" />
-      <change beforePath="$PROJECT_DIR$/static/js/GravityWells.js" afterPath="$PROJECT_DIR$/static/js/GravityWells.js" />
-      <change beforePath="$PROJECT_DIR$/static/js/MenuScene.js" afterPath="$PROJECT_DIR$/static/js/MenuScene.js" />
-      <change beforePath="$PROJECT_DIR$/static/js/p2p.js" afterPath="$PROJECT_DIR$/static/js/p2p.js" />
+      <change beforePath="$PROJECT_DIR$/static/js/GravityWells2.js" afterPath="$PROJECT_DIR$/static/js/GravityWells2.js" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -21,31 +15,6 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="ioevents.js" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/ioevents.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="198">
-              <caret line="51" column="26" lean-forward="false" selection-start-line="51" selection-start-column="26" selection-end-line="51" selection-end-column="26" />
-              <folding>
-                <element signature="e#388#2046#0" expanded="false" />
-                <element signature="e#2209#2429#0" expanded="false" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="MenuScene.js" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/static/js/MenuScene.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="147">
-              <caret line="159" column="34" lean-forward="false" selection-start-line="159" selection-start-column="34" selection-end-line="159" selection-end-column="34" />
-              <folding>
-                <element signature="e#2838#3448#0" expanded="false" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="p2p.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/static/js/p2p.js">
           <provider selected="true" editor-type-id="text-editor">
@@ -56,11 +25,31 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="GameScene.js" pinned="false" current-in-tab="true">
+      <file leaf-file-name="GameScene.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/static/js/GameScene.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="108">
-              <caret line="78" column="23" lean-forward="false" selection-start-line="78" selection-start-column="23" selection-end-line="78" selection-end-column="23" />
+            <state relative-caret-position="107">
+              <caret line="80" column="38" lean-forward="false" selection-start-line="80" selection-start-column="38" selection-end-line="80" selection-end-column="38" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="GravityWells2.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/static/js/GravityWells2.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="249">
+              <caret line="98" column="33" lean-forward="false" selection-start-line="97" selection-start-column="28" selection-end-line="98" selection-end-column="33" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="package.json" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/package.json">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="0">
+              <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -88,13 +77,14 @@
       <find>Gravity</find>
       <find>gravity</find>
       <find>Vector3</find>
+      <find>landscape</find>
     </findStrings>
     <replaceStrings>
       <replace>P2PMenuScene</replace>
       <replace>ginput</replace>
       <replace>Vector3</replace>
-      <replace>Vector2</replace>
       <replace>this.field</replace>
+      <replace>Vector2</replace>
     </replaceStrings>
   </component>
   <component name="Git.Settings">
@@ -115,14 +105,15 @@
         <option value="$PROJECT_DIR$/bin/www" />
         <option value="$PROJECT_DIR$/iobackup.js" />
         <option value="$PROJECT_DIR$/static/js/p2p.js" />
-        <option value="$PROJECT_DIR$/static/js/MenuScene.js" />
         <option value="$PROJECT_DIR$/static/js/AssetManager.js" />
         <option value="$PROJECT_DIR$/static/js/GravityWells.js" />
         <option value="$PROJECT_DIR$/static/js/Vector3.js" />
         <option value="$PROJECT_DIR$/ioevents.js" />
         <option value="$PROJECT_DIR$/static/index.html" />
-        <option value="$PROJECT_DIR$/static/js/GravityWells2.js" />
+        <option value="$PROJECT_DIR$/static/js/Field.js" />
+        <option value="$PROJECT_DIR$/static/js/MenuScene.js" />
         <option value="$PROJECT_DIR$/static/js/GameScene.js" />
+        <option value="$PROJECT_DIR$/static/js/GravityWells2.js" />
       </list>
     </option>
   </component>
@@ -138,7 +129,7 @@
   <component name="PhpWorkspaceProjectConfiguration" backward_compatibility_performed="true" />
   <component name="ProjectFrameBounds" extendedState="6">
     <option name="x" value="1366" />
-    <option name="y" value="-772" />
+    <option name="y" value="-4" />
     <option name="width" value="1366" />
     <option name="height" value="772" />
   </component>
@@ -174,12 +165,6 @@
               <item name="FingerBall" type="b2602c69:ProjectViewProjectNode" />
               <item name="FingerBall" type="2a2b976b:PhpTreeStructureProvider$1" />
               <item name="static" type="2a2b976b:PhpTreeStructureProvider$1" />
-            </path>
-            <path>
-              <item name="FingerBall" type="b2602c69:ProjectViewProjectNode" />
-              <item name="FingerBall" type="2a2b976b:PhpTreeStructureProvider$1" />
-              <item name="static" type="2a2b976b:PhpTreeStructureProvider$1" />
-              <item name="js" type="2a2b976b:PhpTreeStructureProvider$1" />
             </path>
           </expand>
           <select />
@@ -252,15 +237,15 @@
       <workItem from="1534508196222" duration="257000" />
       <workItem from="1534508465097" duration="9765000" />
       <workItem from="1534673246262" duration="13083000" />
-      <workItem from="1534759003187" duration="12854000" />
+      <workItem from="1534759003187" duration="16913000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="41756000" />
+    <option name="totallyTimeSpent" value="45815000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="1366" y="-772" width="1366" height="772" extended-state="6" />
+    <frame x="1366" y="-4" width="1366" height="772" extended-state="6" />
     <editor active="true" />
     <layout>
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.27045456" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
@@ -269,7 +254,7 @@
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32970452" sideWeight="0.5030303" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32970452" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32970452" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3281493" sideWeight="0.4969697" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
@@ -319,14 +304,6 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/bin/www">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="342">
-          <caret line="19" column="0" lean-forward="false" selection-start-line="19" selection-start-column="0" selection-end-line="19" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/ioevents.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
@@ -448,14 +425,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/static/js/Field.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="134">
-          <caret line="27" column="0" lean-forward="false" selection-start-line="27" selection-start-column="0" selection-end-line="27" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/static/js/Puck.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="36">
@@ -506,25 +475,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/ioevents.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="198">
-          <caret line="51" column="26" lean-forward="false" selection-start-line="51" selection-start-column="26" selection-end-line="51" selection-end-column="26" />
-          <folding>
-            <element signature="e#388#2046#0" expanded="false" />
-            <element signature="e#2209#2429#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/static/js/p2p.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="72">
-          <caret line="4" column="22" lean-forward="true" selection-start-line="4" selection-start-column="22" selection-end-line="4" selection-end-column="22" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$APPLICATION_HOME_DIR$/plugins/JavaScriptLanguage/jsLanguageServicesImpl/external/lib.dom.d.ts">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="134">
@@ -538,16 +488,6 @@
         <state relative-caret-position="90">
           <caret line="5" column="27" lean-forward="false" selection-start-line="5" selection-start-column="27" selection-end-line="5" selection-end-column="27" />
           <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/static/js/MenuScene.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="147">
-          <caret line="159" column="34" lean-forward="false" selection-start-line="159" selection-start-column="34" selection-end-line="159" selection-end-column="34" />
-          <folding>
-            <element signature="e#2838#3448#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -569,14 +509,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/static/js/GravityWells2.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="51">
-          <caret line="69" column="1" lean-forward="true" selection-start-line="69" selection-start-column="1" selection-end-line="69" selection-end-column="1" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/static/js/AI.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="90">
@@ -585,10 +517,63 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/static/js/MenuScene.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="18">
+          <caret line="125" column="40" lean-forward="false" selection-start-line="125" selection-start-column="40" selection-end-line="125" selection-end-column="40" />
+          <folding>
+            <element signature="e#2838#3448#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/ioevents.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="198">
+          <caret line="51" column="26" lean-forward="false" selection-start-line="51" selection-start-column="26" selection-end-line="51" selection-end-column="26" />
+          <folding>
+            <element signature="e#388#2046#0" expanded="false" />
+            <element signature="e#2209#2429#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/static/js/p2p.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="72">
+          <caret line="4" column="22" lean-forward="true" selection-start-line="4" selection-start-column="22" selection-end-line="4" selection-end-column="22" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/static/js/Field.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="198">
+          <caret line="38" column="29" lean-forward="false" selection-start-line="38" selection-start-column="29" selection-end-line="38" selection-end-column="29" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/static/js/GameScene.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="108">
-          <caret line="78" column="23" lean-forward="false" selection-start-line="78" selection-start-column="23" selection-end-line="78" selection-end-column="23" />
+        <state relative-caret-position="107">
+          <caret line="80" column="38" lean-forward="false" selection-start-line="80" selection-start-column="38" selection-end-line="80" selection-end-column="38" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/static/js/GravityWells2.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="249">
+          <caret line="98" column="33" lean-forward="false" selection-start-line="97" selection-start-column="28" selection-end-line="98" selection-end-column="33" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/package.json">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding />
         </state>
       </provider>

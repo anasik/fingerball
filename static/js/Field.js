@@ -6,7 +6,7 @@ function Field(physics, canvas, ctx, goalPostR, margin, bounce) {
     this.ctx = ctx;
     this.goalPosts = [];
     this.goalPostR = goalPostR;
-    this.landscape = false;
+    this.landscape = false; //false means portrait
     this.width = 0;
     this.height = 0;
     this.margin = margin;
