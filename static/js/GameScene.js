@@ -11,7 +11,7 @@ function GameScene(canvas, context, choice) {
         window.gameConsole.message("Game started.");
     }
 }
-
+GameScene.prototype.io = null;
 GameScene.prototype.init = function() {
     this.paused = false;
 
@@ -20,7 +20,7 @@ GameScene.prototype.init = function() {
 
     var shortSide = Math.min(this.canvas.width, this.canvas.height);
 
-    var goalPostR = shortSide * 0.015,
+    var goalPostR = shortSide * 0.030,
         gravityWellR = shortSide * 0.0687,
         puckR = shortSide * 0.0458,
         margin = shortSide * 0.026;
@@ -32,20 +32,36 @@ GameScene.prototype.init = function() {
             this.ctx,
             goalPostR, margin, 0.9);
     this.field.addGoals();
-
-    this.gravityWells = new window.GravityWells(
+    if(this.choice !== 2) {
+        this.gravityWells = new window.GravityWells(
             this.physics,
             this.canvas,
             this.ctx,
             this.field,
             false,
             gravityWellR);
-    window.assets.redPlayer.reRender(gravityWellR * 2, gravityWellR * 2);
-    window.assets.bluePlayer.reRender(gravityWellR * 2, gravityWellR * 2);
-
+        window.assets.redPlayer.reRender(gravityWellR * 2, gravityWellR * 2);
+        window.assets.bluePlayer.reRender(gravityWellR * 2, gravityWellR * 2);
+    } else {
+        this.gravityWells = new window.GravityWells2(
+            this.physics,
+            this.canvas,
+            this.ctx,
+            this.field,
+            false,
+            gravityWellR,this.io);
+        window.assets.redPlayer.reRender(gravityWellR * 2, gravityWellR * 2);
+        window.assets.bluePlayer.reRender(gravityWellR * 2, gravityWellR * 2);
+    }
     this.puck = new window.Puck(this.canvas, this.ctx, puckR);
     window.assets.puck.reRender(puckR * 2, puckR * 2);
     this.puck.center(this.canvas);
+
+    var halfWidth = this.field.fieldCenterV.x;
+    var halfHeight = this.field.fieldCenterV.y;
+    defPos = this.field.landscape ?
+        new Vector2(this.field.margin + (this.field.width - this.gravityWells.R), halfHeight) :
+        new Vector2(halfWidth, this.field.margin + this.gravityWells.R);
 
     if (this.choice === 0) {
         this.ai = new window.AI(
@@ -54,23 +70,37 @@ GameScene.prototype.init = function() {
                 this.field);
     } else if(this.choice === 2){
 
-    }
+        this.gravityWells.wells.ai = new GravityWell(defPos.clone(), this.gravityWells.R, "P2");
+        var wupdate = (x,y)=>{
+            this.gravityWells.wells.ai.pos.x = x;
+            this.gravityWells.wells.ai.pos.y = y;
+        };
+        this.io.on("blue", function(vector){
+            var x = (2*halfWidth)-(vector.x*halfWidth);
+            var y = vector.y*halfHeight*2;
+            wupdate(x,y);
+        });
+        // this.gravityWells.wells.mouse.watch('pos', function(id,newval,oldval){
+        //
+        // });
 
-    this.canvas.onmousedown = $.proxy(
+    }
+            this.canvas.onmousedown = $.proxy(
             this.gravityWells.mouseDown,
             this.gravityWells
-            );
-    this.canvas.onmouseup = $.proxy(
+        );
+        this.canvas.onmouseup = $.proxy(
             this.gravityWells.mouseUp,
             this.gravityWells
-            );
-    var touchWellsProxy = $.proxy(
+        );
+        var touchWellsProxy = $.proxy(
             this.gravityWells.touchWells,
             this.gravityWells
-            );
-    this.canvas.ontouchstart = touchWellsProxy;
-    this.canvas.ontouchmove = touchWellsProxy;
-    this.canvas.ontouchend = touchWellsProxy;
+        );
+        this.canvas.ontouchstart = touchWellsProxy;
+        this.canvas.ontouchmove = touchWellsProxy;
+        this.canvas.ontouchend = touchWellsProxy;
+
 
     this.scoreboard = new Scoreboard(this);
 };
@@ -204,6 +234,7 @@ GameScene.prototype.update = function(elapsed) {
     }
 
     this.scoreboard.show();
+
 };
 
 GameScene.prototype.draw = function() {

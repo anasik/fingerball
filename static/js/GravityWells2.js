@@ -57,7 +57,7 @@ function TouchGravityWell(pos, R, player, identifier) {
 
 TouchGravityWell.prototype = GravityWell.prototype;
 
-function GravityWells(physics, canvas, ctx, field, gravityEnabled, R) {
+function GravityWells2(physics, canvas, ctx, field, gravityEnabled, R, io) {
     this.physics = physics;
     this.canvas = canvas;
     this.ctx = ctx;
@@ -66,26 +66,35 @@ function GravityWells(physics, canvas, ctx, field, gravityEnabled, R) {
     this.wells.touches = [];
     this.gravity = gravityEnabled;
     this.R = R;
+    this.io=io;
 }
 
-GravityWells.prototype.mouseDown = function(e) {
+GravityWells2.prototype.mouseDown = function(e) {
     var pos = new Vector2(e.clientX, e.clientY);
     this.wells.mouse = new GravityWell(pos, this.R, 'P1');
     this.canvas.onmousemove = $.proxy(this.mouseMove, this);
+    var posp = pos.clone();
+    posp.x /= this.field.fieldCenterV.x;
+    posp.y /= this.field.fieldCenterV.y*2;
+    this.io.emit('red',posp);
 };
 
-GravityWells.prototype.mouseMove = function(e) {
+GravityWells2.prototype.mouseMove = function(e) {
     this.wells.mouse.pos.x = e.clientX;
     this.wells.mouse.pos.y = e.clientY;
+    var posp = this.wells.mouse.pos.clone();
+    posp.x /= this.field.fieldCenterV.x;
+    posp.y /= this.field.fieldCenterV.y*2;
+    this.io.emit('red',posp);
     return false;
 };
 
-GravityWells.prototype.mouseUp = function() {
+GravityWells2.prototype.mouseUp = function() {
     // this.wells.mouse = null;
     // this.canvas.onmousemove = null;
 };
 
-GravityWells.prototype.touchWells = function(e) {
+GravityWells2.prototype.touchWells = function(e) {
     e.preventDefault();
 
     var newWells = [];
@@ -118,15 +127,20 @@ GravityWells.prototype.touchWells = function(e) {
     }
 
     this.wells.touches = newWells;
+    var posp = newWells.clone();
+    posp.x /= this.field.fieldCenterV.x;
+    posp.y /= this.field.fieldCenterV.y*2;
+    this.io.emit('red',posp);
+
 };
 
-GravityWells.prototype.applyForces = function(puck, elapsed) {
+GravityWells2.prototype.applyForces = function(puck, elapsed) {
     this.allWellsArray().forEach(function(well) {
         this.physics.collidePuckCircle(puck, well, elapsed);
     }, this);
 };
 
-GravityWells.prototype.allWellsArray = function() {
+GravityWells2.prototype.allWellsArray = function() {
     var activeWells = [];
 
     if (this.wells.mouse) {
@@ -147,7 +161,7 @@ GravityWells.prototype.allWellsArray = function() {
     return activeWells;
 };
 
-GravityWells.prototype.draw = function() {
+GravityWells2.prototype.draw = function() {
     this.allWellsArray().forEach(function(well) {
         var imageStartX = well.pos.x - this.R,
             imageStartY = well.pos.y - this.R;

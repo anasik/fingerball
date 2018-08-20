@@ -28,7 +28,27 @@ MenuScene.prototype.createButton = function(text, action) {
 
     return button;
 };
+MenuScene.prototype.createMessage = function(text) {
+    var button = document.createElement("div");
 
+    button.innerHTML = text;
+    button.style.textAlign = "center";
+    button.style.backgroundColor = "red";
+    button.style.color = "rgb(33,33,33)";
+    button.style.borderRadius = "15px";
+    button.style.border = "1px solid rgb(33,33,33)";
+    button.style.display = "inline-block";
+
+    var height = this.canvas.height / 8;
+
+    button.style.margin = (height / 3) + "px";
+    button.style.padding = (height / 3) + "px";
+    button.style.fontSize = (height * 0.60) + "px";
+    button.style.fontFamily = "sans-serif";
+
+    return button;
+};
+MenuScene.prototype.io = null;
 MenuScene.prototype.init = function() {
     this.tearDown();
 
@@ -58,6 +78,23 @@ MenuScene.prototype.init = function() {
     gameTitle.style.cursor = "default";
     this.menuDiv.appendChild(gameTitle);
 
+    var ginput = document.createElement("input");{
+        ginput.style.textAlign = "center";
+        ginput.style.backgroundColor = "white";
+        ginput.style.color = "rgb(33,33,33)";
+        ginput.style.borderRadius = "15px";
+        ginput.style.border = "1px solid rgb(33,33,33)";
+        ginput.style.display = "inline-block";
+
+        var height = this.canvas.height / 8;
+
+        ginput.style.margin = (height / 3) + "px";
+        ginput.style.padding = (height / 3) + "px";
+        ginput.style.fontSize = (height * 0.60) + "px";
+        ginput.style.fontFamily = "sans-serif";
+        ginput.value = Math.random().toString(36).substr(2, 5);
+    }
+
     var vsAIButton = this.createButton(
             "Single player",
             function() {
@@ -78,10 +115,28 @@ MenuScene.prototype.init = function() {
     var playButton = this.createButton(
         "Join and Play",
         function() {
-            this.tearDown();
-            window.scene = new window.GameScene(
-                this.canvas, this.ctx, 2);
-            window.scene.init();
+            var connMessage = this.createMessage("Connecting.");
+            var fullMessage = this.createMessage("Room Full. Try a different string");
+            var errorMessage = this.createMessage("An error occurred. Try again later");
+            var showMessage= (x)=>{this.menuDiv.appendChild(x)};
+            var tearUp = ()=>{
+                this.tearDown();
+                window.scene = new window.GameScene(
+                    this.canvas, this.ctx, 2);
+                window.scene.io=this.io;
+                window.scene.init();
+            }
+            this.io.emit("join",ginput.value, function(resp){
+                if(resp==="connected") {
+                    showMessage(connMessage);
+                    tearUp();
+                }
+                else if (resp==='full')
+                    showMessage(fullMessage);
+                else {
+                    showMessage(errorMessage);
+                }
+            });
         });
     var p2pButton = this.createButton(
         "Versus mode (Online)",
@@ -91,23 +146,9 @@ MenuScene.prototype.init = function() {
             this.menuDiv.removeChild(p2pButton);
             // this.menuDiv.appendChild(createButton);
             // this.menuDiv.appendChild(joinButton);
-            var ginput = document.createElement("input");
-            ginput.style.textAlign = "center";
-            ginput.style.backgroundColor = "white";
-            ginput.style.color = "rgb(33,33,33)";
-            ginput.style.borderRadius = "15px";
-            ginput.style.border = "1px solid rgb(33,33,33)";
-            ginput.style.display = "inline-block";
-
-            var height = this.canvas.height / 8;
-
-            ginput.style.margin = (height / 3) + "px";
-            ginput.style.padding = (height / 3) + "px";
-            ginput.style.fontSize = (height * 0.60) + "px";
-            ginput.style.fontFamily = "sans-serif";
-            ginput.value = Math.random().toString(36).substr(2, 5);
             this.menuDiv.appendChild(ginput);
             this.menuDiv.appendChild(playButton);
+            this.io=io();
         });
     // var createButton = this.createButton(
     //     "Create Game",
