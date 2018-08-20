@@ -104,8 +104,8 @@ GravityWells2.prototype.mouseMove = function(e) {
 };
 
 GravityWells2.prototype.mouseUp = function() {
-    this.wells.mouse = null;
-    this.canvas.onmousemove = null;
+    // this.wells.mouse = null;
+    // this.canvas.onmousemove = null;
 };
 
 GravityWells2.prototype.touchWells = function(e) {
