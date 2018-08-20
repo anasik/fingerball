@@ -75,9 +75,12 @@ GravityWells2.prototype.mouseDown = function(e) {
     this.canvas.onmousemove = $.proxy(this.mouseMove, this);
     var posp = pos.clone();
     if(!this.field.landscape /*if portrait*/){
-        posp.x = ((2*this.field.fieldCenterV.y)-posp.y) / this.field.fieldCenterV.y;
-        posp.y = posp.x / this.field.fieldCenterV.x*2;
+        var x = posp.x, y = posp.y;
+        posp.x = ((2*this.field.fieldCenterV.y)-y) / this.field.fieldCenterV.y;
+        posp.y = x / (2*this.field.fieldCenterV.x);
     } else {
+        var x = posp.x, y = posp.y;
+
         posp.x /= this.field.fieldCenterV.x;
         posp.y /= this.field.fieldCenterV.y*2;
     }
@@ -88,8 +91,14 @@ GravityWells2.prototype.mouseMove = function(e) {
     this.wells.mouse.pos.x = e.clientX;
     this.wells.mouse.pos.y = e.clientY;
     var posp = this.wells.mouse.pos.clone();
-    posp.x /= this.field.fieldCenterV.x;
-    posp.y /= this.field.fieldCenterV.y*2;
+    if(!this.field.landscape /*if portrait*/){
+        var x = posp.x, y = posp.y;
+        posp.x = ((2*this.field.fieldCenterV.y)-y) / this.field.fieldCenterV.y;
+        posp.y = x / (2*this.field.fieldCenterV.x);
+    } else {
+        posp.x /= this.field.fieldCenterV.x;
+        posp.y /= this.field.fieldCenterV.y*2;
+    }
     this.io.emit('red',posp);
     return false;
 };
@@ -133,8 +142,16 @@ GravityWells2.prototype.touchWells = function(e) {
 
     this.wells.touches = newWells;
     var posp = newWells.clone();
-    posp.x /= this.field.fieldCenterV.x;
-    posp.y /= this.field.fieldCenterV.y*2;
+    if(!this.field.landscape /*if portrait*/){
+        var x = posp.x, y = posp.y;
+        posp.x = ((2*this.field.fieldCenterV.y)-y) / this.field.fieldCenterV.y;
+        posp.y = x / (2*this.field.fieldCenterV.x);
+    } else {
+        var x = posp.x, y = posp.y;
+
+        posp.x /= this.field.fieldCenterV.x;
+        posp.y /= this.field.fieldCenterV.y*2;
+    }
     this.io.emit('red',posp);
 
 };
