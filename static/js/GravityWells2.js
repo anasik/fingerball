@@ -110,38 +110,25 @@ GravityWells2.prototype.mouseUp = function() {
 
 GravityWells2.prototype.touchWells = function(e) {
     e.preventDefault();
+    if(e.type==="touchend")
+        return;
 
     var newWells = [];
-    for (var i = 0; i < e.touches.length; i++) {
-        var touchV = new Vector2(e.touches[i].pageX, e.touches[i].pageY);
+    var touchV = new Vector2(e.touches[e.touches.length-1].pageX, e.touches[e.touches.length-1].pageY);
 
-        var oldTouch = null;
-        for (var j = 0; j < this.wells.touches.length; j++) {
-            if (this.wells.touches[j].identifier === e.touches[i].identifier) {
-                oldTouch = this.wells.touches[j];
-                break;
-            }
-        }
+        var oldTouch = this.wells.touches[0];
 
         if (oldTouch) {
             oldTouch.pos = touchV;
-            newWells.push(oldTouch);
+            newWells[0]=(oldTouch);
         }
         else {
-            var player;
-            if (this.field.landscape) {
-                player = touchV.x < this.field.fieldCenterV.x ? "P1" : "P2";
-            }
-            else {
-                player = touchV.y > this.field.fieldCenterV.y ? "P1" : "P2";
-            }
-
-            newWells.push(new TouchGravityWell(touchV, this.R, player, e.touches[i].identifier));
+            newWells[0] = new TouchGravityWell(touchV, this.R, "P1", e.touches[e.touches.length-1].identifier);
         }
-    }
+
 
     this.wells.touches = newWells;
-    var posp = newWells.clone();
+    var posp = this.wells.touches[0].pos.clone();
     if(!this.field.landscape /*if portrait*/){
         var x = posp.x, y = posp.y;
         posp.x = ((2*this.field.fieldCenterV.y)-y) / this.field.fieldCenterV.y;
