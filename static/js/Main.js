@@ -59,18 +59,19 @@ document.addEventListener(visibilityChange, handleVisibilityChange, false);
 
 document.body.appendChild(canvas);
 
-var crc2DProto = CanvasRenderingContext2D.prototype;
-crc2DProto.lineToV = function(vec) {
-    this.lineTo(vec.x, vec.y);
-};
-crc2DProto.moveToV = function(vec) {
-    this.moveTo(vec.x, vec.y);
-};
-crc2DProto.circlePathV = function(pos, r) {
-    this.beginPath();
-    this.arc(pos.x, pos.y, r, 0, Math.PI * 2, true);
-    this.closePath();
-};
+// No idea what this is and why it was ever needed. Doesn't seem to be doing anything. 0 Usages.
+// var crc2DProto = CanvasRenderingContext2D.prototype;
+// crc2DProto.lineToV = function(vec) {
+//     this.lineTo(vec.x, vec.y);
+// };
+// crc2DProto.moveToV = function(vec) {
+//     this.moveTo(vec.x, vec.y);
+// };
+// crc2DProto.circlePathV = function(pos, r) {
+//     this.beginPath();
+//     this.arc(pos.x, pos.y, r, 0, Math.PI * 2, true);
+//     this.closePath();
+// };
 
 function main(timestamp) {
     window.requestAnimationFrame(main);

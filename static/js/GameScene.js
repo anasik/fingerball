@@ -15,6 +15,35 @@ GameScene.prototype.io = null;
 GameScene.prototype.init = function() {
     this.paused = false;
 
+    if(this.scoreboard){
+        var oldorient = this.field.landscape;
+        var oldpuckpos = this.puck.pos.clone();
+        var oldpuck = this.puck;
+        if(!oldorient /*if portrait*/){
+            var x = oldpuckpos.x, y = oldpuckpos.y;
+            oldpuckpos.x = (this.field.height-y) / this.field.height;
+            oldpuckpos.y = x / this.field.width;
+            var x = oldpuck.V.x, y = oldpuck.V.y;
+            oldpuck.V.x =  -(y / this.field.height);
+            oldpuck.V.y = x / this.field.width;
+        } else {
+            oldpuckpos.x /= this.field.width;
+            oldpuckpos.y /= this.field.height;
+            oldpuck.V.x /= this.field.width;
+            oldpuck.V.y /= this.field.height;
+        }
+        var oldp2pos = (this.gravityWells.wells.ai)?this.gravityWells.wells.ai.pos.clone():null;
+        if(oldp2pos) {
+            if (!oldorient) {
+                var x = oldp2pos.x, y = oldp2pos.y;
+                oldp2pos.x = (this.field.height - y) / this.field.height;
+                oldp2pos.y = x / this.field.width;
+            } else {
+                oldp2pos.x /= this.field.width;
+                oldp2pos.y /= this.field.height
+            }
+        }
+    }
     this.canvas.width = window.innerWidth;
     this.canvas.height = window.innerHeight;
 
@@ -89,7 +118,28 @@ GameScene.prototype.init = function() {
         // this.gravityWells.wells.mouse.watch('pos', function(id,newval,oldval){
         //
         // });
+    }
+    if(this.scoreboard){
+        if(!this.field.landscape){
+            this.puck.pos.x = oldpuckpos.y * this.field.width;
+            this.puck.pos.y = this.field.height- (oldpuckpos.x*this.field.height);
+            this.puck.V.x = oldpuck.V.y * this.field.width;
+            this.puck.V.y = -(oldpuck.V.x * this.field.height);
+            if(oldp2pos){
+                this.gravityWells.wells.ai.pos.x = oldp2pos.y * this.field.width;
+                this.gravityWells.wells.ai.pos.y  = this.field.height- (oldp2pos.x*this.field.height);
+            }
 
+        } else {
+            if(oldp2pos){
+                this.gravityWells.wells.ai.pos.x  = oldp2pos.x * this.field.width;
+                this.gravityWells.wells.ai.pos.y  = oldp2pos.y * this.field.height;
+            }
+            this.puck.pos.x = oldpuckpos.x * this.field.width;
+            this.puck.pos.y = oldpuckpos.y * this.field.height;
+            this.puck.V.x = oldpuck.V.x * this.field.width;
+            this.puck.V.y = oldpuck.V.y * this.field.height;
+        }
     }
             this.canvas.onmousedown = $.proxy(
             this.gravityWells.mouseDown,

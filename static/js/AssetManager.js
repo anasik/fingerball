@@ -4,7 +4,7 @@ function AssetManager() {
     this.field = new SvgAsset(
             'stadium',
             screenWidth, screenHeight,
-            true, true);
+            false, true);
     this.puck = new SvgAsset(
             'football',
             100, 100,

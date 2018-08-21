@@ -13,7 +13,7 @@ MenuScene.prototype.createButton = function(text, action) {
     button.style.border = "1px solid rgb(33,33,33)";
     button.style.display = "inline-block";
 
-    var height = this.canvas.height / 8;
+    var height = Math.min(this.canvas.height, this.canvas.width)/ 8;
 
     button.style.margin = (height / 3) + "px";
     button.style.padding = (height / 3) + "px";
@@ -69,7 +69,7 @@ MenuScene.prototype.init = function() {
     gameTitle.innerHTML = "Finger Ball";
     gameTitle.style.color = "white";
     gameTitle.style.textShadow = "-1px -1px 0 #333, 1px -1px 0 #333, -1px 1px 0 #333, 1px 1px 0 #333";
-    var titleHeight = window.innerHeight / 7;
+    var titleHeight = Math.min(this.canvas.height, this.canvas.width) / 7;
     gameTitle.style.fontSize = titleHeight + "px";
     gameTitle.style.fontFamily = "sans-serif";
     gameTitle.style.fontWeight = "bold";
@@ -150,54 +150,6 @@ MenuScene.prototype.init = function() {
             this.menuDiv.appendChild(playButton);
             this.io=io();
         });
-    // var createButton = this.createButton(
-    //     "Create Game",
-    //     function() {
-    //         this.menuDiv.removeChild(joinButton);
-    //         this.menuDiv.removeChild(createButton);
-    //         var ginput = document.createElement("input");
-    //         ginput.style.textAlign = "center";
-    //         ginput.style.backgroundColor = "white";
-    //         ginput.style.color = "rgb(33,33,33)";
-    //         ginput.style.borderRadius = "15px";
-    //         ginput.style.border = "1px solid rgb(33,33,33)";
-    //         ginput.style.display = "inline-block";
-    //
-    //         var height = this.canvas.height / 8;
-    //
-    //         ginput.style.margin = (height / 3) + "px";
-    //         ginput.style.padding = (height / 3) + "px";
-    //         ginput.style.fontSize = (height * 0.60) + "px";
-    //         ginput.style.fontFamily = "sans-serif";
-    //         ginput.value = Math.random().toString(36).substr(2, 5);
-    //         this.menuDiv.appendChild(ginput);
-    //         this.menuDiv.appendChild(playButton);
-    //
-    //     });
-    //
-    // var joinButton = this.createButton(
-    //     "Join Game",
-    //     function() {
-    //         this.menuDiv.removeChild(joinButton);
-    //         this.menuDiv.removeChild(createButton);
-    //         var ginput = document.createElement("input");
-    //         ginput.style.textAlign = "center";
-    //         ginput.style.backgroundColor = "white";
-    //         ginput.style.color = "rgb(33,33,33)";
-    //         ginput.style.borderRadius = "15px";
-    //         ginput.style.border = "1px solid rgb(33,33,33)";
-    //         ginput.style.display = "inline-block";
-    //
-    //         var height = this.canvas.height / 8;
-    //
-    //         ginput.style.margin = (height / 3) + "px";
-    //         ginput.style.padding = (height / 3) + "px";
-    //         ginput.style.fontSize = (height * 0.60) + "px";
-    //         ginput.style.fontFamily = "sans-serif";
-    //         // ginput.value = Math.random().toString(36).substr(2, 5);
-    //         this.menuDiv.appendChild(ginput);
-    //         this.menuDiv.appendChild(playButton);
-    //     });
 
 
     this.menuDiv.appendChild(vsAIButton);
